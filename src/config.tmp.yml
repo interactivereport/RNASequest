@@ -1,0 +1,72 @@
+# ====== The project information ==========
+# prj_name: will be used as a part of the output file names, and 
+#           project information in QuickOmics, which can be changed in output CSV file
+# prj_path: RNAseq project folder (DNAnexus folder), which contains config.json; genes.estcount_table.txt
+# sample_meta: sample definition file, meta data, rows as samples, columns as phenotypes
+# sample_name: the column name in the above table which contains the sample name used for the count matrix
+#               empty means the first column (the row names)
+# sample_alias: the column name in the meta table to replace the sample names, empty means no-replace
+# min_count: 
+# min_sample:
+#               The genes considered in the analysis require at least (min_sample) samples expressed
+#               at least (min_count).
+# count_prior: the small numeric added before log transform
+# output: the result folder
+prj_name: initPrjName
+prj_path: initPrjPath
+sample_meta: initPrjMeta
+sample_name: 
+sample_alias:
+species: initSpecies
+gene_annotation: initGeneAnnotation
+min_count: 1
+min_sample: 1
+count_prior: 0.25
+output: initOutput
+core: 2
+
+# ====== The QC parameters ========
+# covariates_check: The listed covariates will checked against PCA of 
+#                   log TPM before and after covariates removal
+# covariates_rm: the global covariates to be removed from expression visualization 
+covariates_check: initCovariates
+covariates_check_PCcutoff: 5
+covariates_check_FDRcutoff: 0.1
+covariates_check_plotNcol: 3
+covariates_adjust: []
+
+# ====== The comparison information for quickOmics convert ========
+# comparison_file: comparison file defnition file
+# sample_group: the column name(s) in the meta table which will be used to calculate the
+#               mean/sd for all group combinations shown in QuickOmics.
+#               If empty, the first group variable in the comparison file will be used
+comparison_file: initPrjComp
+sample_group: []
+
+# ====== The gene network parameters ===============
+# gene_network_high_variable_N: the number of highly variable genes (sorted by sd) used for
+#                               the gene network construction
+# gene_network_cor_cutoff: the Pearson's correlation coefficients cutoff for the network edge
+# gene_network_p_cutoff: the correlation p-value cutoff for the network edge
+# gene_network_max_edge: The maximum network edge (will increase the cutoff if needed)
+gene_network_high_variable_N: 10000
+gene_network_cor_cutoff: 0.7
+gene_network_p_cutoff: 0.05
+gene_network_max_edge: 2e6
+
+# Please do NOT use the following (under construction) ------------
+# if the above DNAnexus project folder is not available, please provide the following:
+# the following will be used only if the DNAnexus prj_path is not available
+# prj_counts: raw/estimated count matrix, genes as rows, samples as columns
+# exp_effective_length: If the effective length is not available, global batches/variants removal will not be performed
+# exp_tpm: if the effective length is not available, please provide TPM (ignored if effective length is provided)
+# species: if no species or version is known, the row names of counts will be used as gene symbol
+# gene_annotation: The gene annotation file with 
+#           the first column contains unique ids which are consistent with rows in expression matrix, 
+#           the second column contains the gene symbols used in the QuickOmics
+#           the thrid column contains gene type (can be all 'unknown')
+#           the other columns are optional and will be stored into the QuickOmics
+exp_counts: 
+exp_effective_length: 
+exp_tpm:
+# ========

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if [[ -n "$1" ]]; then
+    source /etc/profile.d/modules_bash.sh
+    module add R/3.5.1
+    
+    Rscript $(dirname $0)/src/initConfig.R $(dirname $0)/src/ $@
+else
+    echo "=============== QuickOmicsInit path/to/a/DNAnexus/download/folder"
+    echo "e.g.: EAinit /camhpc/ngs/projects/TST11589/dnanexus/20210426220540_Zhengyu.Ouyang"
+    echo "A folder ('QuickOmics_[date]') with files for EArun will be created in the input folder"
+    echo "==============="
+    exit 0
+fi
