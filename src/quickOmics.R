@@ -34,6 +34,9 @@ for(i in rownames(comp_info)){
         comp_info[i,"Model"] <- comp_info[i,"Group_name"]
         setDefault <- T
     }
+    if(!grepl(comp_info[i,"Group_name"],comp_info[i,"Model"])){
+        stop(paste("The DEG 'Model' didn't include 'Group_name' in the comparison file for",i))
+    }
     if(is.null(comp_info[i,"Shrink_logFC"]) || nchar(comp_info[i,"Shrink_logFC"])==0){
         comp_info[i,"Shrink_logFC"] <- "Yes"
         setDefault <- T
