@@ -9,9 +9,7 @@
 #data.all (PC scores and meta data combined), selVar_All (significant covariate-PC pairs)
 #sel_dataN (Numeric covariate results), sel_dataC (Categorical covariate results)
 Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0.1, N_col=3) {
-  suppressMessages(require(tidyverse))
-  suppressMessages(require(cowplot))
-  suppressMessages(require(openxlsx))
+  require(tidyverse);  require(cowplot); require(openxlsx)
   if (!is.null(out_prefix) ) {
     out_dir=dirname(out_prefix)
     if (!dir.exists(out_dir)) {dir.create(out_dir)}
@@ -38,7 +36,7 @@ Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0
   if (!is.null(out_prefix) ) {
     dat=list(Sig_Cat_Anova=selVarC, Sig_Num_corr=selVarN, All_Cat_Anova=res1$anova, All_Num_Corr=res1$corr, PC_Scores=PC_Scores, MetaData=MetaData, 
              PC_Perentage=PC_info[, 1:2])
-    write.xlsx(dat, str_c(out_prefix, file='.xlsx'))
+    write.xlsx(dat, str_c(out_prefix, file='_Covariate_PC_Results.xlsx'))
   }
   
   #now create PCA plots
@@ -51,27 +49,31 @@ Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0
     mutate(Type="Categorical")%>%dplyr::select(PC,  covar, Type,NewText, pvalue, fdr) }
   selVar_All<-rbind(selVarC1, selVarN1)
   
-  if (!is.null(nrow(selVar_All)) && nrow(selVar_All)>0 && !is.null(out_prefix) ) {
-    pdf(str_c(out_prefix, "_PCA_Plots.pdf"), width=8, height=9)
-    var_list=as.character(sort(unique(selVar_All$covar)))
-    for (i in 1:length(var_list) ) {
-      var=as.character(var_list[i])
-      PCs<-selVar_All%>%filter(covar==var)%>%dplyr::select(PC)%>%unlist%>%as.character()
-      if (length(PCs)==1) {
-        PCs=sort(c(PCs, ifelse(PCs=="PC1", "PC2", "PC1")))
+  if (!is.null(selVar_All)) {
+    selVar_All<-selVar_All%>%arrange(covar, pvalue)
+    if (nrow(selVar_All)>0 && !is.null(out_prefix) ) {
+      pdf(str_c(out_prefix, "_PCA_Plots.pdf"), width=8, height=9)
+      var_list=as.character(sort(unique(selVar_All$covar)))
+      for (i in 1:length(var_list) ) {
+        var=as.character(var_list[i])
+        PCs<-selVar_All%>%filter(covar==var)%>%dplyr::select(PC)%>%unlist%>%as.character()
+        if (length(PCs)==1) {
+          PCs=sort(c(PCs, ifelse(PCs=="PC1", "PC2", "PC1")))
+        }
+        for  (j in 2:length(PCs)) {
+          x=sym(PCs[1]); y=sym(PCs[j]); color_by=sym(var)
+          p<-ggplot(data.all, aes(x=!!x, y=!!y, col=!!color_by))+geom_point()+
+            labs(x=PC_info$PC_new[PC_info$PC==PCs[1]], y=PC_info$PC_new[PC_info$PC==PCs[j]])+ theme_half_open()
+          #additional text to add  
+          more_text<-selVar_All%>%filter(covar==var)%>%dplyr::select(NewText)%>%unlist()%>%paste(collapse="\n")
+          p<-add_sub(p, str_c(more_text, "\n(This plot shows ", PCs[1], " in X and ", PCs[j], " in Y)"), x=0.2, hjust=0)
+          print(ggdraw(p))
+        }
       }
-      for  (j in 2:length(PCs)) {
-        x=sym(PCs[1]); y=sym(PCs[j]); color_by=sym(var)
-        p<-ggplot(data.all, aes(x=!!x, y=!!y, col=!!color_by))+geom_point()+
-          labs(x=PC_info$PC_new[PC_info$PC==PCs[1]], y=PC_info$PC_new[PC_info$PC==PCs[j]])+ theme_half_open()
-        #additional text to add  
-        more_text<-selVar_All%>%filter(covar==var)%>%dplyr::select(NewText)%>%unlist()%>%paste(collapse="\n")
-        p<-add_sub(p, str_c(more_text, "\n(This plot shows ", PCs[1], " in X and ", PCs[j], " in Y)"), x=0.2, hjust=0)
-        print(ggdraw(p))
-      }
+      dev.off()
     }
-    dev.off()
   }
+
   if (!is.null(out_prefix) ) {cat("Please check output files at:", out_dir, "\n")}
   if (!is.null(selVar_All)) {
     names(selVar_All)[c(2, 4, 5, 6)]=c("Covariate", "Significance", "P-value", "FDR")
@@ -106,13 +108,11 @@ plot_covariate_PC<-function(res, pc, var, out_file, width=10, height=8, add_text
 }
 
 
-#compute coraviate vs PC significane. For numerica, use correlation, for categorical, use ANOVA.
+#compute coraviate vs PC significance. For numerica, use correlation, for categorical, use ANOVA.
 #exp is expression matrix (logTPM, logCPM, etc), meta is meta data. Column names (samples) of exp must match row names of meta. 
 #PC_cutoff: select which principle components to be used in analysis. Default 5 will select components that explain more than 5% of variance in the data.
 Compute_Corr_Anova<-function(exp, meta, PC_cutoff=5) {
-  suppressMessages(require(tidyverse))
-  suppressMessages(require(psych))
-  suppressMessages(require(broom))
+  require(tidyverse); require(psych); require(broom)
   meta=data.frame(meta)
   sel=match(colnames(exp), rownames(meta))
   meta=meta[sel,,drop=F ]
@@ -180,7 +180,7 @@ return(list(PC_scores=scores, meta=meta, percentVar=percentVar, corr=cor_mat, an
 }
 
 #select significant covariate vs PC pairs, and create plot. 
-#var_type can be "numeric" or "catogorical"
+#var_type can be "numeric" or "categorical"
 #N_col: number of columns for facet plots
 get_PC_meta_plot<-function(res, var_type, FDR_cutoff=0.1, N_col=3) {
   require(tidyverse);require(cowplot)
