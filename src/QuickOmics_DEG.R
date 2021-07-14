@@ -56,21 +56,10 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
   
   Subset_group = comp_info$Subsetting_group
   if (!is.na(Subset_group) && !Subset_group == "") {
-    Subset_group_levels = strsplit(Subset_group, "; |;")[[1]]
-    Subset_group_level_vec = character(length(Subset_group_levels))
-    Subset_group_level_vec_name = character(length(Subset_group_levels))
-    for (i in 1:length(Subset_group_levels)) {
-      Subset_group_level_vec[i] = strsplit(Subset_group_levels[i], ":")[[1]][2]
-      Subset_group_level_vec_name[i] = strsplit(Subset_group_levels[i], ":")[[1]][1]
-    }
-    names(Subset_group_level_vec) = Subset_group_level_vec_name
-    
-    for (m in length(Subset_group_level_vec)) {
-      S_meta_sub = S_meta_sub %>% dplyr::filter(get(names(Subset_group_level_vec)[m]) == Subset_group_level_vec[m])
-    }
-    Counts_table_sub = Counts_table_sub[,rownames(S_meta_sub)]
+    Subset = subset_data(Subset_group, S_meta_sub, Counts_table_sub)
+    S_meta_sub = Subset$S_meta
+    Counts_table_sub =Subset$Counts_table
   }
-
     
   beta_coef_matrix = data.frame()
   # get covariate factors and adjust basal levels for all the covariates in the model
@@ -192,6 +181,25 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
   }
   return(list(result_list))
 }
+
+subset_data <- function(Subset_group, Sample_meta, Counts_table) {
+  Subset_group_levels = strsplit(Subset_group, "; |;")[[1]]
+  Subset_group_level_vec = character(length(Subset_group_levels))
+  Subset_group_level_vec_name = character(length(Subset_group_levels))
+  for (i in 1:length(Subset_group_levels)) {
+    Subset_group_level_vec[i] = strsplit(Subset_group_levels[i], ":")[[1]][2]
+    Subset_group_level_vec_name[i] = strsplit(Subset_group_levels[i], ":")[[1]][1]
+  }
+  names(Subset_group_level_vec) = Subset_group_level_vec_name
+  
+  for (m in length(Subset_group_level_vec)) {
+    Sample_meta = Sample_meta %>% dplyr::filter(get(names(Subset_group_level_vec)[m]) == Subset_group_level_vec[m])
+  }
+  Counts_table = Counts_table[,rownames(Sample_meta)]
+  subset_list = list("S_meta" = Sample_meta, "Counts_table" = Counts_table)
+  return(subset_list)
+}
+
 
 beta.coef <- function(response_table, design_table, coef_table, digits = 5) { # start function code
     # response_table, table of response variable, y$E from limma voom() object
