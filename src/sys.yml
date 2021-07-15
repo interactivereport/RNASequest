@@ -6,3 +6,4 @@ notCovariates: [Sapio_Submission_ID,Sapio_Sample_ID,Sapio_Request_Name,Sapio_Req
                 Annotated_By,Ethnicity,Race]
 #sample2meta: [Sapio_Plate_Name,RIN,Organ,Tissue,Cell_type,Cell_Line,Gender,Disease,Treatment,Timepoint,Genotype,Age]
 qc2meta: [Intragenic Rate,Mapping Rate,Estimated Library Size,Intronic Rate,Fragment Length Mean,rRNA rate,Duplication Rate of Mapped]
+QuickOmics_path: /camhpc/ngs/projects/Quickomics_data/

@@ -56,8 +56,10 @@ comp_info$Group_test <- as.character(comp_info$Group_test)
 comp_info$Group_ctrl <- as.character(comp_info$Group_ctrl)
 if(setDefault){
     A <- cbind(CompareName=rownames(comp_info),comp_info)
+    file.rename(config$comparison_file,paste0(config$comparison_file,".bk"))
     write.csv(A,file=config$comparison_file,row.names=F)
     message("-----> comparison file (",basename(config$comparison_file),") is updated with some default values!")
+    message("\tThe original comparison file is renamed as ...bk")
 }
 
 ## read the meta information -----
@@ -182,10 +184,13 @@ write.csv(data.frame(Name=config$prj_name,
 ## finished -----
 #system(paste0("cp ",config$output,"/",config$prj_name,"* "))
 message("=================================================\nResults are saved in ",config$output)
-message("-----> to check the results on QuickOmics, execute the following command on ngs server")
-message("\t\tcp ",config$output,"/",config$prj_name,"* /srv/shiny-server/Quickomics/unlisted/.")
-message("\t\t\t And then Please visit: http://ngs.biogen.com:3838/Quickomics/?unlisted=",config$prj_name)
-message("Powered by the Computational Biology Group [zhengyu.ouyang@biogen.com]")
+system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_path))
+#message("-----> to check the results on QuickOmics, execute the following command on ngs server")
+#message("\t\tcp ",config$output,"/",config$prj_name,"* /srv/shiny-server/Quickomics/unlisted/.")
+#message("\t\t\t And then Please visit: http://ngs.biogen.com:3838/Quickomics/?unlisted=",config$prj_name)
+message("\n-----> Please visit: http://ngs.biogen.com:3838/Quickomics/?serverfile=",config$prj_name)
+
+message("\nPowered by the Computational Biology Group [zhengyu.ouyang@biogen.com]")
 
 sink(paste0(config$output,"/session.EArun"))
 sessionInfo()
