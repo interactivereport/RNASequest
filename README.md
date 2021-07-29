@@ -5,7 +5,7 @@ A pipeline to analysis RNAseq
 Three main functions are provided:
 
   - EAinit: Generate a set of project analysis files based on a DNAnexus result folder;
-  - EAqc: Analyze the covariates agaist the expression to determin if the expression is needed to be adjusted;
+  - EAqc: Analyze the covariates against the expression to determine if the expression is needed to be adjusted;
   - EArun: Produce QuickOmics object for webserver loading.
 
 # Installation/Set up
