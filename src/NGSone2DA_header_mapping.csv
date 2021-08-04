@@ -1,0 +1,15 @@
+NGSone_header,DA_header,DA_alt_header
+Genotype,Transfection,
+TST_ID,ProjectName,
+Notes,Description,
+Cell_Type,CellType,
+Race,Ethnicity,
+Cell_Line,SampleSource,Infection
+Sample_Name,SampleID,
+group,SampleType,SampleType
+Plasmid_ID,Symptom,
+amiR,Response,
+Timepoint,SamplingTime,
+Organ,SampleSource,
+Disease,DiseaseState,DiseaseStage
+Sex,Gender,
