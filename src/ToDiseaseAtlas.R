@@ -51,8 +51,8 @@ write.csv(project_info, file.path(output_path, "Project_Info.csv"), row.names=F)
 
 ## sample info -----
 load(R_file)
-# header_mapping = read.csv(paste0(args[1],"NGSone2DA_header_mapping.csv"))
-header_mapping = read.csv('/home/wli7/projects/Quickomics_converter/src/NGSone2DA_header_mapping.csv')
+header_mapping = read.csv(file.path(args[1],"NGSone2DA_header_mapping.csv"))
+# header_mapping = read.csv('/home/wli7/projects/Quickomics_converter/src/NGSone2DA_header_mapping.csv')
 # only keep mapping headers that exist in the MetaData columns and do have mapped DA fields.
 header_mapping = header_mapping[intersect(which(header_mapping$NGSone_header %in% names(MetaData)), which(!header_mapping$DA_header == "")),]
 
