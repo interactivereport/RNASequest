@@ -192,7 +192,7 @@ subset_data <- function(Subset_group, Sample_meta, Counts_table) {
   }
   names(Subset_group_level_vec) = Subset_group_level_vec_name
   
-  for (m in length(Subset_group_level_vec)) {
+  for (m in 1:length(Subset_group_level_vec)) {
     Sample_meta = Sample_meta %>% dplyr::filter(get(names(Subset_group_level_vec)[m]) == Subset_group_level_vec[m])
   }
   Counts_table = Counts_table[,rownames(Sample_meta)]

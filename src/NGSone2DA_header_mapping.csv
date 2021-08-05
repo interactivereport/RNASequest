@@ -1,15 +1,54 @@
-NGSone_header,DA_header,DA_alt_header
-Genotype,Transfection,
+NGSone_header,DA_header,Notes
 TST_ID,ProjectName,
-Notes,Description,
-Cell_Type,CellType,
-Race,Ethnicity,
-Cell_Line,SampleSource,Infection
+Plate_Name,,
+Well,,
+Well_Row,,
+Well_Column,,
 Sample_Name,SampleID,
-group,SampleType,SampleType
-Plasmid_ID,Symptom,
-amiR,Response,
+Sample_Type,,
+Sample_Process,,
+Concentration,,
+Volume,,
+RIN,,
+Annotated_By,,
+Organism,Organism,
+Organ,Tissue,"When both Organ and Tissue are present, these two will be concatenated in the Tissue column"
+Tissue,Tissue,
+Cell_Type,CellType,
+Cell_Line,SampleSource,Will map to both CellLine and SampleSource in the comparison info table
+Gender,Gender,
+Disease,DiseaseState,Disease will map to both DiseaseState and DiseaseStage
+Race,Ethnicity,"When both Race and Ethnicity are present, these two will be concatenated in the Ethnicity column"
+Ethnicity,Ethnicity,
+Treatment,Treatment,
 Timepoint,SamplingTime,
-Organ,SampleSource,
-Disease,DiseaseState,DiseaseStage
+Genotype,Transfection,Will map to both Genotype and Transfection in the comparison info table
+Age,Age,will map to AgeCategory in the comparison info table
+Index_ID,,
+Index_Tag,,
+Index_ID2,,
+Index_Tag2,,
+Status,,
+Status_Time,,
+Notes,Description,
+Sapio_Profile,,
+Sapio_Submission_ID,,
+Sapio_Request_ID,,
+Sapio_Request_Name,,
+Sapio_Plate_ID,,
+Sapio_Plate_Name,,
+Sapio_Sample_ID,,
+Sapio_IndexBarcode,,
+Sapio_URL,,
+ID,,
+group,SampleType,will map to SubjectGroup in the comparison info table
 Sex,Gender,
+,PlatformName,"will be ""RNA-Seq"""
+,Collection,
+,DataSource,
+,Infection,
+,Symptom,
+,Response,
+,SamplePathology,
+,SubjectID,
+,Title,

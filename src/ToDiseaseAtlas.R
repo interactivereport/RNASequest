@@ -17,7 +17,7 @@ config <- yaml::read_yaml(args[2])
 sys_config <- yaml::read_yaml(file.path(args[1],"sys.yml"))
 source(file.path(args[1],"QuickOmics_DEG.R"))
 # config <- yaml::read_yaml("/camhpc/ngs/projects/TST11773/dnanexus/test_zhengyu.ouyang/QuickOmics_20210712180059/config.yml")
-# config <- yaml::read_yaml("/camhpc/ngs/projects/TST11589/dnanexus/20210426220540_zhengyu.ouyang/QuickOmics_20210708004132/config.yml")
+# config <- yaml::read_yaml("/camhpc/ngs/projects/TST11773/dnanexus/wei_test/EA20210805_0/config.yml")
 # sys_config <- yaml::read_yaml(file.path("/home/wli7/projects/Quickomics_converter/src","sys.yml"))
 # source(file.path("/home/wli7/projects/Quickomics_converter/src","QuickOmics_DEG.R"))
 
@@ -43,98 +43,88 @@ if(is.null(config$DA_file_outpath) || length(config$DA_file_outpath)==0) {
   output_path = config$DA_file_outpath
 }
   
-# output_path = file.path(dirname("/camhpc/ngs/projects/TST11589/dnanexus/20210426220540_zhengyu.ouyang/QuickOmics_20210708004132/config.yml"), "DA_Import_Files")
+# output_path = file.path(dirname("/camhpc/ngs/projects/TST11773/dnanexus/wei_test/EA20210805_0/config.yml"), "DA_Import_Files")
 dir.create(output_path, showWarnings = FALSE)
 
-project_info  = data.frame(ProjectID=p_info$ProjectID[1], Title=p_info$ShortName[1], Description=p_info$Name[1], Platform='', PlatformDescription='', PlatformTechnology='', ContactName='')
+project_info  = data.frame(ProjectID=p_info$ProjectID[1], Title=p_info$ShortName[1], Description=p_info$Name[1], ExperimentType="Expression profiling by high throughput sequencing", Platform='', PlatformDescription='', PlatformTechnology='', ContactName='')
 write.csv(project_info, file.path(output_path, "Project_Info.csv"), row.names=F)
 
 ## sample info -----
 load(R_file)
+# header_mapping = read.csv(paste0(args[1],"NGSone2DA_header_mapping.csv"))
+header_mapping = read.csv('/home/wli7/projects/Quickomics_converter/src/NGSone2DA_header_mapping.csv')
+# only keep mapping headers that exist in the MetaData columns and do have mapped DA fields.
+header_mapping = header_mapping[intersect(which(header_mapping$NGSone_header %in% names(MetaData)), which(!header_mapping$DA_header == "")),]
 
-if (length(which(str_detect(names(MetaData), "Sapio"))) > 0) {
-  MetaData = MetaData[, -which(str_detect(names(MetaData), "Sapio"))]
-}
-col_exclude_list1 = c("Order", "ComparePairs", "Index_ID2", "Annotated_By", "Index_ID", "Status", "Index_Tag", "Index_Tag2", "Status_Time", "Well", "Well_Row", "Plate_Name", "Well_Column")
-MetaData = MetaData[, -which(colnames(MetaData) %in% col_exclude_list1)]
-
-# sys_config <- yaml::read_yaml(file.path(args[1],"sys.yml"))
-sys_config <- yaml::read_yaml(file.path("/home/wli7/projects/Quickomics_converter/src","sys.yml"))
-
+# if (length(which(str_detect(names(MetaData), "Sapio"))) > 0) {
+#   MetaData = MetaData[, -which(str_detect(names(MetaData), "Sapio"))]
+# }
+# col_exclude_list1 = c("Order", "ComparePairs", "Index_ID2", "Annotated_By", "Index_ID", "Status", "Index_Tag", "Index_Tag2", "Status_Time", "Well", "Well_Row", "Plate_Name", "Well_Column")
+# MetaData = MetaData[, -which(colnames(MetaData) %in% col_exclude_list1)]
 
 # col_exclude_list2 = gsub(" ", "_", sys_config$qc2meta)
 # MetaData = MetaData[, -which(colnames(MetaData) %in% col_exclude_list2)]
 
-# df_header = read.csv(paste0(args[1],"NGSone2DA_header_mapping.csv"))
-df_header = read.csv('/home/wli7/projects/Quickomics_converter/src/NGSone2DA_header_mapping.csv')
-df_header = df_header[which(df_header$NGSone_header %in% names(MetaData)),]
+# Only keep the default NGSone columns of MetaData that can be mapped to DA
+DA_MetaData = MetaData[, which(colnames(MetaData) %in% header_mapping$NGSone_header)]
 
-meta_names_ori = names(MetaData)
-for (i in 1:nrow(df_header)) {
-  if (df_header$NGSone_header[i] %in% names(MetaData)) {
-    if (!df_header$DA_header[i] %in% names(MetaData)) {
-      names(MetaData) = gsub(df_header$NGSone_header[i], df_header$DA_header[i], names(MetaData))
-      # MetaData = MetaData %>% dplyr::rename(as.name(df_header$DA_header[i])=as.name(df_header$NGSone_header[i]))
-    } else if (!df_header$DA_alt_header[i] == "") {
-      names(MetaData) = gsub(df_header$NGSone_header[i], df_header$DA_alt_header[i], names(MetaData))
-      # MetaData = MetaData %>% dplyr::rename(df_header$DA_alt_header[i] = df_header$NGSone_header[i])
+# header_mapping = header_mapping[!header_mapping$NGSone_header == header_mapping$DA_header, ]
+
+meta_names_ori = names(DA_MetaData)
+
+if (nrow(header_mapping) > 0) {
+  for (i in 1:nrow(header_mapping)) {
+    if (!header_mapping$NGSone_header[i] == header_mapping$DA_header[i]) {
+      if (!header_mapping$DA_header[i] %in% names(DA_MetaData)) {
+        names(DA_MetaData) = gsub(header_mapping$NGSone_header[i], header_mapping$DA_header[i], names(DA_MetaData))
+      } else {
+        DA_MetaData[, header_mapping$DA_header[i]]=str_c(DA_MetaData[, header_mapping$DA_header[i]], "__", DA_MetaData[, header_mapping$NGSone_header[i]])
+        DA_MetaData[, header_mapping$DA_header[i]]=str_replace(DA_MetaData[, header_mapping$DA_header[i]], "^__", "")
+        DA_MetaData[, header_mapping$DA_header[i]]=str_replace(DA_MetaData[, header_mapping$DA_header[i]], "__$", "")
+      }
     }
   }
+  if ("DiseaseState" %in% names(DA_MetaData)) DA_MetaData$DiseaseStage = DA_MetaData$DiseaseState
 }
 
-if ("Disease" %in% names(MetaData) && !"DiseaseStage" %in% names(MetaData)) {
-  names(MetaData) = gsub("Disease", "DiseaseStage", names(MetaData))
-}
 
-DA_header_inclusion_list = sys_config$DA_columns
-MetaData = MetaData[, which(names(MetaData) %in% DA_header_inclusion_list)]
-MetaData$SampleID = str_replace_all(MetaData$SampleID, "-", "_")
-MetaData$SampleID[grepl("^[[:digit:]]+", MetaData$SampleID)] = str_c("S", MetaData$SampleID[grepl("^[[:digit:]]+", MetaData$SampleID)])
-write.csv(MetaData, file.path(output_path, "Sample_Info.csv"), row.names=F)
+# DA_header_inclusion_list = sys_config$DA_columns
+# MetaData = MetaData[, which(names(MetaData) %in% DA_header_inclusion_list)]
+DA_MetaData$SampleID = str_replace_all(DA_MetaData$SampleID, "-", "_")
+DA_MetaData$SampleID[grepl("^[[:digit:]]+", DA_MetaData$SampleID)] = str_c("S", DA_MetaData$SampleID[grepl("^[[:digit:]]+", DA_MetaData$SampleID)])
+write.csv(DA_MetaData, file.path(output_path, "Sample_Info.csv"), row.names=F)
 
 ## Expression & Counts ------
-if(!is.null(config$prj_path)){
-  estCount <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"),
-                         header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-  estCount <- estCount[!grepl("^ERCC",rownames(estCount)),]
-  colnames(estCount) <- sapply(strsplit(sapply(strsplit(colnames(estCount),"\\|"),head,1),
-                                        "_"),tail,1)
-  if (file.exists(paste0(config$prj_path,"/combine_rsem_outputs/genes.fpkm_table.txt"))) {
-    Expression <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.fpkm_table.txt"),
-                             header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-    
-  } else {
-    Expression <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.tpm_table.txt"),
-                             header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-  }
-  Expression <- Expression[!grepl("^ERCC",rownames(Expression)),]
-  colnames(Expression) <- sapply(strsplit(sapply(strsplit(colnames(Expression),"\\|"),head,1),
-                                        "_"),tail,1)
-}else{
-  if(!is.null(config$exp_counts))
-    estCount <- read.table(config$exp_counts,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-  if(!is.null(config$exp_tpm)){
-    Expression <-  read.table(config$exp_tpm,header=T,row.names=1, sep="\t",check.names=F,as.is=T)
-  }
-}
+estCount = readRDS(paste0(config$output,"/",config$prj_name,"_estCount.rds"))
+
+Expression = 2^data_wide - config$count_prior
+
 colnames(estCount) = str_replace_all(colnames(estCount), "-", "_")
 colnames(Expression) = str_replace_all(colnames(Expression), "-", "_")
 colnames(estCount)[grepl("^[[:digit:]]+", colnames(estCount))] = str_c("S", colnames(estCount)[grepl("^[[:digit:]]+", colnames(estCount))])
 colnames(Expression)[grepl("^[[:digit:]]+", colnames(Expression))] = str_c("S", colnames(Expression)[grepl("^[[:digit:]]+", colnames(Expression))])
 
 
-if(!is.null(estCount)) estCount <- estCount[, MetaData$SampleID]
-estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
-
-if(!is.null(Expression)) Expression <- Expression[, MetaData$SampleID]
+# if(!is.null(estCount)) estCount <- estCount[, MetaData$SampleID]
+# estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
+# 
+# if(!is.null(Expression)) Expression <- Expression[, MetaData$SampleID]
 
 fwrite(data.frame(Gene = rownames(Expression), Expression), file.path(output_path, "Gene_Expression_Data.csv"))
 fwrite(data.frame(Gene = rownames(estCount), estCount), file.path(output_path, "Gene_Count.csv"))
 
 ## comparison info ------
 ComparisonID=rownames(comp_info)
-
 c_info=data.frame(ComparisonID, ProjectName=project_info$ProjectID[1], Case_SampleIDs='', Control_SampleIDs='')
+
+
+unmapped_grp_name_list = c("Phenotype", "population", "SubjectTreatment")
+
+unmapped_name_index = 1
+unmapped_record = data.frame("ori"= character(), "new" = character())
+
+estCount = readRDS(paste0(config$output,"/",config$prj_name,"_estCount.rds"))
+
 for (i in 1:nrow(c_info)) {
   S_meta_sub = MetaData
   Subset_group = comp_info$Subsetting_group[i]
@@ -142,6 +132,7 @@ for (i in 1:nrow(c_info)) {
     Subset = subset_data(Subset_group, MetaData, estCount)
     S_meta_sub = Subset$S_meta
   }
+  DA_meta_sub = DA_MetaData[rownames(S_meta_sub),]
   
   if (comp_info$Analysis_method[i] == "DESeq2") {
     c_info$ComparisonID[i] = paste0(c_info$ComparisonID[i], "_DESeq")
@@ -149,8 +140,30 @@ for (i in 1:nrow(c_info)) {
     c_info$ComparisonID[i] = paste0(c_info$ComparisonID[i], "_limma")
   }    
 
-  compare_group = comp_info$Group_name[i]
-  if (!compare_group == "SampleType") {
+  compare_group_ori = comp_info$Group_name[i]
+  c_info$Case_SampleIDs[i]=str_c(DA_meta_sub[S_meta_sub[, compare_group_ori]==comp_info$Group_test[i], 'SampleID'], collapse=";") 
+  c_info$Control_SampleIDs[i]=str_c(DA_meta_sub[S_meta_sub[, compare_group_ori]==comp_info$Group_ctrl[i], 'SampleID'], collapse=";") 
+  
+  compare_group = header_mapping$DA_header[header_mapping$NGSone_header == compare_group_ori]
+
+  if (length(compare_group) > 0 && !compare_group %in% c("SampleType", 'Tissue', "Ethnicity")) {
+    c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
+    c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
+  } else if (length(compare_group) > 0 && compare_group %in% c('Tissue', "Ethnicity")) {
+    if (comp_info$Group_test[i] %in% DA_meta_sub[, compare_group] && comp_info$Group_ctrl[i] %in% DA_meta_sub[, compare_group]) {
+      c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
+      c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
+    } else if (unmapped_name_index < 4) {
+      compare_group = unmapped_grp_name_list[unmapped_name_index]
+      unmapped_record[unmapped_name_index,] = c(compare_group_ori, compare_group)
+      unmapped_name_index = unmapped_name_index + 1
+      c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
+      c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
+    }
+  } else if (length(compare_group) == 0 && unmapped_name_index < 4) {
+    compare_group = unmapped_grp_name_list[unmapped_name_index]
+    unmapped_record[unmapped_name_index,] = c(compare_group_ori, compare_group)
+    unmapped_name_index = unmapped_name_index + 1
     c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
     c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
   }
@@ -158,29 +171,29 @@ for (i in 1:nrow(c_info)) {
   compare_group_new = compare_group
   if (compare_group == "Age") {
     compare_group_new = "AgeCategory"
-  } else if ((compare_group == "Infection" && "Cell_Line" %in% meta_names_ori) || (compare_group == "SampleSource" && !"Organ" %in% meta_names_ori)) {
+  } else if (compare_group == "SampleSource" && "Cell_Line" %in% meta_names_ori) {
     compare_group_new = "CellLine"
   } else if (compare_group == "Transfection" && "Genotype" %in% meta_names_ori) {
     compare_group_new = "Genotype"
   } else if (compare_group == "SampleType" && "group" %in% meta_names_ori) {
     compare_group_new = "SubjectGroup"
   }
-  c_info[i, paste0("Case_", compare_group_new)] = comp_info$Group_test[i]
-  c_info[i, paste0("Control_", compare_group_new)] = comp_info$Group_ctrl[i]
+  if (! compare_group_new == compare_group) {
+    c_info[i, paste0("Case_", compare_group_new)] = comp_info$Group_test[i]
+    c_info[i, paste0("Control_", compare_group_new)] = comp_info$Group_ctrl[i]
+  }
+
+  Covariate_list = setdiff(names(DA_meta_sub), c("SampleID", "ProjectName", "Organism", compare_group))
   
-  c_info$Case_SampleIDs[i]=str_c(S_meta_sub$SampleID[S_meta_sub[,compare_group]==comp_info$Group_test[i]], collapse=";") 
-  c_info$Control_SampleIDs[i]=str_c(S_meta_sub$SampleID[S_meta_sub[,compare_group]==comp_info$Group_ctrl[i]], collapse=";") 
-  
-  Covariate_list = setdiff(names(S_meta_sub), c("SampleID", "ProjectName", "Organism", compare_group))
   if (length(Covariate_list) > 0) {
     for (j in 1:length(Covariate_list)) {
-      case = unique(S_meta_sub[S_meta_sub[,compare_group]==comp_info$Group_test[i], Covariate_list[j]])
-      control = unique(S_meta_sub[S_meta_sub[,compare_group]==comp_info$Group_ctrl[i], Covariate_list[j]])
+      case = unique(DA_meta_sub[S_meta_sub[, compare_group_ori]==comp_info$Group_test[i], Covariate_list[j]])
+      control = unique(DA_meta_sub[S_meta_sub[, compare_group_ori]==comp_info$Group_ctrl[i], Covariate_list[j]])
 
       Covariate = Covariate_list[j]
       if (Covariate_list[j] == "Age") {
         Covariate = "AgeCategory"
-      } else if ((Covariate_list[j] == "Infection" && "Cell_Line" %in% meta_names_ori) || (Covariate_list[j] == "SampleSource" && !"Organ" %in% meta_names_ori)) {
+      } else if (Covariate_list[j] == "SampleSource" && "Cell_Line" %in% meta_names_ori) {
         Covariate = "CellLine"
       } else if (Covariate_list[j] == "Transfection" && "Genotype" %in% meta_names_ori) {
         Covariate = "Genotype"
@@ -189,21 +202,31 @@ for (i in 1:nrow(c_info)) {
       }
       
       if (length(case)== 1) {
-        if (!Covariate_list[j] == "SampleType") {
+        c_info[i, paste0("Case_", Covariate)]=case
+        if (Covariate_list[j] %in% c("SampleSource", 'Transfection')) {
           c_info[i, paste0("Case_", Covariate_list[j])]=case
         }
-        c_info[i, paste0("Case_", Covariate)]=case
       }
       if (length(control)== 1) {
-        if (!Covariate_list[j] == "SampleType") {
+        c_info[i, paste0("Control_", Covariate)]=control
+        if (Covariate_list[j]  %in% c("SampleSource", 'Transfection')) {
           c_info[i, paste0("Control_", Covariate_list[j])]=control
         }
-        c_info[i, paste0("Control_", Covariate)]=control
       }
     }
   }
 } 
 
+if (nrow(unmapped_record) > 0) {
+  for (i in 1:nrow(c_info)) {
+    for (j in 1: nrow(unmapped_record)) {
+      case = unique(S_meta_sub[S_meta_sub[, comp_info$Group_name[i]]==comp_info$Group_test[i], unmapped_record$ori[j]])
+      control = unique(S_meta_sub[S_meta_sub[, comp_info$Group_name[i]]==comp_info$Group_ctrl[i], unmapped_record$ori[j]])
+      if (length(case)== 1) c_info[i, paste0("Case_", unmapped_record$new[j])]=case
+      if (length(control)== 1) c_info[i, paste0("Control_", unmapped_record$new[j])]=control
+    }
+  }
+}
 fwrite(c_info, file.path(output_path, "Comparisons_Info.csv"))
 
 
