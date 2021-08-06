@@ -2,11 +2,12 @@
 
 A pipeline to analysis RNAseq
 
-Three main functions are provided:
+Four main functions are provided:
 
   - EAinit: Generate a set of project analysis files based on a DNAnexus result folder;
   - EAqc: Analyze the covariates against the expression to determine if the expression is needed to be adjusted;
   - EArun: Produce QuickOmics object for webserver loading.
+  - EA2DA: Produce required data files for DiseaseAtlas project import.
 
 # Installation/Set up
 Add "/camhpc/ngs/tools/expressionAnalysis" into your **_PATH_** environment variable.
@@ -43,6 +44,14 @@ The execution of above command will produce R object for QuickOmics webserver to
 
 The results (three files) currently will need to be copied to a folder on ngs, in order to have web accession. **_Please pay attention on the std out messages._**
 
+# EA2DA
+```
+EA2DA A/path/to/a/config/file
+```
+The execution of above command will produce 6 data files which are required for the DiseaseAtlas project import.
+
+**_Please fill the empty entries in the Project_Info.csv before import**
+
 # Administration
 There are two config files in the pipeline folder:
  - config.tmp.yml: The template of the config file, with all default values;
@@ -50,6 +59,8 @@ There are two config files in the pipeline folder:
     1. genome_path: the root path where the genome definition files (gtf) are located
     2. notCovariates: the column names from the sample meta information should not be considred as default covariates
     3. qc2meta: the column names from mapping QC file should be extracted and inserted into sample meta table
+    4. QuickOmics_path: the file path to store the files for QuickOmics web server display
+    4. DA_columns: the column names available for the sample meta table in the DiseaseAtlas system
 
 
 

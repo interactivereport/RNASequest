@@ -2,6 +2,8 @@
 # prj_name: will be used as a part of the output file names, and 
 #           project information in QuickOmics, which can be changed in output CSV file
 # prj_path: RNAseq project folder (DNAnexus folder), which contains config.json; genes.estcount_table.txt
+# DA_file_outpath: folder to store the data files used for DiseaseAtlas project import. If empty, a folder named
+#                  DA_Import_Files under the same folder of the project config.yml file.
 # sample_meta: sample definition file, meta data, rows as samples, columns as phenotypes
 # sample_name: the column name in the above table which contains the sample name used for the count matrix
 #               empty means the first column (the row names)
@@ -14,6 +16,7 @@
 # output: the result folder
 prj_name: initPrjName
 prj_path: initPrjPath
+DA_file_outpath: 
 sample_meta: initPrjMeta
 sample_name: 
 sample_alias:

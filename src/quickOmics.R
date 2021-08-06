@@ -138,6 +138,7 @@ if(!is.null(config$sample_alias)){
     meta <- cbind(meta,orig.sid=rownames(meta))
     rownames(meta) <- colnames(logTPM) <- colnames(estCount) <- meta[,config$sample_alias]
 }
+saveRDS(estCount,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
 ## gene definition file ---------
 message("====== reading gene annotation ...")
 ProteinGeneName <- read.csv(config$gene_annotation)
@@ -178,6 +179,7 @@ save(data_results,results_long,
      data_wide,data_long,
      MetaData,ProteinGeneName,
      comp_info,
+     yaxisLab,
      file=paste0(config$output,"/",config$prj_name,".RData"))
 ## save the project csv file -------
 write.csv(data.frame(Name=config$prj_name,

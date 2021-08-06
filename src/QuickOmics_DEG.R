@@ -158,7 +158,7 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
     }
     if (toupper(shrink_logFC) == "YES") {
       # output predictive log fold changes for first 5 genes
-      tt$logFC = predFCm(fit2,coef=column, all.de=FALSE, prop.true.null.method="lfdr")
+      tt$logFC = predFCm(fit2,coef=column, all.de=T, prop.true.null.method="lfdr")
     }
     ###########################
     #                               logFC    AveExpr         t      P.Value    adj.P.Val        B
@@ -192,7 +192,7 @@ subset_data <- function(Subset_group, Sample_meta, Counts_table) {
   }
   names(Subset_group_level_vec) = Subset_group_level_vec_name
   
-  for (m in length(Subset_group_level_vec)) {
+  for (m in 1:length(Subset_group_level_vec)) {
     Sample_meta = Sample_meta %>% dplyr::filter(get(names(Subset_group_level_vec)[m]) == Subset_group_level_vec[m])
   }
   Counts_table = Counts_table[,rownames(Sample_meta)]
