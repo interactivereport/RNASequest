@@ -20,12 +20,14 @@ if(length(args)>2 & dir.exists(args[3])) strOut <- normalizePath(args[3])
 source(paste0(args[1],"gtf.gz_to_gene_info.R"))
 source(paste0(args[1],"getAnnotation.R"))
 source(paste0(args[1],"extractEffectiveLength.R"))
+source(paste0(args[1],"alignQC.R"))
 config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 
 system(paste("mkdir -p",strOut))
 strMeta <- paste0(strOut,"/sampleMeta.csv")
 strGinfo <- paste0(strOut,"/geneAnnotation.csv")
 strComp <- paste0(strOut,"/compareInfo.csv")
+strAlignQC <- paste0(strOut,"/alignQC.pdf")
 ## extract effective length ----------
 message("Extracting effective length ...")
 a<- getEffectLength(strPath)
@@ -59,8 +61,10 @@ for(i in setdiff(colnames(meta),config$notCovariates)){
 message("Create gene annotation ...")
 gInfo <- getAnnotation(paste0(strPath,"/config.json"),config$genome_path)
 write.csv(gInfo,file=strGinfo)
-species <- 
-## empty comparison file -------
+## alignment QC plots ---------
+message("Plot alignment QC ...")
+alignQC(strPath,gInfo,strAlignQC)
+## create an empty comparison file -------
 message("Create empty comparison template ...")
 comTitle <- c("CompareName",
               "Subsetting_group",
@@ -74,7 +78,7 @@ comTitle <- c("CompareName",
               "LFC_cutoff")
 cat(paste(comTitle,collapse=","),"\n",sep="",file=strComp)
 
-## generate config file ----------
+## generate a config file ----------
 configTmp <- readLines(paste(paste0(args[1],"config.tmp.yml")))
 configTmp <- gsub("initPrjName",getProjectName(paste0(strPath,"/config.json")),configTmp)
 configTmp <- gsub("initPrjPath",strPath,configTmp)

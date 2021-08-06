@@ -33,10 +33,16 @@ if(!is.null(config$prj_path)){
     effeL <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"),
                         header=T,row.names=1,sep="\t",check.names=F,as.is=T)
     effeL <- effeL[!grepl("^ERCC",rownames(effeL)),]
-    colnames(estCount) <- sapply(strsplit(sapply(strsplit(colnames(estCount),"\\|"),head,1),
-                                          "_"),tail,1)
-    colnames(effeL) <- sapply(strsplit(sapply(strsplit(colnames(effeL),"\\|"),head,1),
-                                       "_"),tail,1)
+    colnames(estCount) <- sapply(strsplit(sapply(strsplit(colnames(estC),"\\|"),
+                                                 function(x)return(paste(head(x,-1),
+                                                                         collapse="|"))),
+                                          "_"),function(x)return(paste(x[-1],
+                                                                       collapse="_")))
+    colnames(effeL) <- sapply(strsplit(sapply(strsplit(colnames(effeL),"\\|"),
+                                              function(x)return(paste(head(x,-1),
+                                                                      collapse="|"))),
+                                       "_"),function(x)return(paste(x[-1],
+                                                                    collapse="_")))
 }else{
     if(!is.null(config$exp_counts))
         estCount <- read.table(config$exp_counts,
