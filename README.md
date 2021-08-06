@@ -31,8 +31,8 @@ There will be five files in the folder:
 ```
 EAqc A/path/to/a/config/file
 ```
-The execution of the command with the above default config file, expression PC analysis will be done against covariates specified in **covariates_check** in *config.yml* file. An excel file will list p-value for all numeric and categorical covariates, and with significant ones will be in plot pdf files. The analysis before covariate adjusting will have prefix *covariatePCanalysis_beforeCovariateAdjust*. 
-Based on the above results, you can add covariates into **covariates_adjust** in *config.yml* file, and run ```EAqc``` again. This time additional expression PC analysis will be applied to covariate adjusted expression with files started with *covariatePCanalysis_afterCovariateAdjust*. 
+The execution of the command with the above default config file, expression PC analysis will be done against covariates specified in **covariates_check** in *config.yml* file. An excel file will list p-value for all numeric and categorical covariates, and with significant ones will be in plot pdf files. The analysis before covariate adjusting will have prefix *covariatePCanalysis_noAdjust*. 
+Based on the above results, you can add covariates into **covariates_adjust** in *config.yml* file, and run ```EAqc``` again. This time additional expression PC analysis will be applied to covariate adjusted expression with files started with *covariatePCanalysis_Adjusted*. 
 
 **_Please pay attention on the std out messages._**
 
