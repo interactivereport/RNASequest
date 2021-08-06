@@ -18,6 +18,7 @@ EAinit A/path/to/a/DNAnexus/result/folder
 ```
 The execution of above command will create a sub-folder (QuickOmics_[timestamp]) in the specified DNAnexus result folder.
 There will be five files in the folder:
+
     - compareInfo.csv: an empty comparison definition file (with header). Please fill in this file before ```EArun``` call.
     - config.yml: a config fill specifies the parameters of the ```EAqc``` and ```EArun```. Please update **covariates_adjust** after ```EAqc```.
     - geneAnnotation.csv: a gene annotation file including gene symbol.
