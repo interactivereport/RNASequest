@@ -10,15 +10,18 @@ gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/mouse/Mouse.GRCm38.102/Mus_musculus.GRCm38.transcript.gtf.gz"
     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/monkey/Monkey.Macaca_fascicularis_5.0_NCBI_RefSeq.aavhSMN1.REV4_2/Monkey_REV4b.transcript.gtf.gz"
     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/monkey/Monkey.macFas5.v100.l1_5/Monkey.macFas5.v100.l1_5.transcript.transcript.gtf.gz"
-    #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/aav/V79_DN_145_pERG.00249_SOD1_miRE_7/V79_DN_145_pERG.00249_SOD1_miRE_7_lambdaKanlambda.transcript.gtf.gz"
-    #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/rat/Rattus_norvegicus_ensemble_Rnor6.0.89/Rattus_norvegicus_ensemble_Rnor6.0.89.transcript.transcript.gtf.gz"
+     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/rat/Rattus_norvegicus_ensemble_Rnor6.0.89/Rattus_norvegicus_ensemble_Rnor6.0.89.transcript.transcript.gtf.gz"
 
     gene_info_file <- strOut
     #if(is.null(gene_info_file)) gene_info_file=str_replace(strGTF, "gtf.gz", "gene_info.csv")  #will save gene information file here
     if(is.null(gene_info_file)) gene_info_file=str_replace(str_replace(strGTF, "gtf.gz", "gene_info.csv"),"gtf$","gene_info.csv") #O'Young
     if(gene_info_file==strGTF) gene_info_file <- paste0(strGTF,".gene_info.csv")#O'Young
     #gtf<-fread(strGTF)
-    gtf<-fread(cmd=paste0('grep -v "^#" ',strGTF)) #O'Young
+    if ( str_detect(strGTF, "gtf.gz$") ) {  
+        gtf=fread(cmd=str_c('zcat ', strGTF, '| grep -v "^#" ') ) #use zcat for gtf.gz files
+    } else {
+        gtf<-fread(cmd=paste0('grep -v "^#" ',strGTF)) #O'Young
+    }
     gtf%>%group_by(V3)%>% (dplyr::count)
     #some files use gene_biotype, some files use gene_type
     if (sum(str_detect(gtf$V9, "gene_biotype"))>100) {gene_type_key="gene_biotype"} else {gene_type_key="gene_type"}
@@ -49,7 +52,7 @@ gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     exons<-gtf%>%filter(V3=="exon")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F)
     gr1=GRanges(seqnames=exons$V1,  ranges=IRanges(exons$V4, exons$V5), strand=exons$V7, geneID=exons$geneID)
     gr2=split(gr1, exons$geneID)  #group exons by geneID
-    gr2=reduce(gr2) #merge overlapping exons
+    gr2=GenomicRanges::reduce(gr2) #merge overlapping exons
     gr2=unlist(gr2, use.names=T)
     info1=data.frame(geneID=names(gr2), width=width(gr2) )
     Gene_Length<-info1%>%group_by(geneID)%>%summarize(Length=sum(width))
