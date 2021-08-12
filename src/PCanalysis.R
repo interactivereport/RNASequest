@@ -86,7 +86,7 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
         batchX <- meta[,config$covariates_adjust,drop=F]
         logTPM <- suppressMessages(covariateRM(estCount,effeL,batchX=batchX,method='limma',
                               prior=config$count_prio))
-        save(logTPM,meta,file="PCanalysis.rdata")
+        #save(logTPM,meta,file="PCanalysis.rdata")
         res <- suppressMessages(suppressWarnings(
             Covariate_PC_Analysis(logTPM,meta,
                                   out_prefix=paste0(config$output,"covariatePCanalysis_Adjusted"),
