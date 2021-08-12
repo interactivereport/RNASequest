@@ -152,7 +152,6 @@ if(!is.null(config$gene_annotation)){
 }
 ## comparison -----------
 message("====== Starting DEG analyses ...")
-save(estCount,meta,comp_info,file="DEG.rdata")
 DEGs <- Batch_DEG(estCount, meta, comp_info,core=config$core)
 message("Formating the DEG results")
 compRes <- formatQuickOmicsResult(DEGs,logTPM,meta[,"group"],ProteinGeneName)
