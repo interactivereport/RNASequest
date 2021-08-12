@@ -19,7 +19,7 @@ message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
 if(!is.null(config$sample_name))
     rownames(meta) <- meta[,config$sample_name]
-meta <- meta[,unique(c(config$covariates_check,config$covariates_adjust))]
+meta <- meta[,unique(c(unlist(config$covariates_check),unlist(config$covariates_adjust)))]
 ## change the Well_Row from charactor to numeric
 oneMeta <- "Well_Row"
 if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
@@ -58,7 +58,7 @@ if(!is.null(config$prj_path)){
     }
 }
 if(sum(!rownames(meta)%in%colnames(estCount))>0){
-    message("The following samles from meta information is not in count matrix:")
+    message("The following samples from meta information is not in count matrix:")
     message(paste(rownames(meta)[!rownames(meta)%in%colnames(estCount)],collapse="\n"))
     stop("sample names in the meta table do not match sample name in the count table!")
 }
@@ -110,7 +110,3 @@ message("Powered by the Computational Biology Group [zhengyu.ouyang@biogen.com]"
 sink(paste0(config$output,"/session.EAqc"))
 sessionInfo()
 sink()
-
-
-
-
