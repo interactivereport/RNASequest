@@ -9,7 +9,7 @@ getAnnotation <- function(strF,strPath=NULL){
         gtfPath <- list.files(paste0(strPath,"/rnaseq/",
                                      gConfig$global_params$reference$species,
                                      "/",gConfig$global_params$reference$version),
-                              "gtf.gz$",full.names=T)
+                              "gtf.gz$",full.names=T)[1]
         strF <- gsub("gtf.gz$","gene_info.csv",gtfPath)
         if(!file.exists(strF)){
             gtf.gz_to_gene_info(gtfPath)
@@ -21,6 +21,16 @@ getAnnotation <- function(strF,strPath=NULL){
     gInfo <- cbind(0:(nrow(gInfo)-1),gInfo)
     dimnames(gInfo) <- list(gInfo[,2],
                             c("id","UniqueID","Gene.Name","Biotype",tail(gInfoName,-3)))
+    ## if the lookup table is available
+    strLookup <- paste0(strPath,"/rnaseq/lookup/",
+                        gConfig$global_params$reference$version,
+                        ".csv")
+    if(file.exists(strLookup)){
+        gLookup <- read.csv(strLookup,row.names=1,as.is=T,check.names = F)
+        gInfo <- merge(gInfo,gLookup,by="row.names",all=T,sort=F)
+        rownames(gInfo) <- gInfo[,1]
+        gInfo <- gInfo[,-1]
+    }
     return(gInfo)
 }
 
