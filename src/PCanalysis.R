@@ -19,7 +19,7 @@ message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
 if(!is.null(config$sample_name))
     rownames(meta) <- meta[,config$sample_name]
-meta <- meta[,config$covariates_check]
+meta <- meta[,unique(c(config$covariates_check,config$covariates_adjust))]
 ## change the Well_Row from charactor to numeric
 oneMeta <- "Well_Row"
 if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
@@ -86,6 +86,7 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
         batchX <- meta[,config$covariates_adjust,drop=F]
         logTPM <- suppressMessages(covariateRM(estCount,effeL,batchX=batchX,method='limma',
                               prior=config$count_prio))
+        save(logTPM,meta,file="PCanalysis.rdata")
         res <- suppressMessages(suppressWarnings(
             Covariate_PC_Analysis(logTPM,meta,
                                   out_prefix=paste0(config$output,"covariatePCanalysis_Adjusted"),
