@@ -24,6 +24,7 @@ if(nrow(comp_info)==0){
 if(is.null(config$sample_group) || length(config$sample_group)==0){
     config$sample_group <- comp_info[1,"Group_name"]
 }
+
 # set the default value if those are empty
 setDefault <- F
 for(i in rownames(comp_info)){
@@ -64,9 +65,9 @@ if(setDefault){
 
 ## read the meta information -----
 message("====== reading sample meta information ...")
-meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
-if(!is.null(config$sample_name))
-    rownames(meta) <- meta[,config$sample_name]
+meta <- read.csv(config$sample_meta,check.names=F,as.is=T)
+if (is.null(config$sample_name)) stop("sample_name needs to be defined in config.yml. Default is Sample_Name")
+rownames(meta) <- meta[,config$sample_name]
 colnames(meta) <- gsub("group","group.org",colnames(meta))
 meta <- cbind(group=apply(meta[,config$sample_group,drop=F],1,function(x)return(paste(x,sep="."))),meta)
 # set all Group_name to be charactor
