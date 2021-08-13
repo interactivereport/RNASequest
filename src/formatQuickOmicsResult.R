@@ -3,7 +3,18 @@ formatQuickOmicsResult <- function(DEGs,logTPM,grp,gInfo){
     Dw <- data.frame(gInfo[rownames(logTPM),c("UniqueID","Gene.Name",'id')],
                     Intensity=apply(logTPM,1,mean))
     for(i in unique(grp)){
-        Dw <- cbind(Dw,t(apply(logTPM[,grp==i],1,function(x)return(setNames(c(mean(x),sd(x)),paste(i,c("Mean","sd"),sep="_"))))) )
+        if(sum(grp==i)<1){
+            next
+            message("===== warning: no sample for ",i)
+        }else if(sum(grp==i)<1){
+            tmp <- cbind(logTPM[,grp==i],rep(0,nrow(logTPM)))
+            colnames(tmp) <- paste(i,c("Mean","sd"),sep="_")
+            Dw <- cbind(Dw,tmp)
+            message("===== warning: one sample for ",i)
+        }else{
+            Dw <- cbind(Dw,t(apply(logTPM[,grp==i,drop=F],1,
+                                   function(x)return(setNames(c(mean(x),sd(x)),paste(i,c("Mean","sd"),sep="_"))))) )
+        }
     }
     for(i in names(DEGs)){
         Dw <- merge(Dw,DEGs[[i]]$DEG,by="row.names",all=T,sort=F)

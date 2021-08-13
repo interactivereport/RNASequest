@@ -89,7 +89,7 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
         #save(logTPM,meta,file="PCanalysis.rdata")
         res <- suppressMessages(suppressWarnings(
             Covariate_PC_Analysis(logTPM,meta,
-                                  out_prefix=paste0(config$output,"covariatePCanalysis_Adjusted"),
+                                  out_prefix=paste0(config$output,"/covariatePCanalysis_Adjusted"),
                                   PC_cutoff=config$covariates_check_PCcutoff,
                                   FDR_cutoff=config$covariates_check_FDRcutoff,
                                   N_col=config$covariates_check_plotNcol)))

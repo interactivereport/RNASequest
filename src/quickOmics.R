@@ -186,7 +186,8 @@ save(data_results,results_long,
 write.csv(data.frame(Name=config$prj_name,
                      ShortName=config$prj_name,
                      ProjectID=config$prj_name,
-                     Species=config$species),
+                     Species=config$species, 
+                     ExpressionUnit=paste0("log2(TPM+",config$count_prior,")")),
           file=paste0(config$output,"/",config$prj_name,".csv"),
           row.names=F,quote=F)
 
