@@ -63,7 +63,7 @@ gInfo <- getAnnotation(paste0(strPath,"/config.json"),config$genome_path)
 write.csv(gInfo,file=strGinfo)
 ## alignment QC plots ---------
 message("Plot alignment QC ...")
-alignQC(strPath,gInfo,strAlignQC)
+alignQC(strPath,gInfo,strAlignQC,prioQC=config$qc2meta)
 ## create an empty comparison file -------
 message("Create empty comparison template ...")
 comTitle <- c("CompareName",
