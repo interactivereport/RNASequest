@@ -20,7 +20,7 @@ message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
 if(!is.null(config$sample_name))
     rownames(meta) <- meta[,config$sample_name]
-meta <- meta[,unique(c(unlist(config$covariates_check),unlist(config$covariates_adjust)))]
+meta <- meta[,unique(unlist(c(config$covariates_check,config$covariates_adjust)))]
 ## change the Well_Row from charactor to numeric
 oneMeta <- "Well_Row"
 if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
