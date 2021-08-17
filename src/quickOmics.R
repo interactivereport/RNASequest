@@ -111,7 +111,13 @@ if(!is.null(estCount) && !is.null(effeL)){
         message("'covariates_adjust' is not set in the config file, no covariate adjust")
         batchX <- NULL
     }
-    else batchX <- meta[,config$covariates_adjust,drop=F]
+    else{
+        if(sum(!config$covariates_adjust%in%colnames(meta))){
+            stop(paste0("The following covariates_adjust specified in the config file are not included in the meta file.\n",
+                        paste(config$covariates_adjust[!config$covariates_adjust%in%colnames(meta)],collapse=", ")))
+        }
+        batchX <- meta[,config$covariates_adjust,drop=F]
+    }
     
     logTPM <- covariateRM(estCount,effeL,batchX=batchX,method='limma',
                           prior=config$count_prio)

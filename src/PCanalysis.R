@@ -20,7 +20,13 @@ message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
 if(!is.null(config$sample_name))
     rownames(meta) <- meta[,config$sample_name]
-meta <- meta[,unique(unlist(c(config$covariates_check,config$covariates_adjust)))]
+selCov <- unique(unlist(c(config$covariates_check,config$covariates_adjust)))
+if(sum(!selCov%in%colnames(meta))){
+    stop(paste0("The following covariates specified in the config file are not included in the meta file.\n",
+                paste(selCov[!selCov%in%colnames(meta)],collapse=", ")))
+}
+meta <- meta[,selCov]
+
 ## change the Well_Row from charactor to numeric
 oneMeta <- "Well_Row"
 if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
