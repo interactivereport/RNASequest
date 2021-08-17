@@ -55,7 +55,7 @@ estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)
 
 ## PCA QC analysis before covariates removal ---------
 message("====== TPM estimation ...")
-logTPM <- covariateRM(estCount,effeL,method=NULL)
+logTPM <- covariateRM(estCount,effeL,method=NULL,prior=config$count_prio)
 res <- suppressMessages(suppressWarnings(
     Covariate_PC_Analysis(logTPM,meta,
                           out_prefix=paste0(config$output,"/covariatePCanalysis_noAdjust"),
