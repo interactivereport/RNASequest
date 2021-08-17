@@ -32,9 +32,18 @@ strComp <- paste0(strOut,"/compareInfo.csv")
 strAlignQC <- paste0(strOut,"/alignQC.pdf")
 ## extract effective length ----------
 message("Extracting effective length ...")
-a<- getEffectLength(strPath)
+a <- getEffectLength(strPath)
 ## format meta information ----
 message("Formatting the sample meta information ...")
+studyInfo <- tryCatch(
+    {
+        rjson::fromJSON(gsub('^.','',readLines(paste0(strPath,"/samplesheet.tsv"),n=1)))
+    },
+    error=function(cond){
+        list(Sample_count=as.numeric(gsub('#Sample number: ','',readLines(paste0(strPath,"/samplesheet.tsv"),n=1))),
+             Study_Title=NULL)
+    }
+)
 sInfo <- read.table(paste0(strPath,"/samplesheet.tsv"),sep="\t",
                     header=T,as.is=T,skip=1,comment.char="")
 if(is.null(configTmp$sample_name))
@@ -83,7 +92,10 @@ cat(paste(comTitle,collapse=","),"\n",sep="",file=strComp)
 
 ## generate a config file ----------
 configTmp <- readLines(paste0(args[1],"config.tmp.yml"))
-configTmp <- gsub("initPrjName",getProjectName(paste0(strPath,"/config.json")),configTmp)
+configTmp <- gsub("initPrjName",getProjectID(paste0(strPath,"/config.json")),configTmp)
+configTmp <- gsub("initPrjTitle",ifelse(is.null(studyInfo$Study_Title),
+                                        getProjectID(paste0(strPath,"/config.json")),
+                                        studyInfo$Study_Title),configTmp)
 configTmp <- gsub("initPrjPath",strPath,configTmp)
 configTmp <- gsub("initPrjMeta",strMeta,configTmp)
 configTmp <- gsub("initSpecies",getSpecies(paste0(strPath,"/config.json")),configTmp)

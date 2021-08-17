@@ -110,6 +110,7 @@ if(!is.null(estCount) && !is.null(effeL)){
     if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
         message("'covariates_adjust' is not set in the config file, no covariate adjust")
         batchX <- NULL
+        yaxisLab <- paste0("log2(TPM+",config$count_prior,")")
     }
     else{
         if(sum(!config$covariates_adjust%in%colnames(meta))){
@@ -117,11 +118,10 @@ if(!is.null(estCount) && !is.null(effeL)){
                         paste(config$covariates_adjust[!config$covariates_adjust%in%colnames(meta)],collapse=", ")))
         }
         batchX <- meta[,config$covariates_adjust,drop=F]
+        yaxisLab <- paste0("log2(estTPM+",config$count_prior,")")
     }
-    
     logTPM <- covariateRM(estCount,effeL,batchX=batchX,method='limma',
                           prior=config$count_prio)
-    yaxisLab <- paste0("log2(estTPM+",config$count_prior,")")
 }
 if(is.null(logTPM)){
     stop("Gene quantification is missing, please provide either raw counts with effective length or TPM")
@@ -176,11 +176,13 @@ save(data_results,results_long,
      yaxisLab,
      file=paste0(config$output,"/",config$prj_name,".RData"))
 ## save the project csv file -------
-write.csv(data.frame(Name=config$prj_name,
+write.csv(data.frame(Name=ifelse(is.null(config$prj_title),
+                                 config$prj_name,
+                                 config$prj_title),
                      ShortName=config$prj_name,
                      ProjectID=config$prj_name,
                      Species=config$species, 
-                     ExpressionUnit=paste0("log2(TPM+",config$count_prior,")")),
+                     ExpressionUnit=yaxisLab),
           file=paste0(config$output,"/",config$prj_name,".csv"),
           row.names=F,quote=F)
 

@@ -15,6 +15,7 @@
 # count_prior: the small numeric added before log transform
 # output: the result folder
 prj_name: initPrjName
+prj_title: initPrjTitle
 prj_path: initPrjPath
 DA_file_outpath: 
 sample_meta: initPrjMeta
@@ -56,6 +57,7 @@ gene_network_high_variable_N: 10000
 gene_network_cor_cutoff: 0.7
 gene_network_p_cutoff: 0.05
 gene_network_max_edge: 2e6
+gene_network_min_edge: 2e3
 
 # Please do NOT use the following (under construction) ------------
 # if the above DNAnexus project folder is not available, please provide the following:
