@@ -1,20 +1,10 @@
 suppressWarnings(suppressMessages(require(ggplot2)))
 suppressWarnings(suppressMessages(require(reshape2)))
 alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30)){#,50,100
-    qc <- read.table(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"),
-                     sep="\t",header=T,as.is=T,comment.char="",row.names=1,check.names=F,quote="")
-    estT <- read.table(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"),
-                       header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-    dimnames(qc) <- list(sapply(strsplit(rownames(qc),"_"),function(x)return(gsub(".genome.sorted$","",paste(x[-1],collapse="_")))),
-                         gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc)))))))
-    prioQC <- gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",prioQC)))))
-    qc <- qc[order(rownames(qc)),]
-    dimnames(estT) <- list(paste(rownames(estT),gInfo[rownames(estT),'Gene.Name'],sep="|"),
-                           sapply(strsplit(sapply(strsplit(colnames(estT),"\\|"),
-                                             function(x)return(paste(head(x,-1),
-                                                                     collapse="|"))),
-                                      "_"),function(x)return(paste(x[-1],
-                                                                   collapse="_"))))
+    qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
+    estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
+    prioQC <- colnames(qc)[names(colnames(qc))%in%prioQC]
+
     pdfW <- max(nrow(qc)/10+2,6)
     pdf(strPDF,width=pdfW)
     ## intergenic, intronic and exonic -----

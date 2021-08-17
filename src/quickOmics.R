@@ -15,6 +15,7 @@ source(paste0(args[1],"QuickOmics_DEG.R"))
 source(paste0(args[1],"formatQuickOmicsResult.R"))
 source(paste0(args[1],"getNetwork.R"))
 source(paste0(args[1],"Hmisc.rcorr.R"))
+source(paste0(args[1],"readData.R"))
 
 ## check the comparison file, stop if empty ----------
 comp_info <- read_file(config$comparison_file,T)
@@ -77,22 +78,8 @@ for(i in unique(comp_info$Group_name))meta[,i] <- as.character(meta[,i])
 message("====== reading gene quantification ...")
 estCount <- effeL <- logTPM <- yaxisLab <- NULL
 if(!is.null(config$prj_path)){
-    estCount <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"),
-                           header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-    estCount <- estCount[!grepl("^ERCC",rownames(estCount)),]
-    effeL <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"),
-                        header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-    effeL <- effeL[!grepl("^ERCC",rownames(effeL)),]
-    colnames(estCount) <- sapply(strsplit(sapply(strsplit(colnames(estCount),"\\|"),
-                                                 function(x)return(paste(head(x,-1),
-                                                                         collapse="|"))),
-                                          "_"),function(x)return(paste(x[-1],
-                                                                       collapse="_")))
-    colnames(effeL) <- sapply(strsplit(sapply(strsplit(colnames(effeL),"\\|"),
-                                              function(x)return(paste(head(x,-1),
-                                                                      collapse="|"))),
-                                       "_"),function(x)return(paste(x[-1],
-                                                                    collapse="_")))
+    estCount <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"))
+    effeL <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"))
 }else{
     if(!is.null(config$exp_counts))
         estCount <- read.table(config$exp_counts,
