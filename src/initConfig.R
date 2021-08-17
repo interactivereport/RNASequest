@@ -21,7 +21,9 @@ source(paste0(args[1],"gtf.gz_to_gene_info.R"))
 source(paste0(args[1],"getAnnotation.R"))
 source(paste0(args[1],"extractEffectiveLength.R"))
 source(paste0(args[1],"alignQC.R"))
+source(paste0(args[1],"readData.R"))
 config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
+configTmp <- yaml::read_yaml(paste0(args[1],"config.tmp.yml"))
 
 system(paste("mkdir -p",strOut))
 strMeta <- paste0(strOut,"/sampleMeta.csv")
@@ -35,23 +37,24 @@ a<- getEffectLength(strPath)
 message("Formatting the sample meta information ...")
 sInfo <- read.table(paste0(strPath,"/samplesheet.tsv"),sep="\t",
                     header=T,as.is=T,skip=1,comment.char="")
-rownames(sInfo) <- sInfo[,"Sample_Name"]
+if(is.null(configTmp$sample_name))
+    stop("sample_name needs to be defined in in config tmp (contact admin). Default is Sample_Name")
+rownames(meta) <- meta[,configTmp$sample_name]
 sInfo <- sInfo[,apply(sInfo,2,function(x)return(sum(!is.na(x))>0))]
 
-qc <- read.table(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"),
-                 sep="\t",header=T,as.is=T,comment.char="",row.names=1,
-                 check.names=F,quote="")
+qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
 qc <- qc[,colnames(qc)%in%config$qc2meta]
 dimnames(qc) <- list(sapply(strsplit(rownames(qc),"_"),function(x)return(gsub(".genome.sorted$","",paste(x[-1],collapse="_")))),
                      gsub("^_|_$","",gsub("[ [:punct:]]","_",gsub("%","percent",colnames(qc)))))
 meta <- merge(sInfo,qc,by="row.names")
+rownames(meta) <- meta[,1]
+meta <- meta[,-1]
 ## if Concentration & Volume are both present
 strkey <- c("Concentration","Volume")
 if(sum(strkey%in%colnames(meta))==2){
     meta <- cbind(meta,Vol_Conc=apply(meta[,strkey],1,prod))
 }
-write.csv(meta,file=strMeta,row.names=F)
-meta <- meta[,-1]
+write.csv(meta,file=strMeta)#,row.names=F
 covariates <- c()
 for(i in setdiff(colnames(meta),config$notCovariates)){
     if(length(unique(meta[,i]))>1) covariates <- c(covariates,i)
@@ -79,7 +82,7 @@ comTitle <- c("CompareName",
 cat(paste(comTitle,collapse=","),"\n",sep="",file=strComp)
 
 ## generate a config file ----------
-configTmp <- readLines(paste(paste0(args[1],"config.tmp.yml")))
+configTmp <- readLines(paste0(args[1],"config.tmp.yml"))
 configTmp <- gsub("initPrjName",getProjectName(paste0(strPath,"/config.json")),configTmp)
 configTmp <- gsub("initPrjPath",strPath,configTmp)
 configTmp <- gsub("initPrjMeta",strMeta,configTmp)

@@ -184,7 +184,7 @@ write.csv(data.frame(Name=config$prj_name,
           file=paste0(config$output,"/",config$prj_name,".csv"),
           row.names=F,quote=F)
 
-## finished -----
+## finishing -----
 #system(paste0("cp ",config$output,"/",config$prj_name,"* "))
 message("=================================================\nResults are saved in ",config$output)
 system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_path))

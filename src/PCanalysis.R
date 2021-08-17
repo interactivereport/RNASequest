@@ -18,8 +18,9 @@ system(paste0("rm -f ",config$output,"/covariatePCanalysis_*"))
 ## read the meta information -----
 message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
-if(!is.null(config$sample_name))
-    rownames(meta) <- meta[,config$sample_name]
+if (is.null(config$sample_name)) stop("sample_name needs to be defined in config.yml. Default is Sample_Name")
+rownames(meta) <- meta[,config$sample_name]
+
 selCov <- unique(unlist(c(config$covariates_check,config$covariates_adjust)))
 if(sum(!selCov%in%colnames(meta))){
     stop(paste0("The following covariates specified in the config file are not included in the meta file.\n",

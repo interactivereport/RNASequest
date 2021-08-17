@@ -18,7 +18,7 @@ prj_name: initPrjName
 prj_path: initPrjPath
 DA_file_outpath: 
 sample_meta: initPrjMeta
-sample_name: 
+sample_name: Sample_Name
 sample_alias:
 species: initSpecies
 gene_annotation: initGeneAnnotation
