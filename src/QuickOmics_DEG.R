@@ -53,14 +53,13 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
 
   S_meta_sub = S_meta
   Counts_table_sub = Counts_table
-  
+  message(paste0("Comparison ",comp_name))
   Subset_group = comp_info$Subsetting_group
   if (!is.na(Subset_group) && !Subset_group == "") {
     Subset = subset_data(Subset_group, S_meta_sub, Counts_table_sub)
     S_meta_sub = Subset$S_meta
     Counts_table_sub =Subset$Counts_table
   }
-    
   beta_coef_matrix = data.frame()
   # get covariate factors and adjust basal levels for all the covariates in the model
   if (analysis_method == "DESeq2") {
@@ -68,7 +67,6 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
       if(is.numeric(S_meta_sub[,n])) next # O'Young: possible numeric (co-)variates
       S_meta_sub[,n]= factor(S_meta_sub[,n])
     }
-
     S_meta_sub[,group_var] = relevel(S_meta_sub[,group_var], ref = ctrl_group)
     
     if (!comp_info$Covariate_levels =="") {
@@ -191,7 +189,6 @@ subset_data <- function(Subset_group, Sample_meta, Counts_table) {
     Subset_group_level_vec_name[i] = strsplit(Subset_group_levels[i], ":")[[1]][1]
   }
   names(Subset_group_level_vec) = Subset_group_level_vec_name
-  
   #for (m in 1:length(Subset_group_level_vec)) {
   #  Sample_meta = Sample_meta %>% dplyr::filter(get(names(Subset_group_level_vec)[m]) == Subset_group_level_vec[m])
   #}

@@ -67,6 +67,8 @@ header_mapping = header_mapping[intersect(which(header_mapping$NGSone_header %in
 
 # Only keep the default NGSone columns of MetaData that can be mapped to DA
 DA_MetaData = MetaData[, which(colnames(MetaData) %in% header_mapping$NGSone_header)]
+MetaData_extra = MetaData[, -which(colnames(MetaData) %in% header_mapping$NGSone_header)]
+MetaData_extra = MetaData_extra[, -which(colnames(MetaData_extra) %in% c("Order", "ComparePairs"))]
 
 # header_mapping = header_mapping[!header_mapping$NGSone_header == header_mapping$DA_header, ]
 
@@ -87,12 +89,16 @@ if (nrow(header_mapping) > 0) {
   if ("DiseaseState" %in% names(DA_MetaData)) DA_MetaData$DiseaseStage = DA_MetaData$DiseaseState
 }
 
-
+Meta_complete = cbind(DA_MetaData, MetaData_extra)
 # DA_header_inclusion_list = sys_config$DA_columns
 # MetaData = MetaData[, which(names(MetaData) %in% DA_header_inclusion_list)]
 DA_MetaData$SampleID = str_replace_all(DA_MetaData$SampleID, "-", "_")
 DA_MetaData$SampleID[grepl("^[[:digit:]]+", DA_MetaData$SampleID)] = str_c("S", DA_MetaData$SampleID[grepl("^[[:digit:]]+", DA_MetaData$SampleID)])
 write.csv(DA_MetaData, file.path(output_path, "Sample_Info.csv"), row.names=F)
+
+Meta_complete$SampleID = str_replace_all(Meta_complete$SampleID, "-", "_")
+Meta_complete$SampleID[grepl("^[[:digit:]]+", Meta_complete$SampleID)] = str_c("S", Meta_complete$SampleID[grepl("^[[:digit:]]+", Meta_complete$SampleID)])
+write.csv(Meta_complete, file.path(output_path, "Sample_Info_complete.csv"), row.names=F)
 
 ## Expression & Counts ------
 estCount = readRDS(paste0(config$output,"/",config$prj_name,"_estCount.rds"))
