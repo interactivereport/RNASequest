@@ -158,6 +158,7 @@ network <- getNetwork(logTPM,
                       p_cutoff=config$gene_network_p_cutoff,
                       variableN=config$gene_network_high_variable_N,
                       edge_max=config$gene_network_max_edge,
+                      edge_min=config$gene_network_min_edge,
                       core=config$core)
 save(network,file=paste0(config$output,"/",config$prj_name,"_network.RData"))
 ## save the R object for quickOmics--------

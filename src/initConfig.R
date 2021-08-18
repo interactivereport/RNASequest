@@ -40,7 +40,7 @@ studyInfo <- tryCatch(
         rjson::fromJSON(gsub('^.','',readLines(paste0(strPath,"/samplesheet.tsv"),n=1)))
     },
     error=function(cond){
-        list(Sample_count=as.numeric(gsub('#Sample number: ','',readLines(paste0(strPath,"/samplesheet.tsv"),n=1))),
+        list(Sample_count=NA,#as.numeric(gsub('#Sample number: ','',readLines(paste0(strPath,"/samplesheet.tsv"),n=1))),
              Study_Title=NULL)
     }
 )
@@ -48,13 +48,11 @@ sInfo <- read.table(paste0(strPath,"/samplesheet.tsv"),sep="\t",
                     header=T,as.is=T,skip=1,comment.char="")
 if(is.null(configTmp$sample_name))
     stop("sample_name needs to be defined in in config tmp (contact admin). Default is Sample_Name")
-rownames(meta) <- meta[,configTmp$sample_name]
+rownames(sInfo) <- sInfo[,configTmp$sample_name]
 sInfo <- sInfo[,apply(sInfo,2,function(x)return(sum(!is.na(x))>0))]
 
 qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
-qc <- qc[,colnames(qc)%in%config$qc2meta]
-dimnames(qc) <- list(sapply(strsplit(rownames(qc),"_"),function(x)return(gsub(".genome.sorted$","",paste(x[-1],collapse="_")))),
-                     gsub("^_|_$","",gsub("[ [:punct:]]","_",gsub("%","percent",colnames(qc)))))
+qc <- qc[,names(colnames(qc))%in%config$qc2meta]
 meta <- merge(sInfo,qc,by="row.names")
 rownames(meta) <- meta[,1]
 meta <- meta[,-1]
