@@ -8,7 +8,7 @@ if(length(args)<2){
     stop("config yaml file is required!")
 }
 message("Loading resources ...")
-config <- yaml::read_yaml(args[2])
+config <- sapply(yaml::read_yaml(args[2]),unlist)
 #sys_config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 source(paste0(args[1],"PC_Covariates.R"))
 source(paste0(args[1],"covariateRM.R"))
@@ -21,9 +21,9 @@ meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
 if (is.null(config$sample_name)) stop("sample_name needs to be defined in config.yml. Default is Sample_Name")
 rownames(meta) <- meta[,config$sample_name]
 
-selCov <- unique(unlist(c(config$covariates_check,config$covariates_adjust)))
+selCov <- unique(c(config$covariates_check,config$covariates_adjust))
 if(sum(!selCov%in%colnames(meta))){
-    stop(paste0("The following covariates specified in the config file are not included in the meta file.\n",
+    stop(paste0("The following covariates specified in the config file are not included in the sample meta file.\n",
                 paste(selCov[!selCov%in%colnames(meta)],collapse=", ")))
 }
 meta <- meta[,selCov]

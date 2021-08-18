@@ -8,7 +8,7 @@ if(length(args)<2){
     stop("config yaml file is required!")
 }
 message("Loading resources ...")
-config <- yaml::read_yaml(args[2])
+config <- sapply(yaml::read_yaml(args[2]),unlist)
 sys_config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 source(paste0(args[1],"covariateRM.R"))
 source(paste0(args[1],"QuickOmics_DEG.R"))
@@ -114,7 +114,7 @@ if(!is.null(estCount) && !is.null(effeL)){
     }
     else{
         if(sum(!config$covariates_adjust%in%colnames(meta))){
-            stop(paste0("The following covariates_adjust specified in the config file are not included in the meta file.\n",
+            stop(paste0("The following covariates_adjust specified in the config file are not included in the sample meta file.\n",
                         paste(config$covariates_adjust[!config$covariates_adjust%in%colnames(meta)],collapse=", ")))
         }
         batchX <- meta[,config$covariates_adjust,drop=F]
