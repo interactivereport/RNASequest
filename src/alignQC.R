@@ -3,6 +3,7 @@ suppressWarnings(suppressMessages(require(reshape2)))
 alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30)){#,50,100
     qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
     estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
+    rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
     prioQC <- colnames(qc)[names(colnames(qc))%in%prioQC]
 
     pdfW <- max(nrow(qc)/10+2,6)
@@ -37,8 +38,13 @@ alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30)){#,50,100
                   theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
                         legend.position = "none"))
     }
-    ## union top 30 genes across samples ------
-    topG <- unique(as.vector(apply(estT,2,function(x)return(names(sort(x,decreasing=T)[1:30])))))
+    ## union top genes across samples ------
+    topUnion <- 30
+    topG <- unique(as.vector(apply(estT,2,function(x)return(names(sort(x,decreasing=T)[1:topUnion])))))
+    while(length(topG)>90){
+        topUnion <- topUnion-1
+        topG <- unique(as.vector(apply(estT,2,function(x)return(names(sort(x,decreasing=T)[1:topUnion])))))
+    }
     estTsum <- apply(estT,2,sum)
     D <- apply(estT[topG,],1,function(x)return(100*x/estTsum))
     D <- melt(D[,order(apply(D,2,median))])
@@ -46,7 +52,7 @@ alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30)){#,50,100
         geom_point(color="grey50",alpha=0.4,size=1)+
         geom_boxplot(color="#ff7f00",outlier.shape = NA,alpha=0)+
         xlab("% of total TPM")+ylab("")+
-        ggtitle("Union of top 30 expressed genes")+
+        ggtitle(paste("Union of top",topUnion,"expressed genes"))+
         theme_minimal()+
         theme(axis.text.y=element_text(size=12-(length(topG)-30)/10))
     if(pdfW>8) print(p+theme(aspect.ratio=0.75))
