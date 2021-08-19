@@ -111,7 +111,9 @@ message("-----> 'EAqc' can be used to identify the covariates to be adjusted as:
 message("\t\tEAqc ",strOut,"/config.yml\n\n")
 message("----->'EArun' can be used to obtain the QuickOmics objects after comparison definition file is updated:")
 message("\t\t\t",strComp)
-message("\t\tEArun ",strOut,"/config.yml")
+message("\t\tEArun ",strOut,"/config.yml\n\n")
+message("-----> (additional) 'EAsplit' can be used to split into sub-project according to one column (split_meta) defined in the sample meta file.\n")
+
 message("Powered by the Computational Biology Group [zhengyu.ouyang@biogen.com]")
 
 

@@ -75,7 +75,7 @@ message("====== TPM estimation ...")
 logTPM <- covariateRM(estCount,effeL,method=NULL,prior=config$count_prio)
 res <- suppressMessages(suppressWarnings(
     Covariate_PC_Analysis(logTPM,meta,
-                          out_prefix=paste0(config$output,"/covariatePCanalysis_noAdjust"),
+                          out_prefix=paste0(config$output,"/notAdjusted"),
                           PC_cutoff=config$covariates_check_PCcutoff,
                           FDR_cutoff=config$covariates_check_FDRcutoff,
                           N_col=config$covariates_check_plotNcol)))
@@ -92,7 +92,7 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
                               prior=config$count_prio))
         res <- suppressMessages(suppressWarnings(
             Covariate_PC_Analysis(logTPM,meta,
-                                  out_prefix=paste0(config$output,"/covariatePCanalysis_Adjusted"),
+                                  out_prefix=paste0(config$output,"/Adjusted"),
                                   PC_cutoff=config$covariates_check_PCcutoff,
                                   FDR_cutoff=config$covariates_check_FDRcutoff,
                                   N_col=config$covariates_check_plotNcol)))
@@ -107,7 +107,9 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
 message("==========================================")
 message("----->'EArun' can be used to obtain the QuickOmics object after necessary 'covariates_adjust' is set and comparison definition file is filled:")
 message("\t\t\t",config$comparison_file)
-message("\t\tEArun ",config$output,"/config.yml")
+message("\t\tEArun ",config$output,"/config.yml\n\n")
+message("-----> (additional) 'EAsplit' can be used to split into sub-project according to one column (split_meta) defined in the sample meta file.\n")
+
 message("Powered by the Computational Biology Group [zhengyu.ouyang@biogen.com]")
 
 sink(paste0(config$output,"/session.EAqc"))

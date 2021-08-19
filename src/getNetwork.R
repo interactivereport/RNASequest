@@ -27,20 +27,17 @@ getNetwork <- function(X,cor_cutoff=0.7,p_cutoff=0.05,variableN=3000,edge_max=2e
         p = signif(pmat[ut], 2),
         direction = as.integer(sign(cormat[ut]))
     )
-    network <- network %>% mutate_if(is.factor, as.character) %>%
-        dplyr::filter(!is.na(cor) & abs(cor) > cor_cutoff & p < p_cutoff)
+    selEdge <- sum(!is.na(network$cor) & abs(network$cor) > cor_cutoff & network$p < p_cutoff)
     #check network size. If it has>5 million rows, use higher cor and lower p to futher reduce size
-    if(nrow(network)>edge_max){
+    if(selEdge>edge_max){
         cor_cutoff <- sort(abs(network$cor),decreasing=T)[edge_max]
         p_cutoff <- sort(network$p)[edge_max]
-        network <- network %>% mutate_if(is.factor, as.character) %>%
-            dplyr::filter(!is.na(cor) & abs(cor) > cor_cutoff & p < p_cutoff)
-    }else if(nrow(network)<edge_min){
+    }else if(selEdge<edge_min){
         cor_cutoff <- sort(abs(network$cor),decreasing=T)[edge_min]
         p_cutoff <- sort(network$p)[edge_min]
-        network <- network %>% mutate_if(is.factor, as.character) %>%
-            dplyr::filter(!is.na(cor) & abs(cor) > cor_cutoff & p < p_cutoff)
     }
+    network <- network %>% mutate_if(is.factor, as.character) %>%
+        dplyr::filter(!is.na(cor) & abs(cor) > cor_cutoff & p < p_cutoff)
     return(network)
 }
 

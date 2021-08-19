@@ -19,13 +19,13 @@ checkConsistConfigMeta <- function(config,meta){
         stop(paste0("split_meta (",config$split_meta,") in config is NOT defined in the sample meta file."))
     
     if(!is.null(config$covariates_check) && sum(!config$covariates_check%in%colnames(meta))>0)
-        stop(paste0("covariates_check variables, ",
-                    config$covariates_check[!config$covariates_check%in%colnames(meta)],
-                   ", is NOT defined in the sample meta file"))
+        stop(paste0("covariates_check variables defined in config (",
+                    paste(config$covariates_check[!config$covariates_check%in%colnames(meta)],collapse=", "),
+                   "), is NOT defined in the sample meta file"))
     if(!is.null(config$covariates_adjust) && sum(!config$covariates_adjust%in%colnames(meta))>0)
-        stop(paste0("covariates_adjust variables, ",
+        stop(paste0("covariates_adjust variables defined in config (",
                     config$covariates_adjust[!config$covariates_adjust%in%colnames(meta)],
-                    ", is NOT defined in the sample meta file"))
+                    "), is NOT defined in the sample meta file"))
 
 }
 ## check the same name consistency between meta and quantify ------
