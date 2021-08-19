@@ -16,7 +16,9 @@ source(paste0(args[1],"formatQuickOmicsResult.R"))
 source(paste0(args[1],"getNetwork.R"))
 source(paste0(args[1],"Hmisc.rcorr.R"))
 source(paste0(args[1],"readData.R"))
+source(paste0(args[1],"infoCheck.R"))
 
+checkConfig(config)
 ## check the comparison file, stop if empty ----------
 comp_info <- read_file(config$comparison_file,T)
 if(nrow(comp_info)==0){
@@ -67,14 +69,14 @@ if(setDefault){
 ## read the meta information -----
 message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,check.names=F,as.is=T)
-if (is.null(config$sample_name)) stop("sample_name needs to be defined in config.yml. Default is Sample_Name")
+checkConsistConfigMeta(config,meta)
 rownames(meta) <- meta[,config$sample_name]
+# use first group name in comparison file for group information
 colnames(meta) <- gsub("group","group.org",colnames(meta))
 meta <- cbind(group=apply(meta[,config$sample_group,drop=F],1,function(x)return(paste(x,sep="."))),meta)
 # set all Group_name to be charactor
 for(i in unique(comp_info$Group_name))meta[,i] <- as.character(meta[,i])
 
-#meta <- apply(meta,2,function(x)return(gsub("\\-","_",x)))
 ## read the gene quantification input ----
 message("====== reading gene quantification ...")
 estCount <- effeL <- logTPM <- yaxisLab <- NULL
@@ -95,11 +97,7 @@ if(!is.null(config$prj_path)){
         yaxisLab <- paste0("log2(TPM+",config$count_prior,")")
     }
 }
-if(sum(!rownames(meta)%in%colnames(estCount))>0){
-    message("The following samles from meta information is not in count matrix:")
-    message(paste(rownames(meta)[!rownames(meta)%in%colnames(estCount)],collapse="\n"))
-    stop("sample names in the meta table do not match sample name in the count table!")
-}
+checkSampleName(rownames(meta),colnames(estCount))
 if(!is.null(estCount)) estCount <- estCount[,rownames(meta)]
 if(!is.null(effeL)) effeL <- effeL[,rownames(meta)]
 estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
@@ -107,16 +105,12 @@ estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)
 ## covariates removal ----
 message("====== adjusting covariates for visualization ...")
 if(!is.null(estCount) && !is.null(effeL)){
-    if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
+    if(is.null(config$covariates_adjust)){
         message("'covariates_adjust' is not set in the config file, no covariate adjust")
         batchX <- NULL
         yaxisLab <- paste0("log2(TPM+",config$count_prior,")")
     }
     else{
-        if(sum(!config$covariates_adjust%in%colnames(meta))){
-            stop(paste0("The following covariates_adjust specified in the config file are not included in the sample meta file.\n",
-                        paste(config$covariates_adjust[!config$covariates_adjust%in%colnames(meta)],collapse=", ")))
-        }
         batchX <- meta[,config$covariates_adjust,drop=F]
         yaxisLab <- paste0("log2(estTPM+",config$count_prior,")")
     }
@@ -129,13 +123,11 @@ if(is.null(logTPM)){
 logTPM <- logTPM[rownames(estCount),rownames(meta)]
 ## sample alias ------
 if(!is.null(config$sample_alias)){
-    meta <- cbind(meta,orig.sid=rownames(meta))
     rownames(meta) <- colnames(logTPM) <- colnames(estCount) <- meta[,config$sample_alias]
 }
 saveRDS(estCount,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
 ## gene definition file ---------
 message("====== reading gene annotation ...")
-ProteinGeneName <- read.csv(config$gene_annotation)
 if(!is.null(config$gene_annotation)){
     ProteinGeneName <- read.csv(config$gene_annotation,row.names=1,as.is=T)
 }else{

@@ -9,28 +9,38 @@ if(length(args)<2){
 }
 message("Loading resources ...")
 config <- sapply(yaml::read_yaml(args[2]),unlist)
-#sys_config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
+sys_config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 source(paste0(args[1],"PC_Covariates.R"))
 source(paste0(args[1],"covariateRM.R"))
+source(paste0(args[1],"alignQC.R"))
 source(paste0(args[1],"readData.R"))
+source(paste0(args[1],"infoCheck.R"))
 
+checkConfig(config)
 system(paste0("rm -f ",config$output,"/covariatePCanalysis_*"))
 ## read the meta information -----
 message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
-if (is.null(config$sample_name)) stop("sample_name needs to be defined in config.yml. Default is Sample_Name")
+checkConsistConfigMeta(config,meta)
 rownames(meta) <- meta[,config$sample_name]
-
-selCov <- unique(c(config$covariates_check,config$covariates_adjust))
-if(sum(!selCov%in%colnames(meta))){
-    stop(paste0("The following covariates specified in the config file are not included in the sample meta file.\n",
-                paste(selCov[!selCov%in%colnames(meta)],collapse=", ")))
+## plot alignment QC if alias exists ----
+if(!is.null(config$sample_alias)){
+    message("====== Plot alignment QC for alias ...")
+    gInfo <- read.csv(config$gene_annotation,row.names=1,as.is=T)
+    alignQC(config$prj_path,
+            gInfo,
+            paste0(config$output,"/alignQC.alias.pdf"),
+            prioQC=sys_config$qc2meta,
+            sIDalias=setNames(meta[,config$sample_alias],rownames(meta)))
 }
+## select covariates for analysis-------
+selCov <- unique(c(config$covariates_check,config$covariates_adjust))
 meta <- meta[,selCov]
 
 ## change the Well_Row from charactor to numeric
 oneMeta <- "Well_Row"
 if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
+
 ## read the gene quantification input ----
 message("====== reading gene quantification ...")
 estCount <- effeL <- logTPM <- yaxisLab <- NULL
@@ -71,7 +81,7 @@ res <- suppressMessages(suppressWarnings(
                           N_col=config$covariates_check_plotNcol)))
 message("============================================================")
 message("-----> PC analysis is done with no covariate adjusted:\n\t",config$output,"/covariatePCanalysis_noAdjust...")
-## covariates removal ----
+## PCA QC analysis after covariates removal ----
 if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
     warning("< covariates_adjust is NOT set in the config file, no covariate was adjusted! >")
 }else{
@@ -80,7 +90,6 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
         batchX <- meta[,config$covariates_adjust,drop=F]
         logTPM <- suppressMessages(covariateRM(estCount,effeL,batchX=batchX,method='limma',
                               prior=config$count_prio))
-        #save(logTPM,meta,file="PCanalysis.rdata")
         res <- suppressMessages(suppressWarnings(
             Covariate_PC_Analysis(logTPM,meta,
                                   out_prefix=paste0(config$output,"/covariatePCanalysis_Adjusted"),

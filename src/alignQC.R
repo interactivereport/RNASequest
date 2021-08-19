@@ -1,13 +1,20 @@
 suppressWarnings(suppressMessages(require(ggplot2)))
 suppressWarnings(suppressMessages(require(reshape2)))
-alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30)){#,50,100
-    qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
+alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,100
     estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
     rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
-    prioQC <- colnames(qc)[names(colnames(qc))%in%prioQC]
+    qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
+    prioQC <- matchQCnames(qc,prioQC)
+    ## if alias provided
+    if(!is.null(sIDalias)){
+        estT <- estT[,colnames(estT)%in%names(sIDalias)]
+        qc <- qc[rownames(qc)%in%names(sIDalias),]
+        colnames(estT) <- sIDalias[colnames(estT)]
+        rownames(qc) <- sIDalias[rownames(qc)]
+    }
 
     pdfW <- max(nrow(qc)/10+2,6)
-    pdf(strPDF,width=pdfW)
+    pdf(strPDF,width=pdfW,height=6)
     ## intergenic, intronic and exonic -----
     selN <- c("Exonic_Rate","Intronic_Rate","Intergenic_Rate")
     D = melt(as.matrix(qc[,colnames(qc)%in%selN]))
@@ -32,7 +39,7 @@ alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30)){#,50,100
         if(i=="sID") next
         print(ggplot(D,aes_string(x="sID",y=i))+
                   geom_bar(stat="identity")+
-                  xlab("")+ylab("Percentage")+
+                  xlab("")+ylab("% of Total TPM")+
                   ggtitle(paste(i,"genes"))+
                   theme_minimal()+
                   theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
@@ -48,13 +55,14 @@ alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30)){#,50,100
     estTsum <- apply(estT,2,sum)
     D <- apply(estT[topG,],1,function(x)return(100*x/estTsum))
     D <- melt(D[,order(apply(D,2,median))])
+    write.csv(D,file=gsub("pdf","unionTop.csv",strPDF),row.names=F)
     p <- ggplot(D,aes(x=value,y=Var2))+
         geom_point(color="grey50",alpha=0.4,size=1)+
         geom_boxplot(color="#ff7f00",outlier.shape = NA,alpha=0)+
         xlab("% of total TPM")+ylab("")+
         ggtitle(paste("Union of top",topUnion,"expressed genes"))+
         theme_minimal()+
-        theme(axis.text.y=element_text(size=12-(length(topG)-30)/10))
+        theme(axis.text.y=element_text(size=12-(length(topG)-10)/10))
     if(pdfW>8) print(p+theme(aspect.ratio=0.75))
     else print(p)
     ## all rest qc -----
@@ -73,3 +81,10 @@ alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30)){#,50,100
     ## -----
     a <- dev.off()
 }
+
+#config <- yaml::read_yaml(paste0("/home/zouyang/projects/quickOmics/src/sys.yml"))
+#source("/home/zouyang/projects/quickOmics/src/readData.R")
+#qc <- readQC(paste0("./combine_rnaseqc/combined.metrics.tsv"))
+#matchQCnames(qc,config$qc2meta)
+
+

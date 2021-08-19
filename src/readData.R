@@ -14,10 +14,14 @@ readData <- function(strF){
 
 readQC <- function(strF){
     qc <- read.table(strF,sep="\t",header=T,as.is=T,comment.char="",row.names=1,check.names=F,quote="")
+    attr(qc,'oriNames') <- setNames(gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc)))))),
+                                    colnames(qc))
     dimnames(qc) <- list(sapply(strsplit(rownames(qc),"_"),function(x)return(gsub(".genome.sorted$","",paste(x[-1],collapse="_")))),
-                         setNames(gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc)))))),
-                                  colnames(qc)))
-    
+                         attr(qc,'oriNames'))
     qc <- qc[order(rownames(qc)),]
     return(qc)
+}
+
+matchQCnames <- function(qc,qNames){
+    return(attr(qc,'oriNames')[names(attr(qc,'oriNames'))%in%qNames])
 }
