@@ -21,11 +21,24 @@ checkConsistConfigMeta <- function(config,meta){
     if(!is.null(config$covariates_check) && sum(!config$covariates_check%in%colnames(meta))>0)
         stop(paste0("covariates_check variables defined in config (",
                     paste(config$covariates_check[!config$covariates_check%in%colnames(meta)],collapse=", "),
-                   "), is NOT defined in the sample meta file"))
-    if(!is.null(config$covariates_adjust) && sum(!config$covariates_adjust%in%colnames(meta))>0)
-        stop(paste0("covariates_adjust variables defined in config (",
-                    config$covariates_adjust[!config$covariates_adjust%in%colnames(meta)],
                     "), is NOT defined in the sample meta file"))
+    {
+            
+        
+    }
+        
+    
+    if(!is.null(config$covariates_adjust)){
+        if( sum(!config$covariates_adjust%in%colnames(meta))>0)
+            stop(paste0("covariates_adjust variables defined in config (",
+                        config$covariates_adjust[!config$covariates_adjust%in%colnames(meta)],
+                        "), is NOT defined in the sample meta file"))
+        for(one in config$covariates_adjust){
+            if(length(unique(meta[,one]))<2)
+                stop(paste0("covariates_adjust (",one,") only contains one value in the sample meta and cannot be used for adjusting"))
+        }
+    }
+        
 
 }
 ## check the same name consistency between meta and quantify ------
