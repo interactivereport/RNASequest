@@ -1,12 +1,12 @@
 #X: log expression [genes,samples]
 # X <- matrix(rnorm(gN*sN,10),nrow=gN,ncol=sN,dimnames=list(paste0("g",1:gN),paste0("s",1:sN)))
-getNetwork <- function(X,cor_cutoff=0.7,p_cutoff=0.05,variableN=3000,edge_max=2e6,core=2){
+getNetwork <- function(X,cor_cutoff=0.7,p_cutoff=0.05,variableN=3000,edge_max=2e6,edge_min=2e3,core=2){
     suppressMessages(require(BiocParallel))
     suppressMessages(require(tidyverse))
     if(nrow(X)>variableN){
         X <- X[order(apply(X,1,sd),decreasing=T)[1:variableN],]
     }
-    if(nrow(X)>6e4){## the parallel is much slower than Hmisc
+    if(nrow(X)>6e5){## the parallel is much slower than Hmisc
         grpN <- 100
         grp <- c("grp001",rep(paste0("grp",gsub(" ","0",format(1:grpN,width=3))),
                             diff(round(seq(1,nrow(X),length.out=grpN+1)))))
@@ -27,15 +27,17 @@ getNetwork <- function(X,cor_cutoff=0.7,p_cutoff=0.05,variableN=3000,edge_max=2e
         p = signif(pmat[ut], 2),
         direction = as.integer(sign(cormat[ut]))
     )
-    network <- network %>% mutate_if(is.factor, as.character) %>%
-        dplyr::filter(!is.na(cor) & abs(cor) > cor_cutoff & p < p_cutoff)
+    selEdge <- sum(!is.na(network$cor) & abs(network$cor) > cor_cutoff & network$p < p_cutoff)
     #check network size. If it has>5 million rows, use higher cor and lower p to futher reduce size
-    if(nrow(network)>edge_max){
+    if(selEdge>edge_max){
         cor_cutoff <- sort(abs(network$cor),decreasing=T)[edge_max]
         p_cutoff <- sort(network$p)[edge_max]
-        network <- network %>% mutate_if(is.factor, as.character) %>%
-            dplyr::filter(!is.na(cor) & abs(cor) > cor_cutoff & p < p_cutoff)
+    }else if(selEdge<edge_min){
+        cor_cutoff <- sort(abs(network$cor),decreasing=T)[edge_min]
+        p_cutoff <- sort(network$p)[edge_min]
     }
+    network <- network %>% mutate_if(is.factor, as.character) %>%
+        dplyr::filter(!is.na(cor) & abs(cor) > cor_cutoff & p < p_cutoff)
     return(network)
 }
 

@@ -8,6 +8,7 @@
 # sample_name: the column name in the above table which contains the sample name used for the count matrix
 #               empty means the first column (the row names)
 # sample_alias: the column name in the meta table to replace the sample names, empty means no-replace
+# split_meta: the column name in the meta table is used to split the data into sub folder
 # min_count: 
 # min_sample:
 #               The genes considered in the analysis require at least (min_sample) samples expressed
@@ -15,17 +16,19 @@
 # count_prior: the small numeric added before log transform
 # output: the result folder
 prj_name: initPrjName
+prj_title: initPrjTitle
 prj_path: initPrjPath
-DA_file_outpath: 
 sample_meta: initPrjMeta
-sample_name: 
+sample_name: Sample_Name
 sample_alias:
+split_meta:
 species: initSpecies
 gene_annotation: initGeneAnnotation
 min_count: 1
 min_sample: 1
 count_prior: 0.25
 output: initOutput
+DA_file_outpath: initOutput
 core: 2
 
 # ====== The QC parameters ========
@@ -56,6 +59,7 @@ gene_network_high_variable_N: 10000
 gene_network_cor_cutoff: 0.7
 gene_network_p_cutoff: 0.05
 gene_network_max_edge: 2e6
+gene_network_min_edge: 2e3
 
 # Please do NOT use the following (under construction) ------------
 # if the above DNAnexus project folder is not available, please provide the following:
