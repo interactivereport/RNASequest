@@ -8,17 +8,14 @@ if(length(args)<2){
     stop("config yaml file is required!")
 }
 message("Loading resources ...")
-config <- sapply(yaml::read_yaml(args[2]),unlist)
+config <- yaml::read_yaml(args[2])
 sys_config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 source(paste0(args[1],"covariateRM.R"))
 source(paste0(args[1],"QuickOmics_DEG.R"))
 source(paste0(args[1],"formatQuickOmicsResult.R"))
 source(paste0(args[1],"getNetwork.R"))
 source(paste0(args[1],"Hmisc.rcorr.R"))
-source(paste0(args[1],"readData.R"))
-source(paste0(args[1],"infoCheck.R"))
 
-checkConfig(config)
 ## check the comparison file, stop if empty ----------
 comp_info <- read_file(config$comparison_file,T)
 if(nrow(comp_info)==0){
@@ -27,7 +24,6 @@ if(nrow(comp_info)==0){
 if(is.null(config$sample_group) || length(config$sample_group)==0){
     config$sample_group <- comp_info[1,"Group_name"]
 }
-
 # set the default value if those are empty
 setDefault <- F
 for(i in rownames(comp_info)){
@@ -68,21 +64,35 @@ if(setDefault){
 
 ## read the meta information -----
 message("====== reading sample meta information ...")
-meta <- read.csv(config$sample_meta,check.names=F,as.is=T)
-checkConsistConfigMeta(config,meta)
-rownames(meta) <- meta[,config$sample_name]
-# use first group name in comparison file for group information
+meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
+if(!is.null(config$sample_name))
+    rownames(meta) <- meta[,config$sample_name]
 colnames(meta) <- gsub("group","group.org",colnames(meta))
 meta <- cbind(group=apply(meta[,config$sample_group,drop=F],1,function(x)return(paste(x,sep="."))),meta)
 # set all Group_name to be charactor
 for(i in unique(comp_info$Group_name))meta[,i] <- as.character(meta[,i])
 
+#meta <- apply(meta,2,function(x)return(gsub("\\-","_",x)))
 ## read the gene quantification input ----
 message("====== reading gene quantification ...")
 estCount <- effeL <- logTPM <- yaxisLab <- NULL
 if(!is.null(config$prj_path)){
-    estCount <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"))
-    effeL <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"))
+    estCount <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"),
+                           header=T,row.names=1,sep="\t",check.names=F,as.is=T)
+    estCount <- estCount[!grepl("^ERCC",rownames(estCount)),]
+    effeL <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"),
+                        header=T,row.names=1,sep="\t",check.names=F,as.is=T)
+    effeL <- effeL[!grepl("^ERCC",rownames(effeL)),]
+    colnames(estCount) <- sapply(strsplit(sapply(strsplit(colnames(estCount),"\\|"),
+                                                 function(x)return(paste(head(x,-1),
+                                                                         collapse="|"))),
+                                          "_"),function(x)return(paste(x[-1],
+                                                                       collapse="_")))
+    colnames(effeL) <- sapply(strsplit(sapply(strsplit(colnames(effeL),"\\|"),
+                                              function(x)return(paste(head(x,-1),
+                                                                      collapse="|"))),
+                                       "_"),function(x)return(paste(x[-1],
+                                                                    collapse="_")))
 }else{
     if(!is.null(config$exp_counts))
         estCount <- read.table(config$exp_counts,
@@ -97,7 +107,11 @@ if(!is.null(config$prj_path)){
         yaxisLab <- paste0("log2(TPM+",config$count_prior,")")
     }
 }
-checkSampleName(rownames(meta),colnames(estCount))
+if(sum(!rownames(meta)%in%colnames(estCount))>0){
+    message("The following samles from meta information is not in count matrix:")
+    message(paste(rownames(meta)[!rownames(meta)%in%colnames(estCount)],collapse="\n"))
+    stop("sample names in the meta table do not match sample name in the count table!")
+}
 if(!is.null(estCount)) estCount <- estCount[,rownames(meta)]
 if(!is.null(effeL)) effeL <- effeL[,rownames(meta)]
 estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
@@ -105,17 +119,15 @@ estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)
 ## covariates removal ----
 message("====== adjusting covariates for visualization ...")
 if(!is.null(estCount) && !is.null(effeL)){
-    if(is.null(config$covariates_adjust)){
+    if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
         message("'covariates_adjust' is not set in the config file, no covariate adjust")
         batchX <- NULL
-        yaxisLab <- paste0("log2(TPM+",config$count_prior,")")
     }
-    else{
-        batchX <- meta[,config$covariates_adjust,drop=F]
-        yaxisLab <- paste0("log2(estTPM+",config$count_prior,")")
-    }
+    else batchX <- meta[,config$covariates_adjust,drop=F]
+    
     logTPM <- covariateRM(estCount,effeL,batchX=batchX,method='limma',
                           prior=config$count_prio)
+    yaxisLab <- paste0("log2(estTPM+",config$count_prior,")")
 }
 if(is.null(logTPM)){
     stop("Gene quantification is missing, please provide either raw counts with effective length or TPM")
@@ -123,11 +135,13 @@ if(is.null(logTPM)){
 logTPM <- logTPM[rownames(estCount),rownames(meta)]
 ## sample alias ------
 if(!is.null(config$sample_alias)){
+    meta <- cbind(meta,orig.sid=rownames(meta))
     rownames(meta) <- colnames(logTPM) <- colnames(estCount) <- meta[,config$sample_alias]
 }
 saveRDS(estCount,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
 ## gene definition file ---------
 message("====== reading gene annotation ...")
+ProteinGeneName <- read.csv(config$gene_annotation)
 if(!is.null(config$gene_annotation)){
     ProteinGeneName <- read.csv(config$gene_annotation,row.names=1,as.is=T)
 }else{
@@ -149,8 +163,7 @@ network <- getNetwork(logTPM,
                       cor_cutoff=config$gene_network_cor_cutoff,
                       p_cutoff=config$gene_network_p_cutoff,
                       variableN=config$gene_network_high_variable_N,
-                      edge_max=as.numeric(config$gene_network_max_edge),
-                      edge_min=as.numeric(config$gene_network_min_edge),
+                      edge_max=config$gene_network_max_edge,
                       core=config$core)
 save(network,file=paste0(config$output,"/",config$prj_name,"_network.RData"))
 ## save the R object for quickOmics--------
@@ -169,17 +182,15 @@ save(data_results,results_long,
      yaxisLab,
      file=paste0(config$output,"/",config$prj_name,".RData"))
 ## save the project csv file -------
-write.csv(data.frame(Name=ifelse(is.null(config$prj_title),
-                                 config$prj_name,
-                                 config$prj_title),
+write.csv(data.frame(Name=config$prj_name,
                      ShortName=config$prj_name,
                      ProjectID=config$prj_name,
                      Species=config$species, 
-                     ExpressionUnit=yaxisLab),
+                     ExpressionUnit=paste0("log2(TPM+",config$count_prior,")")),
           file=paste0(config$output,"/",config$prj_name,".csv"),
           row.names=F,quote=F)
 
-## finishing -----
+## finished -----
 #system(paste0("cp ",config$output,"/",config$prj_name,"* "))
 message("=================================================\nResults are saved in ",config$output)
 system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_path))

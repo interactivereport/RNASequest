@@ -38,7 +38,7 @@ getSpecies <- function(strF){
     gConfig <- rjson::fromJSON(file=strF)
     return(gConfig$global_params$reference$species)
 }
-getProjectID <- function(strF){
+getProjectName <- function(strF){
     gConfig <- rjson::fromJSON(file=strF)
     return(gConfig$global_params$internal_project_id)
 }

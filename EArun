@@ -7,7 +7,7 @@ if [[ -n "$1" ]]; then
     
     Rscript $(dirname $0)/src/quickOmics.R $(dirname $0)/src/ $@
 else
-    echo "=============== EArun path/to/config/file"
+    echo "=============== QuickOmicsGet path/to/config/file"
     exePath=$(dirname $0)
     echo "An example config file can be found: $exePath/example/config.yml"
     echo "'EAinit' can be used to create a config file for a RNAseq project downloaded from DNAnexus"

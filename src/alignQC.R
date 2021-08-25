@@ -1,20 +1,22 @@
 suppressWarnings(suppressMessages(require(ggplot2)))
 suppressWarnings(suppressMessages(require(reshape2)))
-alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,100
-    estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
-    rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
-    qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
-    prioQC <- matchQCnames(qc,prioQC)
-    ## if alias provided
-    if(!is.null(sIDalias)){
-        estT <- estT[,colnames(estT)%in%names(sIDalias)]
-        qc <- qc[rownames(qc)%in%names(sIDalias),]
-        colnames(estT) <- sIDalias[colnames(estT)]
-        rownames(qc) <- sIDalias[rownames(qc)]
-    }
-
+alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30)){#,50,100
+    qc <- read.table(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"),
+                     sep="\t",header=T,as.is=T,comment.char="",row.names=1,check.names=F,quote="")
+    estT <- read.table(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"),
+                       header=T,row.names=1,sep="\t",check.names=F,as.is=T)
+    dimnames(qc) <- list(sapply(strsplit(rownames(qc),"_"),function(x)return(gsub(".genome.sorted$","",paste(x[-1],collapse="_")))),
+                         gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc)))))))
+    prioQC <- gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",prioQC)))))
+    qc <- qc[order(rownames(qc)),]
+    dimnames(estT) <- list(paste(rownames(estT),gInfo[rownames(estT),'Gene.Name'],sep="|"),
+                           sapply(strsplit(sapply(strsplit(colnames(estT),"\\|"),
+                                             function(x)return(paste(head(x,-1),
+                                                                     collapse="|"))),
+                                      "_"),function(x)return(paste(x[-1],
+                                                                   collapse="_"))))
     pdfW <- max(nrow(qc)/10+2,6)
-    pdf(strPDF,width=pdfW,height=6)
+    pdf(strPDF,width=pdfW)
     ## intergenic, intronic and exonic -----
     selN <- c("Exonic_Rate","Intronic_Rate","Intergenic_Rate")
     D = melt(as.matrix(qc[,colnames(qc)%in%selN]))
@@ -39,30 +41,24 @@ alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#
         if(i=="sID") next
         print(ggplot(D,aes_string(x="sID",y=i))+
                   geom_bar(stat="identity")+
-                  xlab("")+ylab("% of Total TPM")+
+                  xlab("")+ylab("Percentage")+
                   ggtitle(paste(i,"genes"))+
                   theme_minimal()+
                   theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
                         legend.position = "none"))
     }
-    ## union top genes across samples ------
-    topUnion <- 30
-    topG <- unique(as.vector(apply(estT,2,function(x)return(names(sort(x,decreasing=T)[1:topUnion])))))
-    while(length(topG)>90){
-        topUnion <- topUnion-1
-        topG <- unique(as.vector(apply(estT,2,function(x)return(names(sort(x,decreasing=T)[1:topUnion])))))
-    }
+    ## union top 30 genes across samples ------
+    topG <- unique(as.vector(apply(estT,2,function(x)return(names(sort(x,decreasing=T)[1:30])))))
     estTsum <- apply(estT,2,sum)
     D <- apply(estT[topG,],1,function(x)return(100*x/estTsum))
     D <- melt(D[,order(apply(D,2,median))])
-    write.csv(D,file=gsub("pdf","unionTop.csv",strPDF),row.names=F)
     p <- ggplot(D,aes(x=value,y=Var2))+
         geom_point(color="grey50",alpha=0.4,size=1)+
         geom_boxplot(color="#ff7f00",outlier.shape = NA,alpha=0)+
         xlab("% of total TPM")+ylab("")+
-        ggtitle(paste("Union of top",topUnion,"expressed genes"))+
+        ggtitle("Union of top 30 expressed genes")+
         theme_minimal()+
-        theme(axis.text.y=element_text(size=12-(length(topG)-10)/10))
+        theme(axis.text.y=element_text(size=12-(length(topG)-30)/10))
     if(pdfW>8) print(p+theme(aspect.ratio=0.75))
     else print(p)
     ## all rest qc -----
@@ -81,10 +77,3 @@ alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#
     ## -----
     a <- dev.off()
 }
-
-#config <- yaml::read_yaml(paste0("/home/zouyang/projects/quickOmics/src/sys.yml"))
-#source("/home/zouyang/projects/quickOmics/src/readData.R")
-#qc <- readQC(paste0("./combine_rnaseqc/combined.metrics.tsv"))
-#matchQCnames(qc,config$qc2meta)
-
-
