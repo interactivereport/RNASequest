@@ -8,41 +8,45 @@ if(length(args)<2){
     stop("config yaml file is required!")
 }
 message("Loading resources ...")
-config <- yaml::read_yaml(args[2])
-#sys_config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
+config <- sapply(yaml::read_yaml(args[2]),unlist)
+sys_config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 source(paste0(args[1],"PC_Covariates.R"))
 source(paste0(args[1],"covariateRM.R"))
+source(paste0(args[1],"alignQC.R"))
+source(paste0(args[1],"readData.R"))
+source(paste0(args[1],"infoCheck.R"))
 
+checkConfig(config)
 system(paste0("rm -f ",config$output,"/covariatePCanalysis_*"))
 ## read the meta information -----
 message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
-if(!is.null(config$sample_name))
-    rownames(meta) <- meta[,config$sample_name]
-meta <- meta[,unique(c(unlist(config$covariates_check),unlist(config$covariates_adjust)))]
+checkConsistConfigMeta(config,meta)
+rownames(meta) <- meta[,config$sample_name]
+## plot alignment QC if alias exists ----
+if(!is.null(config$sample_alias)){
+    message("====== Plot alignment QC for alias ...")
+    gInfo <- read.csv(config$gene_annotation,row.names=1,as.is=T)
+    alignQC(config$prj_path,
+            gInfo,
+            paste0(config$output,"/alignQC.alias.pdf"),
+            prioQC=sys_config$qc2meta,
+            sIDalias=setNames(meta[,config$sample_alias],rownames(meta)))
+}
+## select covariates for analysis-------
+selCov <- unique(c(config$covariates_check,config$covariates_adjust))
+meta <- meta[,selCov]
+
 ## change the Well_Row from charactor to numeric
 oneMeta <- "Well_Row"
 if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
+
 ## read the gene quantification input ----
 message("====== reading gene quantification ...")
 estCount <- effeL <- logTPM <- yaxisLab <- NULL
 if(!is.null(config$prj_path)){
-    estCount <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"),
-                           header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-    estCount <- estCount[!grepl("^ERCC",rownames(estCount)),]
-    effeL <- read.table(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"),
-                        header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-    effeL <- effeL[!grepl("^ERCC",rownames(effeL)),]
-    colnames(estCount) <- sapply(strsplit(sapply(strsplit(colnames(estCount),"\\|"),
-                                                 function(x)return(paste(head(x,-1),
-                                                                         collapse="|"))),
-                                          "_"),function(x)return(paste(x[-1],
-                                                                       collapse="_")))
-    colnames(effeL) <- sapply(strsplit(sapply(strsplit(colnames(effeL),"\\|"),
-                                              function(x)return(paste(head(x,-1),
-                                                                      collapse="|"))),
-                                       "_"),function(x)return(paste(x[-1],
-                                                                    collapse="_")))
+    estCount <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"))
+    effeL <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"))
 }else{
     if(!is.null(config$exp_counts))
         estCount <- read.table(config$exp_counts,
@@ -68,16 +72,16 @@ estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)
 
 ## PCA QC analysis before covariates removal ---------
 message("====== TPM estimation ...")
-logTPM <- covariateRM(estCount,effeL,method=NULL)
+logTPM <- covariateRM(estCount,effeL,method=NULL,prior=config$count_prio)
 res <- suppressMessages(suppressWarnings(
     Covariate_PC_Analysis(logTPM,meta,
-                          out_prefix=paste0(config$output,"/covariatePCanalysis_noAdjust"),
+                          out_prefix=paste0(config$output,"/notAdjusted"),
                           PC_cutoff=config$covariates_check_PCcutoff,
                           FDR_cutoff=config$covariates_check_FDRcutoff,
                           N_col=config$covariates_check_plotNcol)))
 message("============================================================")
 message("-----> PC analysis is done with no covariate adjusted:\n\t",config$output,"/covariatePCanalysis_noAdjust...")
-## covariates removal ----
+## PCA QC analysis after covariates removal ----
 if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
     warning("< covariates_adjust is NOT set in the config file, no covariate was adjusted! >")
 }else{
@@ -86,10 +90,9 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
         batchX <- meta[,config$covariates_adjust,drop=F]
         logTPM <- suppressMessages(covariateRM(estCount,effeL,batchX=batchX,method='limma',
                               prior=config$count_prio))
-        #save(logTPM,meta,file="PCanalysis.rdata")
         res <- suppressMessages(suppressWarnings(
             Covariate_PC_Analysis(logTPM,meta,
-                                  out_prefix=paste0(config$output,"/covariatePCanalysis_Adjusted"),
+                                  out_prefix=paste0(config$output,"/Adjusted"),
                                   PC_cutoff=config$covariates_check_PCcutoff,
                                   FDR_cutoff=config$covariates_check_FDRcutoff,
                                   N_col=config$covariates_check_plotNcol)))
@@ -104,7 +107,9 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
 message("==========================================")
 message("----->'EArun' can be used to obtain the QuickOmics object after necessary 'covariates_adjust' is set and comparison definition file is filled:")
 message("\t\t\t",config$comparison_file)
-message("\t\tEArun ",config$output,"/config.yml")
+message("\t\tEArun ",config$output,"/config.yml\n\n")
+message("-----> (additional) 'EAsplit' can be used to split into sub-project according to one column (split_meta) defined in the sample meta file.\n")
+
 message("Powered by the Computational Biology Group [zhengyu.ouyang@biogen.com]")
 
 sink(paste0(config$output,"/session.EAqc"))
