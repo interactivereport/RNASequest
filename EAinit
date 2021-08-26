@@ -8,7 +8,7 @@ if [[ -n "$1" ]]; then
 else
     echo "=============== QuickOmicsInit path/to/a/DNAnexus/download/folder"
     echo "e.g.: EAinit /camhpc/ngs/projects/TST11589/dnanexus/20210426220540_Zhengyu.Ouyang"
-    echo "A folder ('QuickOmics_[date]') with files for EArun will be created in the input folder"
+    echo "A folder ('EA[date]') with files for EArun will be created in the input folder"
     echo "==============="
     exit 0
 fi
