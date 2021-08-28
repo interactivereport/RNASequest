@@ -29,7 +29,6 @@ Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0
     graphW=min(nrow(selVarC)*4+1, 12)
     ggsave(str_c(out_prefix, "_Significant_Categorical_Covariates.pdf"), sel_dataC$plot, width=graphW, height=graphH)
   }  
-  
   if (!is.null(selVarC)) {selVarC<-selVarC%>%arrange(fdr)}
   if (!is.null(selVarN)) {selVarN<-selVarN%>%arrange(fdr)}
   
@@ -41,7 +40,6 @@ Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0
              PC_Perentage=PC_info[, 1:2])
     write.xlsx(dat, str_c(out_prefix, file='_Covariate_PC_Results.xlsx'))
   }
-  
   #now create PCA plots
   data.all<-cbind(res1$PC_scores, res1$meta)
   if (is.null(selVarN)) {selVarN1=NULL
@@ -50,9 +48,12 @@ Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0
   if (is.null(selVarC)) {selVarC1=NULL
   } else { selVarC1<-selVarC%>%mutate(NewText=str_c(covar, " vs. ", PC, " ", text ))%>%
     mutate(Type="Categorical")%>%dplyr::select(PC,  covar, Type,NewText, pvalue, fdr) }
+
   selVar_All<-rbind(selVarC1, selVarN1)
-  
+
   if (!is.null(selVar_All)) {
+	selVar_All$PC = as.character(selVar_All$PC) 
+	selVar_All$covar = as.character(selVar_All$covar) 
     selVar_All<-selVar_All%>%arrange(fdr) #sort by FDR
     if (nrow(selVar_All)>0 && !is.null(out_prefix) ) {
       pdf(str_c(out_prefix, "_PCA_Plots.pdf"), width=8, height=9)
