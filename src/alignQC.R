@@ -17,23 +17,25 @@ alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#
     pdf(strPDF,width=pdfW,height=6)
     ## intergenic, intronic and exonic -----
     selN <- c("Exonic_Rate","Intronic_Rate","Intergenic_Rate")
-    D = melt(as.matrix(qc[,colnames(qc)%in%selN]))
-    print(ggplot(D,aes(x=Var1,y=value,fill=Var2))+
-              geom_bar(position="stack",stat="identity")+
-              ylab("Fraction of Reads")+xlab("")+
-              ggtitle("Mapped reads allocation")+
-              ylim(0,1)+theme_minimal()+
-              scale_fill_manual(values=c("#66c2a5","#fc8d62","#8da0cb"))+
-              theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
-                    legend.position = "top")+
-              guides(fill=guide_legend(title="")))
-    qc <- qc[,!colnames(qc)%in%selN]
+    if(sum(selN%in%colnames(qc))==length(selN)){
+        D = melt(as.matrix(qc[,colnames(qc)%in%selN]))
+        print(ggplot(D,aes(x=Var1,y=value,fill=Var2))+
+                  geom_bar(position="stack",stat="identity")+
+                  ylab("Fraction of Reads")+xlab("")+
+                  ggtitle("Mapped reads allocation")+
+                  ylim(0,1)+theme_minimal()+
+                  scale_fill_manual(values=c("#66c2a5","#fc8d62","#8da0cb"))+
+                  theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                        legend.position = "top")+
+                  guides(fill=guide_legend(title="")))
+        qc <- qc[,!colnames(qc)%in%selN,drop=F]
+    }
     ## top genes ratio----
     topN <- setNames(topN,paste0("Top",topN))
     D <- t(apply(estT,2,function(x){
         x <- sort(x,decreasing=T)
         return(sapply(topN,function(i)return(sum(x[1:i])/sum(x)*100)))
-        }))[rownames(qc),]
+        }))[rownames(qc),,drop=F]
     D <- cbind(sID=rownames(D),data.frame(D))
     for(i in colnames(D)){
         if(i=="sID") next

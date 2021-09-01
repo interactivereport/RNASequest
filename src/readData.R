@@ -18,7 +18,7 @@ readQC <- function(strF){
                                     colnames(qc))
     dimnames(qc) <- list(sapply(strsplit(rownames(qc),"_"),function(x)return(gsub(".genome.sorted$","",paste(x[-1],collapse="_")))),
                          attr(qc,'oriNames'))
-    qc <- qc[order(rownames(qc)),]
+    qc <- qc[order(rownames(qc)),,drop=F]
     return(qc)
 }
 
