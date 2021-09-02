@@ -21,6 +21,10 @@ message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,check.names=F,as.is=T)
 checkConsistConfigMeta(config,meta)
 rownames(meta) <- meta[,config$sample_name]
+## read the comparison file ------
+message("====== reading comparison information ...")
+comp <- read.csv(config$comparison_file,check.names=F,as.is=T)
+
 ## create sub projects -------
 gInfo <- read.csv(config$gene_annotation,row.names=1,as.is=T)
 subProj <- c()
@@ -37,25 +41,35 @@ for(one in unique(meta[,config$split_meta])){
     
     # create the config file
     strConfig <- paste0(strOut,"/config.yml")
-    system(paste("cp",args[2],strConfig))
-    system(paste0('sed -i "s|^output.*|output: ',strOut,'|" ',strConfig))
-    system(paste0('sed -i "s|^DA_file_outpath.*|DA_file_outpath: ',strOut,'|" ',strConfig))
-    
+    newConfig <- readLines(args[2])
+    # replace output and DA output path
+    newConfig[grepl("^output",newConfig)] <- paste("output:",strOut)
+    newConfig[grepl("^DA_file_outpath",newConfig)] <- paste0("DA_file_outpath: ",strOut,"/DA_Import_Files")
+
     # create meta file
-    strMeta <- paste0(strOut,"/sampleMeta.csv")
+    strMeta <- paste0(strOut,"/",basename(config$sample_meta))
     oneMeta <- meta[meta[,config$split_meta]==one,]
     write.csv(oneMeta,file=strMeta)
-    system(paste0('sed -i "s|^sample_meta.*|sample_meta: ',strMeta,'|" ',strConfig))
-
+    newConfig[grepl("^sample_meta",newConfig)] <- paste("sample_meta:",strMeta)
+    
     # copy comparison definition file
-    strCom <- paste0(strOut,"/compareInfo.csv")
-    system(paste("cp",config$comparison_file,strCom))
-    system(paste0('sed -i "s|^comparison_file.*|comparison_file: ',strCom,'|" ',strConfig))
+    strCom <- paste0(strOut,"/",basename(config$comparison_file))
+    selCom <- gsub(" ","",comp[,"Subsetting_group"])==paste(config$split_meta,one,sep=":")
+    if(sum(selCom)>0){
+        subCom <- comp[selCom,]
+        subCom[,"Subsetting_group"] <- ""
+        write.csv(subCom,file=strCom,row.names=F)
+    }else{
+        write.csv(comp,file=strCom,row.names=F)
+    }
+    newConfig[grepl("^comparison_file",newConfig)] <- paste("comparison_file:",strCom)
+
+    # change prj_name 
+    newConfig[grepl("^prj_name",newConfig)] <- paste0("prj_name: ",config$prj_name,"_",one)
     
-    # change prj_name and prj_title
-    system(paste0('sed -i "s|^prj_name.*|prj_name: ',paste(config$prj_name,one,sep="_"),'|" ',strConfig))
-    system(paste0('sed -i "s|^prj_title.*|prj_title: ',paste(one,config$prj_title,sep=":"),'|" ',strConfig))
-    
+    # save new config file
+    cat(paste(newConfig,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
+
     # plot alignment QC for one sub project
     message("\tplot QC for the sub-project")
     alignQC(config$prj_path,

@@ -171,7 +171,7 @@ save(data_results,results_long,
 ## save the project csv file -------
 write.csv(data.frame(Name=ifelse(is.null(config$prj_title),
                                  config$prj_name,
-                                 config$prj_title),
+                                 paste(config$prj_name,config$prj_title,sep=": ")),
                      ShortName=config$prj_name,
                      ProjectID=config$prj_name,
                      Species=config$species, 
