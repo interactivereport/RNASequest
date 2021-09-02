@@ -52,7 +52,7 @@ rownames(sInfo) <- sInfo[,configTmp$sample_name]
 sInfo <- sInfo[,apply(sInfo,2,function(x)return(sum(!is.na(x))>0))]
 
 qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
-qc <- qc[,matchQCnames(qc,config$qc2meta)]
+qc <- qc[,matchQCnames(qc,config$qc2meta),drop=F]
 meta <- merge(sInfo,qc,by="row.names")
 rownames(meta) <- meta[,1]
 meta <- meta[,-1]
