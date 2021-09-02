@@ -20,7 +20,7 @@ checkConfig(config)
 system(paste0("rm -f ",config$output,"/covariatePCanalysis_*"))
 ## read the meta information -----
 message("====== reading sample meta information ...")
-meta <- read.csv(config$sample_meta,row.names=1,check.names=F,as.is=T)
+meta <- read.csv(config$sample_meta,check.names=F,as.is=T)#,row.names=1
 checkConsistConfigMeta(config,meta)
 rownames(meta) <- meta[,config$sample_name]
 ## plot alignment QC if alias exists ----

@@ -61,7 +61,7 @@ strkey <- c("Concentration","Volume")
 if(sum(strkey%in%colnames(meta))==2){
     meta <- cbind(meta,Vol_Conc=apply(meta[,strkey],1,prod))
 }
-write.csv(meta,file=strMeta)#,row.names=F
+write.csv(meta,file=strMeta,row.names=F)#
 covariates <- c()
 for(i in setdiff(colnames(meta),config$notCovariates)){
     if(length(unique(meta[,i]))>1) covariates <- c(covariates,i)

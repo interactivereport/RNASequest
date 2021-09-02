@@ -49,7 +49,7 @@ for(one in unique(meta[,config$split_meta])){
     # create meta file
     strMeta <- paste0(strOut,"/",basename(config$sample_meta))
     oneMeta <- meta[meta[,config$split_meta]==one,]
-    write.csv(oneMeta,file=strMeta)
+    write.csv(oneMeta,file=strMeta,row.names=F)
     newConfig[grepl("^sample_meta",newConfig)] <- paste("sample_meta:",strMeta)
     
     # copy comparison definition file
