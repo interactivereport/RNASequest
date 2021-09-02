@@ -177,7 +177,7 @@ write.csv(data.frame(Name=ifelse(is.null(config$prj_title),
                      Species=config$species, 
                      ExpressionUnit=yaxisLab),
           file=paste0(config$output,"/",config$prj_name,".csv"),
-          row.names=F,quote=F)
+          row.names=F)
 
 ## finishing -----
 #system(paste0("cp ",config$output,"/",config$prj_name,"* "))
