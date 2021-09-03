@@ -1,12 +1,12 @@
 #X: log expression [genes,samples]
 # X <- matrix(rnorm(gN*sN,10),nrow=gN,ncol=sN,dimnames=list(paste0("g",1:gN),paste0("s",1:sN)))
 getNetwork <- function(X,cor_cutoff=0.7,p_cutoff=0.05,variableN=3000,edge_max=2e6,edge_min=2e3,core=2){
-    suppressMessages(require(BiocParallel))
-    suppressMessages(require(tidyverse))
+    suppressMessages(require(tibble))
     if(nrow(X)>variableN){
         X <- X[order(apply(X,1,sd),decreasing=T)[1:variableN],]
     }
     if(nrow(X)>6e5){## the parallel is much slower than Hmisc
+        suppressMessages(require(BiocParallel))
         grpN <- 100
         grp <- c("grp001",rep(paste0("grp",gsub(" ","0",format(1:grpN,width=3))),
                             diff(round(seq(1,nrow(X),length.out=grpN+1)))))
@@ -36,7 +36,7 @@ getNetwork <- function(X,cor_cutoff=0.7,p_cutoff=0.05,variableN=3000,edge_max=2e
         cor_cutoff <- sort(abs(network$cor),decreasing=T)[edge_min]
         p_cutoff <- sort(network$p)[edge_min]
     }
-    network <- network %>% mutate_if(is.factor, as.character) %>%
+    network <- network %>% dplyr::mutate_if(is.factor, as.character) %>%
         dplyr::filter(!is.na(cor) & abs(cor) > cor_cutoff & p < p_cutoff)
     return(network)
 }

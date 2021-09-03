@@ -5,7 +5,8 @@ args = commandArgs(trailingOnly=T)
 if(length(args)<2){
     message("An example config can be found: /camhpc/ngs/projects/TST11589/dnanexus/20210426220540_Zhengyu.Ouyang/config.yml")
     message("'EAinit' can be used to create a config file for a RNAseq project")
-    stop("config yaml file is required!")
+    args <- c("/home/zouyang/projects/quickOmics/src/","/home/zouyang/TST/TST11797/dnanexus/20210809135550_maria.zavodszky/EA20210902_0/Lv/config.yml")
+    #stop("config yaml file is required!")
 }
 message("Loading resources ...")
 config <- sapply(yaml::read_yaml(args[2]),unlist)
@@ -137,6 +138,7 @@ if(!is.null(config$gene_annotation)){
                                   Biotype='unknown')
 }
 ## comparison -----------
+stop()
 message("====== Starting DEG analyses ...")
 DEGs <- Batch_DEG(estCount, meta, comp_info,core=config$core)
 message("Formating the DEG results")
