@@ -131,7 +131,7 @@ plot_covariate_PC<-function(res, pc, var, out_file, width=10, height=8, add_text
 #exp is expression matrix (logTPM, logCPM, etc), meta is meta data. Column names (samples) of exp must match row names of meta. 
 #PC_cutoff: select which principle components to be used in analysis. Default 5 will select components that explain more than 5% of variance in the data.
 Compute_Corr_Anova<-function(exp, meta, PC_cutoff=5) {
-  require(tidyverse); require(psych); require(broom)
+  require(tidyverse); require(psych); require(broom);require(dplyr);require(stringr)
   meta=data.frame(meta)
   sel=match(colnames(exp), rownames(meta))
   meta=meta[sel,,drop=F ]
