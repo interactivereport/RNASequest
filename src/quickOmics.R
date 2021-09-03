@@ -137,7 +137,6 @@ if(!is.null(config$gene_annotation)){
                                   Biotype='unknown')
 }
 ## comparison -----------
-stop()
 message("====== Starting DEG analyses ...")
 DEGs <- Batch_DEG(estCount, meta, comp_info,core=config$core)
 message("Formating the DEG results")
