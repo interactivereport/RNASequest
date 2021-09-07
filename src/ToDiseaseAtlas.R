@@ -16,10 +16,6 @@ message("loading resource ...")
 config <- yaml::read_yaml(args[2])
 sys_config <- yaml::read_yaml(file.path(args[1],"sys.yml"))
 source(file.path(args[1],"QuickOmics_DEG.R"))
-# config <- yaml::read_yaml("/camhpc/ngs/projects/TST11773/dnanexus/test_zhengyu.ouyang/QuickOmics_20210712180059/config.yml")
-# config <- yaml::read_yaml("/camhpc/ngs/projects/TST11773/dnanexus/wei_test/EA20210805_0/config.yml")
-# sys_config <- yaml::read_yaml(file.path("/home/wli7/projects/Quickomics_converter/src","sys.yml"))
-# source(file.path("/home/wli7/projects/Quickomics_converter/src","QuickOmics_DEG.R"))
 
 R_file = normalizePath(file.path(sys_config$QuickOmics_path, paste0(config$prj_name, ".RData")))
 if(!file.exists(R_file)){
@@ -43,7 +39,6 @@ if(is.null(config$DA_file_outpath) || length(config$DA_file_outpath)==0) {
   output_path = config$DA_file_outpath
 }
   
-# output_path = file.path(dirname("/camhpc/ngs/projects/TST11773/dnanexus/wei_test/EA20210805_0/config.yml"), "DA_Import_Files")
 dir.create(output_path, showWarnings = FALSE)
 
 project_info  = data.frame(ProjectID=p_info$ProjectID[1], Title=p_info$ShortName[1], Description=p_info$Name[1], ExperimentType="Expression profiling by high throughput sequencing", Platform='', PlatformDescription='', PlatformTechnology='', ContactName='')
@@ -52,25 +47,13 @@ write.csv(project_info, file.path(output_path, "Project_Info.csv"), row.names=F)
 ## sample info -----
 load(R_file)
 header_mapping = read.csv(file.path(args[1],"NGSone2DA_header_mapping.csv"))
-# header_mapping = read.csv('/home/wli7/projects/Quickomics_converter/src/NGSone2DA_header_mapping.csv')
 # only keep mapping headers that exist in the MetaData columns and do have mapped DA fields.
 header_mapping = header_mapping[intersect(which(header_mapping$NGSone_header %in% names(MetaData)), which(!header_mapping$DA_header == "")),]
-
-# if (length(which(str_detect(names(MetaData), "Sapio"))) > 0) {
-#   MetaData = MetaData[, -which(str_detect(names(MetaData), "Sapio"))]
-# }
-# col_exclude_list1 = c("Order", "ComparePairs", "Index_ID2", "Annotated_By", "Index_ID", "Status", "Index_Tag", "Index_Tag2", "Status_Time", "Well", "Well_Row", "Plate_Name", "Well_Column")
-# MetaData = MetaData[, -which(colnames(MetaData) %in% col_exclude_list1)]
-
-# col_exclude_list2 = gsub(" ", "_", sys_config$qc2meta)
-# MetaData = MetaData[, -which(colnames(MetaData) %in% col_exclude_list2)]
 
 # Only keep the default NGSone columns of MetaData that can be mapped to DA
 DA_MetaData = MetaData[, which(colnames(MetaData) %in% header_mapping$NGSone_header)]
 MetaData_extra = MetaData[, -which(colnames(MetaData) %in% header_mapping$NGSone_header)]
 MetaData_extra = MetaData_extra[, -which(colnames(MetaData_extra) %in% c("Order", "ComparePairs"))]
-
-# header_mapping = header_mapping[!header_mapping$NGSone_header == header_mapping$DA_header, ]
 
 meta_names_ori = names(DA_MetaData)
 
@@ -90,13 +73,9 @@ if (nrow(header_mapping) > 0) {
 }
 
 Meta_complete = cbind(DA_MetaData, MetaData_extra)
-# DA_header_inclusion_list = sys_config$DA_columns
-# MetaData = MetaData[, which(names(MetaData) %in% DA_header_inclusion_list)]
-DA_MetaData$SampleID = str_replace_all(DA_MetaData$SampleID, "-", "_")
 DA_MetaData$SampleID[grepl("^[[:digit:]]+", DA_MetaData$SampleID)] = str_c("S", DA_MetaData$SampleID[grepl("^[[:digit:]]+", DA_MetaData$SampleID)])
 write.csv(DA_MetaData, file.path(output_path, "Sample_Info.csv"), row.names=F)
 
-Meta_complete$SampleID = str_replace_all(Meta_complete$SampleID, "-", "_")
 Meta_complete$SampleID[grepl("^[[:digit:]]+", Meta_complete$SampleID)] = str_c("S", Meta_complete$SampleID[grepl("^[[:digit:]]+", Meta_complete$SampleID)])
 write.csv(Meta_complete, file.path(output_path, "Sample_Info_complete.csv"), row.names=F)
 
@@ -105,31 +84,24 @@ estCount = readRDS(paste0(config$output,"/",config$prj_name,"_estCount.rds"))
 
 Expression = 2^data_wide - config$count_prior
 
-colnames(estCount) = str_replace_all(colnames(estCount), "-", "_")
-colnames(Expression) = str_replace_all(colnames(Expression), "-", "_")
-colnames(estCount)[grepl("^[[:digit:]]+", colnames(estCount))] = str_c("S", colnames(estCount)[grepl("^[[:digit:]]+", colnames(estCount))])
-colnames(Expression)[grepl("^[[:digit:]]+", colnames(Expression))] = str_c("S", colnames(Expression)[grepl("^[[:digit:]]+", colnames(Expression))])
+Sample_list = names(estCount)
+Sample_list[grepl("^[[:digit:]]+", Sample_list)] = str_c("S", Sample_list)[grepl("^[[:digit:]]+", Sample_list)]
 
-
-# if(!is.null(estCount)) estCount <- estCount[, MetaData$SampleID]
-# estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
-# 
-# if(!is.null(Expression)) Expression <- Expression[, MetaData$SampleID]
-
-fwrite(data.frame(Gene = rownames(Expression), Expression), file.path(output_path, "Gene_Expression_Data.csv"))
-fwrite(data.frame(Gene = rownames(estCount), estCount), file.path(output_path, "Gene_Count.csv"))
+Exp = data.frame(Gene = rownames(Expression), Expression)
+names(Exp) = c("Gene", Sample_list)
+Count = data.frame(Gene = rownames(estCount), estCount)
+names(Count) = names(Exp)
+fwrite(Exp, file.path(output_path, "Gene_Expression_Data.csv"))
+fwrite(Count, file.path(output_path, "Gene_Count.csv"))
 
 ## comparison info ------
 ComparisonID=rownames(comp_info)
-c_info=data.frame(ComparisonID, ProjectName=project_info$ProjectID[1], Case_SampleIDs='', Control_SampleIDs='')
-
+c_info=data.frame(ComparisonID, ProjectName=project_info$ProjectID[1], ComparisonContrast = str_c(comp_info$Group_test, ".vs.", comp_info$Group_ctrl), Case_SampleIDs='', Control_SampleIDs='')
 
 unmapped_grp_name_list = c("Phenotype", "population", "SubjectTreatment")
 
 unmapped_name_index = 1
 unmapped_record = data.frame("ori"= character(), "new" = character())
-
-estCount = readRDS(paste0(config$output,"/",config$prj_name,"_estCount.rds"))
 
 for (i in 1:nrow(c_info)) {
   S_meta_sub = MetaData
@@ -159,19 +131,29 @@ for (i in 1:nrow(c_info)) {
     if (comp_info$Group_test[i] %in% DA_meta_sub[, compare_group] && comp_info$Group_ctrl[i] %in% DA_meta_sub[, compare_group]) {
       c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
       c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
-    } else if (unmapped_name_index < 4) {
+    } else if (unmapped_name_index < 4 && !compare_group_ori %in% unmapped_record$ori) {
       compare_group = unmapped_grp_name_list[unmapped_name_index]
       unmapped_record[unmapped_name_index,] = c(compare_group_ori, compare_group)
       unmapped_name_index = unmapped_name_index + 1
       c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
       c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
+    } else if (unmapped_name_index < 4 && compare_group_ori %in% unmapped_record$ori) {
+      compare_group = unmapped_record$new[which(unmapped_record$ori == compare_group_ori)]
+      c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
+      c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
     }
   } else if (length(compare_group) == 0 && unmapped_name_index < 4) {
-    compare_group = unmapped_grp_name_list[unmapped_name_index]
-    unmapped_record[unmapped_name_index,] = c(compare_group_ori, compare_group)
-    unmapped_name_index = unmapped_name_index + 1
-    c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
-    c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
+    if (!compare_group_ori %in% unmapped_record$ori) {
+      compare_group = unmapped_grp_name_list[unmapped_name_index]
+      unmapped_record[unmapped_name_index,] = c(compare_group_ori, compare_group)
+      unmapped_name_index = unmapped_name_index + 1
+      c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
+      c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
+    } else if (compare_group_ori %in% unmapped_record$ori) {
+      compare_group = unmapped_record$new[which(unmapped_record$ori == compare_group_ori)]
+      c_info[i, paste0("Case_", compare_group)] = comp_info$Group_test[i]
+      c_info[i, paste0("Control_", compare_group)] = comp_info$Group_ctrl[i]
+    }
   }
 
   compare_group_new = compare_group
@@ -233,6 +215,7 @@ if (nrow(unmapped_record) > 0) {
     }
   }
 }
+
 fwrite(c_info, file.path(output_path, "Comparisons_Info.csv"))
 
 
@@ -253,6 +236,7 @@ for (i in seq(1, ncol(comp_data), 3)) {
     Comparison_long=rbind(Comparison_long, subdata)
   }
 }
+
 
 fwrite(Comparison_long, file.path(output_path, "Comparisons_Data.csv"))
 
