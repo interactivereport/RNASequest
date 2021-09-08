@@ -266,6 +266,7 @@ checkComparisonInfo <- function(comp_info, meta, comp_info_file) {
     message("\tThe original comparison file is renamed as ...bk")
   }
   checkComparisonModel(comp_info, meta)
+  return(comp_info)
 }
 
 checkComparisonModel <- function(comp_info, meta) {
