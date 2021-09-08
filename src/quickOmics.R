@@ -19,59 +19,20 @@ source(paste0(args[1],"readData.R"))
 source(paste0(args[1],"infoCheck.R"))
 
 checkConfig(config)
-## check the comparison file, stop if empty ----------
-comp_info <- read_file(config$comparison_file,T)
-if(nrow(comp_info)==0){
-    stop(paste0("Empty comparison definition file (",config$comparison_file,") is NOT allowed!"))
-}
-if(is.null(config$sample_group) || length(config$sample_group)==0){
-    config$sample_group <- comp_info[1,"Group_name"]
-}
 
-# set the default value if those are empty
-setDefault <- F
-for(i in rownames(comp_info)){
-    if(is.null(comp_info[i,"Group_name"]) || nchar(comp_info[i,"Group_name"])==0){
-        stop(paste0("'Group_name' cannot be empty for comparison",i))
-    }
-    if(is.null(comp_info[i,"Model"]) || nchar(comp_info[i,"Model"])==0){
-        comp_info[i,"Model"] <- comp_info[i,"Group_name"]
-        setDefault <- T
-    }
-    if(!grepl(comp_info[i,"Group_name"],comp_info[i,"Model"])){
-        stop(paste("The DEG 'Model' didn't include 'Group_name' in the comparison file for",i))
-    }
-    if(is.null(comp_info[i,"Shrink_logFC"]) || nchar(comp_info[i,"Shrink_logFC"])==0){
-        comp_info[i,"Shrink_logFC"] <- "Yes"
-        setDefault <- T
-    }
-    if(is.null(comp_info[i,"LFC_cutoff"]) || nchar(comp_info[i,"LFC_cutoff"])==0){
-        comp_info[i,"LFC_cutoff"] <- 0
-        setDefault <- T
-    }
-    if(!comp_info[i,"Analysis_method"]%in%c("DESeq2","limma")){
-        stop(paste(comp_info[i,"Analysis_method"],"for comparison",i,
-                   "is NOT a valide 'Analysis_method' (DESeq2 or limma) in comparison file."))
-    }
-}
-comp_info$LFC_cutoff <- as.numeric(comp_info$LFC_cutoff)
-if(sum(comp_info$LFC_cutoff<0)>0) stop("'LFC_cutoff' in comparison file is required to be non-negative!")
-comp_info$Group_test <- as.character(comp_info$Group_test)
-comp_info$Group_ctrl <- as.character(comp_info$Group_ctrl)
-if(setDefault){
-    A <- cbind(CompareName=rownames(comp_info),comp_info)
-    file.rename(config$comparison_file,paste0(config$comparison_file,".bk"))
-    write.csv(A,file=config$comparison_file,row.names=F)
-    message("-----> comparison file (",basename(config$comparison_file),") is updated with some default values!")
-    message("\tThe original comparison file is renamed as ...bk")
-}
-
-## read the meta information -----
+## read and check the meta information -----
 message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,check.names=F,as.is=T)
 checkConsistConfigMeta(config,meta)
 rownames(meta) <- meta[,config$sample_name]
+
+## read and check the comparison file ------
+comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
+                                 meta,config$comparison_file)
 # use first group name in comparison file for group information
+if(is.null(config$sample_group) || length(config$sample_group)==0){
+    config$sample_group <- comp_info[1,"Group_name"]
+}
 colnames(meta) <- gsub("group","group.org",colnames(meta))
 meta <- cbind(group=apply(meta[,config$sample_group,drop=F],1,function(x)return(paste(x,sep="."))),meta)
 # set all Group_name to be charactor

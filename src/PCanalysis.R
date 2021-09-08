@@ -5,7 +5,8 @@ args = commandArgs(trailingOnly=T)
 if(length(args)<2){
     message("An example config can be found: /camhpc/ngs/projects/TST11589/dnanexus/20210426220540_Zhengyu.Ouyang/config.yml")
     message("'EAinit' can be used to create a config file for a RNAseq project")
-    stop("config yaml file is required!")
+    args <- c("/home/zouyang/projects/quickOmics/src/","/camhpc/ngs/projects/TST11781/dnanexus/20210607022720_Maria.Zavodszky/EA20210902_0/Sc/config.yml")
+    #stop("config yaml file is required!")
 }
 message("Loading resources ...")
 config <- sapply(yaml::read_yaml(args[2]),unlist)
