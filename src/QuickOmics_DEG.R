@@ -161,8 +161,8 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
   trt_group = comp_info$Group_test
   ctrl_group = comp_info$Group_ctrl
   analysis_method = comp_info$Analysis_method
-  shrink_logFC = comp_info$Shrink_logFC
-  #LFC_cutoff = comp_info$LFC_cutoff
+  #shrink_logFC = comp_info$Shrink_logFC
+  LFC_cutoff = comp_info$LFC_cutoff
   
   var_list= unique(trimws(str_split(model, "~|\\+|\\*|\\:", simplify =T)[1,]))
   var_list = var_list[!var_list ==""]
