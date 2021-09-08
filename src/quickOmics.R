@@ -27,6 +27,7 @@ checkConsistConfigMeta(config,meta)
 rownames(meta) <- meta[,config$sample_name]
 
 ## read and check the comparison file ------
+message("====== reading comparison information ...")
 comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
                                  meta,config$comparison_file)
 # use first group name in comparison file for group information

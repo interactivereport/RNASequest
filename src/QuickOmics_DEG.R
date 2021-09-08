@@ -279,7 +279,7 @@ checkComparisonModel <- function(comp_info, meta) {
     trt_group = comp_info$Group_test[i]
     ctrl_group = comp_info$Group_ctrl[i]
     
-    print(comp_name)
+    message("\tChecking model for ",comp_name)
     # check the existence of subset variables and subset levels in sample meta table
     if (!is.na(Subset_group) && !Subset_group == "") {
       Subset_group_levels = trimws(strsplit(Subset_group, ";")[[1]])
@@ -303,13 +303,13 @@ checkComparisonModel <- function(comp_info, meta) {
     if (sum(!covariate_list%in%names(meta)) > 0) {
       stop(paste("Error in", comp_name, ": Covariates:", paste(covariate_list[!covariate_list%in%names(meta)], collapse = ','), "is NOT defined in the sample meta file."))
     } else {
-      Sample_meta = Sample_meta[, covariate_list]
+      Sample_meta = Sample_meta[, covariate_list,drop=F]
       n_covariate_levels = apply(Sample_meta, 2, function(x) return(length(unique(x))))
       single_level_covariates = names(Sample_meta)[n_covariate_levels == 1]
       if (length(single_level_covariates) > 0) {
         stop(paste("Error in", comp_name, ": Covariates:", paste(single_level_covariates, collapse = ','), "only have one level."))
       } else {
-        library(caret)
+        suppressWarnings(suppressMessages(library(caret)))
         Sample_meta = data.frame(Sample_meta)
         for (n in 1: length(covariate_list)) {
           if(is.numeric(Sample_meta[,covariate_list[n]])) {
