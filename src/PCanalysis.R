@@ -24,30 +24,16 @@ message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,check.names=F,as.is=T)#,row.names=1
 checkConsistConfigMeta(config,meta)
 rownames(meta) <- meta[,config$sample_name]
-## plot alignment QC if alias exists ----
-if(!is.null(config$sample_alias)){
-    message("====== Plot alignment QC for alias ...")
-    gInfo <- read.csv(config$gene_annotation,row.names=1,as.is=T)
-    alignQC(config$prj_path,
-            gInfo,
-            paste0(config$output,"/alignQC.alias.pdf"),
-            prioQC=sys_config$qc2meta,
-            sIDalias=setNames(meta[,config$sample_alias],rownames(meta)))
-}
-## select covariates for analysis-------
-selCov <- unique(c(config$covariates_check,config$covariates_adjust))
-meta <- meta[,selCov]
-
-## change the Well_Row from charactor to numeric
-oneMeta <- "Well_Row"
-if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
-
+## read the gene annotation -----
+gInfo <- read.csv(config$gene_annotation,row.names=1,as.is=T)
 ## read the gene quantification input ----
 message("====== reading gene quantification ...")
 estCount <- effeL <- logTPM <- yaxisLab <- NULL
 if(!is.null(config$prj_path)){
-    estCount <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"))
-    effeL <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"))
+    estCount <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"),
+                         rownames(meta),rownames(gInfo))
+    effeL <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"),
+                      rownames(meta),rownames(gInfo))
 }else{
     if(!is.null(config$exp_counts))
         estCount <- read.table(config$exp_counts,
@@ -62,14 +48,28 @@ if(!is.null(config$prj_path)){
         yaxisLab <- paste0("log2(TPM+",config$count_prior,")")
     }
 }
-if(sum(!rownames(meta)%in%colnames(estCount))>0){
-    message("The following samples from meta information is not in count matrix:")
-    message(paste(rownames(meta)[!rownames(meta)%in%colnames(estCount)],collapse="\n"))
-    stop("sample names in the meta table do not match sample name in the count table!")
-}
-if(!is.null(estCount)) estCount <- estCount[,rownames(meta)]
-if(!is.null(effeL)) effeL <- effeL[,rownames(meta)]
 estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
+
+## plot alignment QC if alias exists ----
+if(!is.null(config$sample_alias)){
+    message("====== Plot alignment QC for alias ...")
+    logTPM <- covariateRM(estCount,effeL,method=NULL,prior=config$count_prior)
+    estT <- 2^logTPM-config$count_prior
+    rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
+    qc <- readQC(paste0(config$prj_path,"/combine_rnaseqc/combined.metrics.tsv"))
+    alignQC(estT,
+            qc,
+            paste0(config$output,"/alignQC.alias.pdf"),
+            prioQC=sys_config$qc2meta,
+            sIDalias=setNames(meta[,config$sample_alias],rownames(meta)))
+}
+## select covariates for analysis-------
+selCov <- unique(c(config$covariates_check,config$covariates_adjust))
+meta <- meta[,selCov]
+
+## change the Well_Row from charactor to numeric
+oneMeta <- "Well_Row"
+if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
 
 ## PCA QC analysis before covariates removal ---------
 message("====== TPM estimation ...")

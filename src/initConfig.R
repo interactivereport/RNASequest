@@ -73,7 +73,10 @@ gInfo <- getAnnotation(paste0(strPath,"/config.json"),config$genome_path)
 write.csv(gInfo,file=strGinfo)
 ## alignment QC plots ---------
 message("Plot alignment QC ...")
-alignQC(strPath,gInfo,strAlignQC,prioQC=config$qc2meta)
+estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
+rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
+qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
+alignQC(estT,qc,strAlignQC,prioQC=config$qc2meta)
 ## create an empty comparison file -------
 message("Create empty comparison template ...")
 comTitle <- c("CompareName",

@@ -39,12 +39,25 @@ meta <- cbind(group=apply(meta[,config$sample_group,drop=F],1,function(x)return(
 # set all Group_name to be charactor
 for(i in unique(comp_info$Group_name))meta[,i] <- as.character(meta[,i])
 
+## gene definition file ---------
+message("====== reading gene annotation ...")
+if(!is.null(config$gene_annotation)){
+    gInfo <- read.csv(config$gene_annotation,row.names=1,as.is=T)
+}else{
+    gInfo <- data.frame(id=rownames(estCount),
+                        UniqueID=rownames(estCount),
+                        Gene.Name=rownames(estCount),
+                        Biotype='unknown')
+}
+
 ## read the gene quantification input ----
 message("====== reading gene quantification ...")
 estCount <- effeL <- logTPM <- yaxisLab <- NULL
 if(!is.null(config$prj_path)){
-    estCount <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"))
-    effeL <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"))
+    estCount <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt"),
+                         rownames(meta),rownames(gInfo))
+    effeL <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"),
+                      rownames(meta),rownames(gInfo))
 }else{
     if(!is.null(config$exp_counts))
         estCount <- read.table(config$exp_counts,
@@ -88,21 +101,11 @@ if(!is.null(config$sample_alias)){
     rownames(meta) <- colnames(logTPM) <- colnames(estCount) <- meta[,config$sample_alias]
 }
 saveRDS(estCount,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
-## gene definition file ---------
-message("====== reading gene annotation ...")
-if(!is.null(config$gene_annotation)){
-    ProteinGeneName <- read.csv(config$gene_annotation,row.names=1,as.is=T)
-}else{
-    ProteinGeneName <- data.frame(id=rownames(estCount),
-                                  UniqueID=rownames(estCount),
-                                  Gene.Name=rownames(estCount),
-                                  Biotype='unknown')
-}
 ## comparison -----------
 message("====== Starting DEG analyses ...")
 DEGs <- Batch_DEG(estCount, meta, comp_info,core=config$core)
 message("Formating the DEG results")
-compRes <- formatQuickOmicsResult(DEGs,logTPM,meta[,"group"],ProteinGeneName)
+compRes <- formatQuickOmicsResult(DEGs,logTPM,meta[,"group"],gInfo)
 data_results <- compRes$Dw
 results_long <- compRes$Dl
 ## produce the network for quickOmics ----------
@@ -126,7 +129,7 @@ data_long <- cbind(data_long,group=meta[data_long$sampleid,config$sample_group])
 MetaData <- formatQuickOmicsMeta(meta,names(DEGs))
 save(data_results,results_long,
      data_wide,data_long,
-     MetaData,ProteinGeneName,
+     MetaData,gInfo,
      comp_info,
      yaxisLab,
      file=paste0(config$output,"/",config$prj_name,".RData"))

@@ -1,9 +1,10 @@
 suppressWarnings(suppressMessages(require(ggplot2)))
 suppressWarnings(suppressMessages(require(reshape2)))
-alignQC <- function(strPath,gInfo,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,100
-    estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
-    rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
-    qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
+alignQC <- function(estT,qc,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,100
+    #estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
+    #rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
+    #qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
+
     prioQC <- matchQCnames(qc,prioQC)
     ## if alias provided
     if(!is.null(sIDalias)){

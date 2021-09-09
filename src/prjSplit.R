@@ -70,13 +70,15 @@ for(one in unique(meta[,config$split_meta])){
     # save new config file
     cat(paste(newConfig,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
 
+    ## the following can be done with EAqc for the subproject by
+    ## setting sample_alias to be the same as sample_name
     # plot alignment QC for one sub project
-    message("\tplot QC for the sub-project")
-    alignQC(config$prj_path,
-            gInfo,
-            paste0(strOut,"/alignQC.pdf"),
-            prioQC=sys_config$qc2meta,
-            sIDalias=setNames(rownames(oneMeta),rownames(oneMeta)))
+    #message("\tplot QC for the sub-project")
+    #alignQC(config$prj_path,
+    #        gInfo,
+    #        paste0(strOut,"/alignQC.pdf"),
+    #        prioQC=sys_config$qc2meta,
+    #        sIDalias=setNames(rownames(oneMeta),rownames(oneMeta)))
     
     sink(paste0(strOut,"/session.EAsplit"))
     sessionInfo()

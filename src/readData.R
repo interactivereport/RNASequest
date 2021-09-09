@@ -1,13 +1,25 @@
 
 # read dnanexus rsem results, TPM, raw counts and effective length
 
-readData <- function(strF){
+readData <- function(strF,sName=NULL,gID=NULL){
     D <- read.table(strF,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
     D <- D[!grepl("^ERCC",rownames(D)),]
     # remove the TST-prefix and |postfix
     colnames(D) <- sapply(strsplit(sapply(strsplit(colnames(D),"\\|"),
                                           function(x)return(paste(head(x,-1),collapse="|"))),
                                    "_"),function(x)return(paste(x[-1],collapse="_")))
+    ## filtering the data
+    if(!is.null(sName)){
+        if(sum(!sName%in%colnames(D))>0)
+            stop(paste0("Samples (",paste(sName[!sName%in%colnames(D)],collapse=","),
+                        ") provided in the sample meta information is not listed in ",strF))
+        D <- D[sName]
+    }
+    if(!is.null(gID)){
+        gID <- intersect(gID,rownames(D))
+        D <- D[gID,]
+        message("\t\tFiltering with ",length(gID)," genes")
+    }
     return(D)
     
 }

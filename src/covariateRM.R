@@ -26,19 +26,22 @@ covariateRM <- function(X,effeL,batchX=NULL,method='limma',
     # filter low express genes
     X <- as.matrix(X)
     ix <- apply(X,1,function(x)return(sum(x>=minCount)))>=minSample
+    sizeF<-NULL
     ## batch removal counts/cpm
     if(is.null(method) || is.null(batchX)){
         ad_X <- X
     }else if(method=="limma"){
         ad_X <- limmaRM(X[ix,],batchX,prior)
         ad_X <- rbind(ad_X,X[!ix,])
+        sizeF <- getSizeF(ad_X)
     }else if(method=="combat_seq"){
         ad_X <- ComBatRM(X[ix,],batchX[,1])
         ad_X <- rbind(ad_X,X[!ix,])
+        sizeF <- getSizeF(ad_X)
     }else{
         stop("unknown batch removal method!")
     }
-    logTPM <- estTPM(ad_X,effeL,getSizeF(ad_X),prior)
+    logTPM <- estTPM(ad_X,effeL,sizeF,prior)
     message("Finished TPM estimation!")
     return(logTPM)
 }
