@@ -50,13 +50,13 @@ if(!is.null(config$prj_path)){
 }
 estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
 
-## plot alignment QC if alias exists ----
+## read alignment QC and plot alignment QC if alias exists ----
+qc <- readQC(paste0(config$prj_path,"/combine_rnaseqc/combined.metrics.tsv"))
 if(!is.null(config$sample_alias)){
     message("====== Plot alignment QC for alias ...")
     logTPM <- covariateRM(estCount,effeL,method=NULL,prior=config$count_prior)
     estT <- 2^logTPM-config$count_prior
     rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
-    qc <- readQC(paste0(config$prj_path,"/combine_rnaseqc/combined.metrics.tsv"))
     alignQC(estT,
             qc,
             paste0(config$output,"/alignQC.alias.pdf"),
@@ -91,6 +91,19 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
         batchX <- meta[,config$covariates_adjust,drop=F]
         logTPM <- suppressMessages(covariateRM(estCount,effeL,batchX=batchX,method='limma',
                               prior=config$count_prior))
+        estT <- 2^logTPM-config$count_prior
+        rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
+        if(!is.null(config$sample_alias))
+            alignQC(estT,
+                    qc,
+                    paste0(config$output,"/Adjusted.alignQC.pdf"),
+                    prioQC=sys_config$qc2meta,
+                    sIDalias=setNames(meta[,config$sample_alias],rownames(meta)))
+        else
+            alignQC(estT,
+                    qc,
+                    paste0(config$output,"/Adjusted.alignQC.pdf"),
+                    prioQC=sys_config$qc2meta)
         res <- suppressMessages(suppressWarnings(
             Covariate_PC_Analysis(logTPM,meta,
                                   out_prefix=paste0(config$output,"/Adjusted"),
