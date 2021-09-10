@@ -34,6 +34,12 @@ if(!is.null(config$prj_path)){
                          rownames(meta),rownames(gInfo))
     effeL <- readData(paste0(config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt"),
                       rownames(meta),rownames(gInfo))
+    if(config$min_median_effective_length>0){
+        message("\tfiltering by effective gene length>=",config$min_median_effective_length)
+        effeL <- effeL[apply(effeL,1,median)>=config$min_median_effective_length,]
+        estCount <- estCount[rownames(effeL),]
+        message("\t\t",nrow(estCount)," genes")
+    }
 }else{
     if(!is.null(config$exp_counts))
         estCount <- read.table(config$exp_counts,
