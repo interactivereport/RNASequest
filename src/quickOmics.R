@@ -17,6 +17,7 @@ source(paste0(args[1],"getNetwork.R"))
 source(paste0(args[1],"Hmisc.rcorr.R"))
 source(paste0(args[1],"readData.R"))
 source(paste0(args[1],"infoCheck.R"))
+source(paste0(args[1],"qsubDEG.R"))
 
 checkConfig(config)
 
@@ -103,7 +104,11 @@ if(!is.null(config$sample_alias)){
 saveRDS(estCount,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
 ## comparison -----------
 message("====== Starting DEG analyses ...")
-DEGs <- Batch_DEG(estCount, meta, comp_info,core=config$core)
+if(!is.null(config$qsub) && config$qsub){
+    DEGs <- qsubDEG(estCount,meta,comp_info,config$output,args[1],core=config$core)
+}else{
+    DEGs <- Batch_DEG(estCount, meta, comp_info,core=config$core)
+}
 message("Formating the DEG results")
 compRes <- formatQuickOmicsResult(DEGs,logTPM,meta[,"group"],gInfo)
 data_results <- compRes$Dw
