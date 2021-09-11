@@ -31,7 +31,7 @@ module add R/3.5.1
         system(paste0("qsub ",strOut,i,".sh"))
     }
     ## submit monior job depdents on the previous jobs
-    message("===== Monitorring all submited DEG jobs ...")
+    message("----- Monitorring all submited DEG jobs ...")
     cat(gsub("wkPath",strOut,
              gsub("qsubCore",1,qsubDEGsh)),
         file=paste0(strOut,"jIDmonitor.sh"))

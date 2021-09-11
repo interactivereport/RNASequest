@@ -18,6 +18,7 @@ prj_name: initPrjName
 prj_title: initPrjTitle
 prj_path: initPrjPath
 sample_meta: initPrjMeta
+sample_factor: initPrjFactor
 sample_name: Sample_Name
 sample_alias:
 split_meta:

@@ -16,6 +16,7 @@ source(paste0(args[1],"covariateRM.R"))
 source(paste0(args[1],"alignQC.R"))
 source(paste0(args[1],"readData.R"))
 source(paste0(args[1],"infoCheck.R"))
+source(paste0(args[1],"metaFactor.R"))
 
 checkConfig(config)
 system(paste0("rm -f ",config$output,"/covariatePCanalysis_*"))
@@ -24,6 +25,8 @@ message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,check.names=F,as.is=T)#,row.names=1
 checkConsistConfigMeta(config,meta)
 rownames(meta) <- meta[,config$sample_name]
+## set meta factors ------
+meta <- metaFactor(meta,config$sample_factor)
 ## read the gene annotation -----
 gInfo <- read.csv(config$gene_annotation,row.names=1,as.is=T)
 ## read the gene quantification input ----

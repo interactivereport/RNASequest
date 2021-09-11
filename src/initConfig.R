@@ -23,11 +23,13 @@ source(paste0(args[1],"extractEffectiveLength.R"))
 source(paste0(args[1],"alignQC.R"))
 source(paste0(args[1],"readData.R"))
 source(paste0(args[1],"lengthQC.R"))
+source(paste0(args[1],"metaFactor.R"))
 config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 configTmp <- yaml::read_yaml(paste0(args[1],"config.tmp.yml"))
 
 system(paste("mkdir -p",strOut))
 strMeta <- paste0(strOut,"/sampleMeta.csv")
+strMetaFactor <- paste0(strOut,"/sampleMetaFactor.yml")
 strGinfo <- paste0(strOut,"/geneAnnotation.csv")
 strComp <- paste0(strOut,"/compareInfo.csv")
 strAlignQC <- paste0(strOut,"/alignQC.pdf")
@@ -63,6 +65,7 @@ strkey <- c("Concentration","Volume")
 if(sum(strkey%in%colnames(meta))==2){
     meta <- cbind(meta,Vol_Conc=apply(meta[,strkey],1,prod))
 }
+meta <- metaFactor(meta,strMetaFactor)
 write.csv(meta,file=strMeta,row.names=F)#
 covariates <- c()
 for(i in setdiff(colnames(meta),config$notCovariates)){
@@ -114,6 +117,7 @@ configTmp <- gsub("initPrjTitle",ifelse(is.null(studyInfo$Study_Title),
                                         studyInfo$Study_Title),configTmp)
 configTmp <- gsub("initPrjPath",strPath,configTmp)
 configTmp <- gsub("initPrjMeta",strMeta,configTmp)
+configTmp <- gsub("initPrjFactor",strMetaFactor,configTmp)
 configTmp <- gsub("initSpecies",getSpecies(paste0(strPath,"/config.json")),configTmp)
 configTmp <- gsub("initGeneAnnotation",strGinfo,configTmp)
 configTmp <- gsub("initOutput",strOut,configTmp)

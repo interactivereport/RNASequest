@@ -18,6 +18,7 @@ source(paste0(args[1],"Hmisc.rcorr.R"))
 source(paste0(args[1],"readData.R"))
 source(paste0(args[1],"infoCheck.R"))
 source(paste0(args[1],"qsubDEG.R"))
+source(paste0(args[1],"metaFactor.R"))
 
 checkConfig(config)
 
@@ -31,15 +32,15 @@ rownames(meta) <- meta[,config$sample_name]
 message("====== reading comparison information ...")
 comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
                                  meta,config$comparison_file)
-# use first group name in comparison file for group information
+## set meta factors ------
+meta <- metaFactor(meta,config$sample_factor,unique(comp_info$Group_name))
+
+# use first group name in comparison file for group information -----
 if(is.null(config$sample_group) || length(config$sample_group)==0){
     config$sample_group <- comp_info[1,"Group_name"]
 }
 colnames(meta) <- gsub("group","group.org",colnames(meta))
 meta <- cbind(group=apply(meta[,config$sample_group,drop=F],1,function(x)return(paste(x,sep="."))),meta)
-# set all Group_name to be charactor
-for(i in unique(comp_info$Group_name))meta[,i] <- as.character(meta[,i])
-
 ## gene definition file ---------
 message("====== reading gene annotation ...")
 if(!is.null(config$gene_annotation)){
