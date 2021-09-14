@@ -136,7 +136,7 @@ message("\t\t\t",strComp)
 message("\t\tEArun ",strOut,"/config.yml\n\n")
 message("-----> (additional) 'EAsplit' can be used to split into sub-project according to one column (split_meta) defined in the sample meta file.\n")
 
-message("Powered by the Computational Biology Group [zhengyu.ouyang@biogen.com]")
+message("Powered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
 
 
 sink(paste0(strOut,"/session.EAinit"))

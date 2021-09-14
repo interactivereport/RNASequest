@@ -164,7 +164,7 @@ system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics
 #message("\t\t\t And then Please visit: http://ngs.biogen.com:3838/Quickomics/?unlisted=",config$prj_name)
 message("\n-----> Please visit: http://ngs.biogen.com:3838/Quickomics/?serverfile=",config$prj_name)
 
-message("\nPowered by the Computational Biology Group [zhengyu.ouyang@biogen.com]")
+message("\nPowered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
 
 sink(paste0(config$output,"/session.EArun"))
 sessionInfo()
