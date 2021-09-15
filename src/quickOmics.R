@@ -138,9 +138,10 @@ data_long <- cbind(data_long,group=meta[data_long$sampleid,config$sample_group])
 
 
 MetaData <- formatQuickOmicsMeta(meta,names(DEGs))
+ProteinGeneName <- gInfo
 save(data_results,results_long,
      data_wide,data_long,
-     MetaData,gInfo,
+     MetaData,ProteinGeneName,
      comp_info,
      yaxisLab,
      file=paste0(config$output,"/",config$prj_name,".RData"))
