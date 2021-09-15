@@ -297,6 +297,20 @@ checkComparisonModel <- function(comp_info, meta) {
       }
     } else {Sample_meta =meta}
     
+    # check if the comparison groups contain multiple samples
+    n_samples = apply(Sample_meta[, group_var,drop=F], 2, function(x) return(table(x)))
+    if (! trt_group %in% rownames(n_samples)) {
+      stop(paste("Error in", comp_name, ": trt_group ", trt_group, " is NOT defined in the sample meta file."))
+    } else if (n_samples[trt_group,] < 2) {
+      stop(paste("Error in", comp_name, ": there is no replicate samples for trt_group ", trt_group, "."))
+    }
+
+    if (! ctrl_group %in% rownames(n_samples)) {
+      stop(paste("Error in", comp_name, ": ctrl_group ", ctrl_group, " is NOT defined in the sample meta file."))
+    } else if (n_samples[ctrl_group,] < 2) {
+      stop(paste("Error in", comp_name, ": there is no replicate samples for ctrl_group ", ctrl_group, "."))
+    }
+
     # check if all the covariates in the model exist in sample meta table and have multiple levels and are independent
     covariate_list = unique(as.vector(trimws(str_split(model, "~|\\+|\\*|\\:", simplify =T))))
     covariate_list = covariate_list[!covariate_list ==""]
