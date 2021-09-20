@@ -138,7 +138,7 @@ data_long <- cbind(data_long,group=meta[data_long$sampleid,config$sample_group])
 
 
 MetaData <- formatQuickOmicsMeta(meta,names(DEGs))
-ProteinGeneName <- gInfo
+ProteinGeneName <- gInfo[rownames(logTPM),]
 save(data_results,results_long,
      data_wide,data_long,
      MetaData,ProteinGeneName,
