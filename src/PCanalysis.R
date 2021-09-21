@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
 rm(list=ls())
+.libPaths(grep("home",.libPaths(),invert=T,value=T))
 args = commandArgs(trailingOnly=T)
 ## init -----
 if(length(args)<2){

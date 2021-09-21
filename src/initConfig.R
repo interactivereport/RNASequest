@@ -1,4 +1,5 @@
 rm(list=ls())
+.libPaths(grep("home",.libPaths(),invert=T,value=T))
 args = commandArgs(trailingOnly=T)
 if(length(args)<1){
     stop("A path to a RNAseq project downloaded from DNAnexus is required!")
