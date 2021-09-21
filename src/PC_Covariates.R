@@ -9,7 +9,7 @@
 #data.all (PC scores and meta data combined), selVar_All (significant covariate-PC pairs)
 #sel_dataN (Numeric covariate results), sel_dataC (Categorical covariate results)
 Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0.1, N_col=3, PCA_plots="ranked") {
-  require(tidyverse);  require(cowplot); require(openxlsx);
+  require(tidyverse);  require(cowplot); require(openxlsx)
   if (!is.null(out_prefix) ) {
     out_dir=dirname(out_prefix)
     if (!dir.exists(out_dir)) {dir.create(out_dir)}
@@ -91,7 +91,6 @@ Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0
       dev.off()
     }
   }
-  message("\tin Covariate_PC_Analysis 8")
   
   if (!is.null(selVar_All)) {
     names(selVar_All)[c(2, 4, 5, 6)]=c("Covariate", "Significance", "P-value", "FDR")
