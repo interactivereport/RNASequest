@@ -13,6 +13,8 @@ qsubDEG <- function(estCount,meta,comp_info,strWK,strSrc,core=8){
 #$ -e cName.log
 #- End UGE embedded arguments
 : > $SGE_STDOUT_PATH
+cat $PE_HOSTFILE
+echo 'end of HOST'
 
 source /etc/profile.d/modules_bash.sh
 module add R/3.5.1
@@ -36,8 +38,26 @@ module add R/3.5.1
              gsub("qsubCore",1,qsubDEGsh)),
         file=paste0(strOut,"jIDmonitor.sh"))
     system(paste0('qsub -sync y -hold_jid "',jID,'_*" ',strOut,"jIDmonitor.sh"))
+    ix <- sapply(rownames(comp_info),function(x)return(!file.exists(paste0(strOut,i,".rds"))))
+    badNODEs <- c()
+    tryN <- 0
+    while(sum(ix)>0 && tryN<5){
+        tryN <- tryN +1
+        message("===== Resubmitting failed jobs for ",tryN," times =====")
+        for(i in rownames(comp_info)[ix]){
+            tmp <- readLines(paste0(strOut,i,".log"))
+            badNODEs <- unique(c(badNODEs,tmp[1:(grep("end of HOST",tmp)[1]-1)]))
+        }
+        for(i in rownames(comp_info)[ix]){
+            system(paste0("qsub -l h='!(",paste(badNODEs,collapse="|"),")' ",strOut,i,".sh"))
+        }
+        system(paste0('qsub -sync y -hold_jid "',jID,'_*" ',strOut,"jIDmonitor.sh"))
+        ix <- sapply(rownames(comp_info),function(x)return(!file.exists(paste0(strOut,i,".rds"))))
+    }
+    cat(paste(badNODEs,collapse="\n"),file=paste0(strOut,"badNODEs.txt"))
     DEGs <- list()
     for(i in rownames(comp_info)){
+        message("===== ",i," =====")
         strRDS <- paste0(strOut,i,".rds")
         system(paste("cat",gsub("rds$","log",strRDS)))
         if(!file.exists(strRDS)){
