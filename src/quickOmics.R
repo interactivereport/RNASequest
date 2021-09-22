@@ -153,7 +153,8 @@ write.csv(data.frame(Name=ifelse(is.null(config$prj_title),
                      ShortName=config$prj_name,
                      ProjectID=config$prj_name,
                      Species=config$species, 
-                     ExpressionUnit=yaxisLab),
+                     ExpressionUnit=yaxisLab,
+                     Path=config$output),
           file=paste0(config$output,"/",config$prj_name,".csv"),
           row.names=F)
 
