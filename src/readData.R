@@ -13,7 +13,7 @@ readData <- function(strF,sName=NULL,gID=NULL){
         if(sum(!sName%in%colnames(D))>0)
             stop(paste0("Samples (",paste(sName[!sName%in%colnames(D)],collapse=","),
                         ") provided in the sample meta information is not listed in ",strF))
-        D <- D[sName]
+        D <- D[,sName,drop=F]
     }
     if(!is.null(gID)){
         gID <- intersect(gID,rownames(D))
@@ -24,13 +24,20 @@ readData <- function(strF,sName=NULL,gID=NULL){
     
 }
 
-readQC <- function(strF){
+readQC <- function(strF,sName=NULL){
     qc <- read.table(strF,sep="\t",header=T,as.is=T,comment.char="",row.names=1,check.names=F,quote="")
     attr(qc,'oriNames') <- setNames(gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc)))))),
                                     colnames(qc))
     dimnames(qc) <- list(sapply(strsplit(rownames(qc),"_"),function(x)return(gsub(".genome.sorted$","",paste(x[-1],collapse="_")))),
                          attr(qc,'oriNames'))
-    qc <- qc[order(rownames(qc)),,drop=F]
+    if(!is.null(sName)){
+        if(sum(!sName%in%rownames(qc))>0)
+            stop(paste0("Samples (",paste(sName[!sName%in%rownames(qc)],collapse=","),
+                        ") provided in the sample meta information is not listed in ",strF))
+        qc <- qc[sName,,drop=F]
+    }
+    #qc <- qc[order(rownames(qc)),,drop=F]
+    
     return(qc)
 }
 

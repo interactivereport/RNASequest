@@ -61,7 +61,7 @@ if(!is.null(config$prj_path)){
 estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
 
 ## read alignment QC and plot alignment QC if alias exists ----
-qc <- readQC(paste0(config$prj_path,"/combine_rnaseqc/combined.metrics.tsv"))
+qc <- readQC(paste0(config$prj_path,"/combine_rnaseqc/combined.metrics.tsv"),rownames(meta))
 if(!is.null(config$sample_alias)){
     message("====== Plot alignment QC for alias ...")
     logTPM <- covariateRM(estCount,effeL,method=NULL,prior=config$count_prior)

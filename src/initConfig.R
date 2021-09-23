@@ -56,7 +56,7 @@ if(is.null(configTmp$sample_name))
 rownames(sInfo) <- sInfo[,configTmp$sample_name]
 sInfo <- sInfo[,apply(sInfo,2,function(x)return(sum(!is.na(x))>0))]
 
-qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
+qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"),rownames(sInfo))
 qc <- qc[,matchQCnames(qc,config$qc2meta),drop=F]
 meta <- merge(sInfo,qc,by="row.names",sort=F)
 rownames(meta) <- meta[,1]
@@ -79,9 +79,11 @@ gInfo <- getAnnotation(paste0(strPath,"/config.json"),config$genome_path)
 write.csv(gInfo,file=strGinfo)
 ## alignment QC plots ---------
 message("Plot alignment QC ...")
-estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
+estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"),
+                 rownames(sInfo))
 rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
-qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
+qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"),
+             rownames(sInfo))
 alignQC(estT,qc,strAlignQC,prioQC=config$qc2meta)
 ## gene length plots -----
 message("Plot gene length against expression ...")

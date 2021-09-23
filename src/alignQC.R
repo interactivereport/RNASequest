@@ -20,6 +20,7 @@ alignQC <- function(estT,qc,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,10
     selN <- c("Exonic_Rate","Intronic_Rate","Intergenic_Rate")
     if(sum(selN%in%colnames(qc))==length(selN)){
         D = melt(as.matrix(qc[,colnames(qc)%in%selN]))
+        D$Var1 <- factor(D$Var1,levels=rownames(qc))
         print(ggplot(D,aes(x=Var1,y=value,fill=Var2))+
                   geom_bar(position="stack",stat="identity")+
                   ylab("Fraction of Reads")+xlab("")+
@@ -37,7 +38,7 @@ alignQC <- function(estT,qc,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,10
         x <- sort(x,decreasing=T)
         return(sapply(topN,function(i)return(sum(x[1:i])/sum(x)*100)))
         }))[rownames(qc),,drop=F]
-    D <- cbind(sID=rownames(D),data.frame(D))
+    D <- cbind(sID=factor(rownames(D),levels=rownames(D)),data.frame(D))
     for(i in colnames(D)){
         if(i=="sID") next
         print(ggplot(D,aes_string(x="sID",y=i))+
@@ -69,7 +70,7 @@ alignQC <- function(estT,qc,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,10
     if(pdfW>8) print(p+theme(aspect.ratio=0.75))
     else print(p)
     ## all rest qc -----
-    qc <- cbind(sID=rownames(qc),qc)
+    qc <- cbind(sID=factor(rownames(qc),levels=rownames(qc)),qc)
     selQC <- colnames(qc)%in%prioQC
     for(i in c(colnames(qc)[selQC],colnames(qc)[!selQC])){
         if(!is.numeric(qc[1,i])) next
