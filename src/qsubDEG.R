@@ -40,8 +40,8 @@ module add R/3.5.1
 }
 qsubRM <- function(jID,allJOB=F){
     qJob <- tail(system("qstat",intern=T),-2)
-    nJob <- F
-    if(!is.null(qJob)){
+    nJob <- length(qJob)
+    if(!is.null(qJob) && length(qJob)>0){
         nJob<- sapply(strsplit(qJob," "),function(x){
             x <- x[nchar(x)>0]
             if(grepl(jID,x[3])){
