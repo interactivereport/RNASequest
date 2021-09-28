@@ -40,8 +40,9 @@ module add R/3.5.1
 }
 qsubRM <- function(jID,allJOB=F){
     qJob <- tail(system("qstat",intern=T),-2)
+    nJob <- F
     if(!is.null(qJob)){
-        qJob<- sapply(strsplit(qJob," "),function(x){
+        nJob<- sapply(strsplit(qJob," "),function(x){
             x <- x[nchar(x)>0]
             if(grepl(jID,x[3])){
                 if(x[5]=="Eqw" || allJOB){
@@ -54,7 +55,7 @@ qsubRM <- function(jID,allJOB=F){
             return(F)
         })
     }
-    return(sum(qJob))
+    return(sum(nJob))
 }
 qsubCheckStatus <- function(jID,strOut,qsubDEGsh,sID){
     message("----- Monitorring all submited DEG jobs ...")
