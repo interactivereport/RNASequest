@@ -97,7 +97,7 @@ qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL){
                        "Rscript ",strSrc,"qsubDEG.R ",strSrc," ",qsubDEGsrcFile," ",i,"\n"),
                 file=strQsub)
         if(is.null(badNodes)){system(paste("qsub",strQsub))}
-        else{system(paste0("qsub -l h='!(",paste(badNODEs,collapse="|"),")' ",strQsub))}
+        else{system(paste0("qsub -l h='!(",paste(badNodes,collapse="|"),")' ",strQsub))}
     }
     ix <- qsubCheckStatus(jID,strOut,qsubDEGsh,sID)
     if(sum(ix)>0 && reN<5)
@@ -111,7 +111,7 @@ getBadNodes <- function(sID,strOut){
         strLog <- paste0(strOut,i,".log")
         if(!file.exists(strLog)) next
         tmp <- readLines(strLog)
-        badNODEs <- c(badNODEs,tmp[1:(grep("end of HOST",tmp)[1]-1)])
+        badNODEs <- c(badNODEs,sapply(strsplit(tmp[1:(grep("end of HOST",tmp)[1]-1)]," "),head,1))
     }
     return(unique(badNODEs))
 }
