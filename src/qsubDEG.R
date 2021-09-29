@@ -117,6 +117,7 @@ getBadNodes <- function(sID,strOut){
 }
 
 if(length(args)>2 && !grepl("yml$",args[2])){
+    .libPaths(grep("home",.libPaths(),invert=T,value=T))
     suppressMessages(suppressWarnings(source(paste0(args[1],"QuickOmics_DEG.R"))))
     load(args[2])
     DEGs <- Batch_DEG(estCount, meta, comp_info[args[3],],core=core)
