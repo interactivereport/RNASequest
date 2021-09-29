@@ -58,7 +58,7 @@ qsubRM <- function(jID,allJOB=F){
     return(sum(nJob))
 }
 qsubCheckStatus <- function(jID,strOut,qsubDEGsh,sID){
-    message("----- Monitorring all submited DEG jobs ...")
+    message("----- Monitoring all submitted DEG jobs ...")
     ## check if any job not in good stat
     qsubRM(jID)
     reN <- 0
