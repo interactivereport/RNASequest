@@ -4,6 +4,8 @@ args = commandArgs(trailingOnly=T)
 if(length(args)<1){
     stop("A path to a RNAseq project downloaded from DNAnexus is required!")
 }
+library(data.table)
+
 ## initialization -----
 message("loading resource ...")
 strPath <- normalizePath(args[2])
@@ -49,8 +51,13 @@ studyInfo <- tryCatch(
              Study_Title=NULL)
     }
 )
-sInfo <- read.table(paste0(strPath,"/samplesheet.tsv"),sep="\t",
-                    header=T,as.is=T,skip=1,comment.char="")
+# Use data.table fread here - problem is if we strip the comment
+# line off sample sheet (for reordering for example), this will
+# no longer work. comment.char="#" doesn't seem to work for the 
+# NGSone file either
+sInfo <- data.frame(
+			fread(paste0(strPath,"/samplesheet.tsv")),
+				  stringsAsFactors=F)
 if(is.null(configTmp$sample_name))
     stop("sample_name needs to be defined in in config tmp (contact admin). Default is Sample_Name")
 rownames(sInfo) <- sInfo[,configTmp$sample_name]
