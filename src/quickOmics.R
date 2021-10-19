@@ -161,11 +161,11 @@ write.csv(data.frame(Name=ifelse(is.null(config$prj_title),
 ## finishing -----
 #system(paste0("cp ",config$output,"/",config$prj_name,"* "))
 message("=================================================\nResults are saved in ",config$output)
-system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_path))
+system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_test_folder))
 #message("-----> to check the results on QuickOmics, execute the following command on ngs server")
 #message("\t\tcp ",config$output,"/",config$prj_name,"* /srv/shiny-server/Quickomics/unlisted/.")
 #message("\t\t\t And then Please visit: http://ngs.biogen.com:3838/Quickomics/?unlisted=",config$prj_name)
-message("\n-----> Please visit: http://ngs.biogen.com:3838/Quickomics/?serverfile=",config$prj_name)
+message(paste0("\n-----> Please visit: ",sys_config$QuickOmics_test_link,config$prj_name))
 
 message("\nPowered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
 
