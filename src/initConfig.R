@@ -18,7 +18,7 @@ while(dir.exists(strOut)){
     ix <- ix+1
     strOut <- paste0(strPath,"/EA",gsub("\\-","",Sys.Date()),"_",ix)
 }
-if(length(args)>2 & dir.exists(args[3])) strOut <- normalizePath(args[3])
+if(length(args)>2 && dir.exists(args[3])) strOut <- normalizePath(args[3])
 
 source(paste0(args[1],"gtf.gz_to_gene_info.R"))
 source(paste0(args[1],"getAnnotation.R"))
@@ -93,7 +93,7 @@ qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"),
              rownames(sInfo))
 alignQC(estT,qc,strAlignQC,prioQC=config$qc2meta)
 ## gene length plots -----
-if(length(args)>2 & args[3]=="geneLength"){
+if(length(args)>2 && args[3]=="geneLength"){
     message("Plot gene length against expression ...")
     estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
     estC <- readData(paste0(strPath,"/combine_rsem_outputs/genes.estcount_table.txt"))
