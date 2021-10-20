@@ -36,7 +36,7 @@ comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
 ## EApub: set meta factors ------
 meta <- metaFactor(meta,config$sample_factor,unique(comp_info$Group_name))
 
-# EApub: use first group name in comparison file for group information -----
+## EApub: use first group name in comparison file for group information -----
 if(is.null(config$sample_group) || length(config$sample_group)==0){
     config$sample_group <- comp_info[1,"Group_name"]
 }

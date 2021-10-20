@@ -26,6 +26,18 @@ metaFactor <- function(meta,strMetaFactor,addFactor=NULL){
         oneMetaUnique <- unique(meta[,i])
         if(sum(!oneMetaUnique%in%metaFactor[[i]])>0){
             warning(paste0(paste(oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]],collapse=","),
+                           " from ",i," are not defined in meta factor file"))
+            message("Please update metaFactor file to avoid this warning message")
+            metaFactor[[i]] <- c(metaFactor[[i]],oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]])
+        }
+        if(sum(!metaFactor[[i]]%in%oneMetaUnique)>0){
+            warning(paste0(paste(metaFactor[[i]][!metaFactor[[i]]%in%oneMetaUnique],collapse=","),
+                           " from ",i," are missing from sample file"))
+            message("Please update metaFactor file to avoid this warning message")
+            metaFactor[[i]] <- metaFactor[[i]][metaFactor[[i]]%in%oneMetaUnique]
+        }
+        if(sum(!oneMetaUnique%in%metaFactor[[i]])>0){
+            warning(paste0(paste(oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]],collapse=","),
                         " from ",i," are not defined in meta factor file"))
             message("Please update metaFactor file to avoid this warning message")
             metaFactor[[i]] <- c(metaFactor[[i]],oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]])

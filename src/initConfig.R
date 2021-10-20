@@ -93,17 +93,19 @@ qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"),
              rownames(sInfo))
 alignQC(estT,qc,strAlignQC,prioQC=config$qc2meta)
 ## gene length plots -----
-message("Plot gene length against expression ...")
-estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
-estC <- readData(paste0(strPath,"/combine_rsem_outputs/genes.estcount_table.txt"))
-effL <- readData(paste0(strPath,"/combine_rsem_outputs/genes.effective_length.txt"))
-pdf(strGlength,width=9)
-par(mar=c(3,3,2,0.5)+0.1,mgp=c(1.1,0.2,0),tcl=-0.1)
-lengthQC(estT,gInfo[rownames(estT),"Length"],main="TPM")
-lengthQC(estC,gInfo[rownames(estC),"Length"],main="est Count")
-lengthQC(estT,effL[rownames(estT),],main="TPM")
-lengthQC(estC,effL[rownames(estC),],main="est Count")
-a <- dev.off()
+if(length(args)>2 & args[3]=="geneLength"){
+    message("Plot gene length against expression ...")
+    estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
+    estC <- readData(paste0(strPath,"/combine_rsem_outputs/genes.estcount_table.txt"))
+    effL <- readData(paste0(strPath,"/combine_rsem_outputs/genes.effective_length.txt"))
+    pdf(strGlength,width=9)
+    par(mar=c(3,3,2,0.5)+0.1,mgp=c(1.1,0.2,0),tcl=-0.1)
+    lengthQC(estT,gInfo[rownames(estT),"Length"],main="TPM")
+    lengthQC(estC,gInfo[rownames(estC),"Length"],main="est Count")
+    lengthQC(estT,effL[rownames(estT),],main="TPM")
+    lengthQC(estC,effL[rownames(estC),],main="est Count")
+    a <- dev.off()
+}
 
 ## create an empty comparison file -------
 message("Create empty comparison template ...")
