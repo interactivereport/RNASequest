@@ -23,26 +23,26 @@ source(paste0(args[1],"metaFactor.R"))
 
 checkConfig(config)
 
-## read and check the meta information -----
+## EApub: read and check the meta information -----
 message("====== reading sample meta information ...")
 meta <- read.csv(config$sample_meta,check.names=F,as.is=T)
 checkConsistConfigMeta(config,meta)
 rownames(meta) <- meta[,config$sample_name]
 
-## read and check the comparison file ------
+## EApub: read and check the comparison file ------
 message("====== reading comparison information ...")
 comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
                                  meta,config$comparison_file)
-## set meta factors ------
+## EApub: set meta factors ------
 meta <- metaFactor(meta,config$sample_factor,unique(comp_info$Group_name))
 
-# use first group name in comparison file for group information -----
+# EApub: use first group name in comparison file for group information -----
 if(is.null(config$sample_group) || length(config$sample_group)==0){
     config$sample_group <- comp_info[1,"Group_name"]
 }
 colnames(meta) <- gsub("group","group.org",colnames(meta))
 meta <- cbind(group=apply(meta[,config$sample_group,drop=F],1,function(x)return(paste(x,sep="."))),meta)
-## gene definition file ---------
+## EApub if: gene definition file ---------
 message("====== reading gene annotation ...")
 if(!is.null(config$gene_annotation)){
     gInfo <- read.csv(config$gene_annotation,row.names=1,as.is=T)
@@ -53,7 +53,7 @@ if(!is.null(config$gene_annotation)){
                         Biotype='unknown')
 }
 
-## read the gene quantification input ----
+## EApub if: read the gene quantification input ----
 message("====== reading gene quantification ...")
 estCount <- effeL <- logTPM <- yaxisLab <- NULL
 if(!is.null(config$prj_path)){
@@ -85,7 +85,7 @@ if(!is.null(estCount)) estCount <- estCount[,rownames(meta)]
 if(!is.null(effeL)) effeL <- effeL[,rownames(meta)]
 estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
 
-## covariates removal ----
+## EApub if: covariates removal ----
 message("====== adjusting covariates for visualization ...")
 if(!is.null(estCount) && !is.null(effeL)){
     if(is.null(config$covariates_adjust)){
@@ -104,12 +104,12 @@ if(is.null(logTPM)){
     stop("Gene quantification is missing, please provide either raw counts with effective length or TPM")
 }
 logTPM <- logTPM[rownames(estCount),rownames(meta)]
-## sample alias ------
+## EApub: sample alias ------
 if(!is.null(config$sample_alias)){
     rownames(meta) <- colnames(logTPM) <- colnames(estCount) <- meta[,config$sample_alias]
 }
 saveRDS(estCount,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
-## comparison -----------
+## EApub else: comparison -----------
 message("====== Starting DEG analyses ...")
 if(!is.null(config$qsub) && config$qsub){
     DEGs <- qsubDEG(estCount,meta,comp_info,config$output,args[1],core=config$core)
@@ -120,7 +120,7 @@ message("Formating the DEG results")
 compRes <- formatQuickOmicsResult(DEGs,logTPM,meta[,"group"],gInfo)
 data_results <- compRes$Dw
 results_long <- compRes$Dl
-## produce the network for quickOmics ----------
+## EApub: produce the network for quickOmics ----------
 message("====== gene network generation ...")
 network <- getNetwork(logTPM,
                       cor_cutoff=config$gene_network_cor_cutoff,
@@ -130,7 +130,7 @@ network <- getNetwork(logTPM,
                       edge_min=as.numeric(config$gene_network_min_edge),
                       core=config$core)
 save(network,file=paste0(config$output,"/",config$prj_name,"_network.RData"))
-## save the R object for quickOmics--------
+## EApub: save the R object for quickOmics--------
 message("====== saving QuickOmics object ...")
 data_wide <- logTPM
 data_long <- melt(as.matrix(logTPM))

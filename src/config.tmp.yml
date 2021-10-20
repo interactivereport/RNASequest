@@ -63,6 +63,15 @@ gene_network_p_cutoff: 0.05
 gene_network_max_edge: 2e6
 gene_network_min_edge: 2e3
 
+# ====== This section for ShinyOne project manager =========
+shinyOne_Description: 
+shinyOne_Disease_Model:  #e.g. AD, ALS
+shinyOne_Biological_System:  #e.g. Brain, Heart
+shinyOne_Sample_Type:   #e.g. Blood, Cell
+shinyOne_Technology_Platform: RNA-Seq
+shinyOne_Data_Source: Internal
+shinyOne_Data_Cleaning:
+
 # Please do NOT use the following (under construction) ------------
 # if the above DNAnexus project folder is not available, please provide the following:
 # the following will be used only if the DNAnexus prj_path is not available
