@@ -26,22 +26,103 @@ shinyOneData[["URL"]] <- paste0(sys_config$QuiclOmics_publish_link,config$prj_na
 shinyOneCMD <- paste0("curl -s -k -X POST -d 'data={",
                       paste(paste0('"',names(shinyOneData),'": "',shinyOneData,'"'),collapse = ", "),
                       "}' '",sys_config$shinyApp,"api_add_project.php?api_key=lnpJMJ5ClbuHCylWqfBY8BoxxdrpU0'")
-res <- system(shinyOneCMD,intern=T)
-if(!(grepl("Status",res) && grepl("ID",res))){
+# for real job
+#res <- system(shinyOneCMD,intern=T)
+# debug
+res <- "{\"Status\":true,\"ID\":148}"
+
+shinyMsg <- tryCatch({
+    rjson::fromJSON(res)
+},error=function(eMsg){
     stop(paste0(paste(res,collapse="\n"),
                 "\nPlease contact Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]"))
-}
-shinyMsg <- rjson::fromJSON(res)
+})
 if(!shinyMsg$Status){
     stop(paste0(paste(paste(names(shinyMsg),shinyMsg,sep=":"),collapse="\n"),
                 "\nPlease contact Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]"))
 }
 system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_test_folder))
 
-
 message("=================================================\nShinyOne access: ",
         sys_config$shinyApp,"app_project_review.php?ID=",shinyMsg$ID)
 message("\nPowered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
 
+
+
+
+
+
+## create publish folders --------
+strOut <- paste0(config$output,"/publish/")
+strData <- paste0(strOut,"data/")
+system(paste("mkdir -p",strData))
+
+## copy raw DNAnexus files (counts and effective length)----
+system(paste0("mkdir -p ",strData,"combine_rsem_outputs"))
+system(paste0("cp ",config$prj_path,"/combine_rsem_outputs/genes.estcount_table.txt ",strData,"combine_rsem_outputs/."))
+system(paste0("cp ",config$prj_path,"/combine_rsem_outputs/genes.effective_length.txt ",strData,"combine_rsem_outputs/."))
+
+## readin process script -----
+runScript <- readLines(paste0(args[1],"quickOmics.R"))
+
+## create utility functions -----
+system(paste0("echo '' > ",strPath,"utility.R"))
+for(one in sapply(strsplit(grep("^source",runScript,value=T),"\"|\'"),function(x)return(grep(".R$",x,value=T)))){
+    if(grepl("qsub",one)) next
+    system(paste0("cat ",args[1],one," >> ",strPath,"utility.R"))
+}
+
+## write the process script for EApub sections----
+secIndex <- grep("## .*-----$",runScript)
+secSections <- data.frame(start=secIndex,end=c(secIndex[-1]-1,length(runScript)))
+
+pubScript <- unlist(apply(secSections,1,function(x){
+    oneScript <- ""
+    if(grepl("^## EApub",runScript[x[1]])){
+        oneScript <- runScript[x[1]:x[2]]
+    }
+    return(oneScript)
+}))
+
+usedConfig <- unique(unlist(sapply(pubScript,function(oneScript){
+    return(trimws(sapply(strsplit(strsplit(oneScript,"config\\$")[[1]][-1],",|)|]| "),head,1)))
+})))
+
+
+
+
+
+pubScript <- apply(secSections,1,function(x){
+    s <- x[1]
+    e <- x[2]
+    oneScript <- ""
+    if(grepl("^## EApub",runScript[s])){
+        for(i in s:e){
+            message(i)
+            if(nchar(runScript[i])>3 && grepl("config\\$",runScript[i])){
+                for(one in trimws(sapply(strsplit(strsplit(runScript[i],"config\\$")[[1]][-1],",|)|]| "),head,1))){
+                    message("\t",one)
+                    if(is.null(config[[one]])){
+                        newV <- "NULL"
+                    }else if(file.exists(config[[one]])){
+                        if(!file.exists(paste0(strData,basename(config[[one]])))){
+                            system(paste("cp",config[[one]],strData))
+                        }
+                        newV <- paste0('"data/',basename(config[[one]]),'"')
+                    }else{
+                        newV <- paste0('"',config[[one]],'"')
+                    }
+                    runScript[i] <- gsub(paste0("config\\$",one),
+                                         newV,
+                                         runScript[i])
+                }
+            }
+            oneScript <- c(oneScript,runScript[i])
+        }
+    }
+    return(oneScript)
+})
+cat(paste(c('source("utility.R")',unlist(pubScript)),collapse="\n"),
+    file=paste0(strOut,"process.R"))
 
 
