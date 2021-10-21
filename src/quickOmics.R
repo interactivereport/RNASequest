@@ -2,6 +2,9 @@
 rm(list=ls())
 .libPaths(grep("home",.libPaths(),invert=T,value=T))
 args = commandArgs(trailingOnly=T)
+## please note: the command section started with EApub is a indicator this section of code will be published by EApub
+## if/else right after indicating which section of code will be included,
+## thus such section will only contain one pair of if/else
 ## init -----
 if(length(args)<2){
     message("An example config can be found: /camhpc/ngs/projects/TST11589/dnanexus/20210426220540_Zhengyu.Ouyang/config.yml")
@@ -82,12 +85,13 @@ if(!is.null(config$prj_path)){
         yaxisLab <- paste0("log2(TPM+",config$count_prior,")")
     }
 }
+## EApub: process gene quantification -----
 checkSampleName(rownames(meta),colnames(estCount))
 if(!is.null(estCount)) estCount <- estCount[,rownames(meta)]
 if(!is.null(effeL)) effeL <- effeL[,rownames(meta)]
 estCount <- estCount[apply(estCount,1,function(x)return(sum(x>=config$min_count)))>=config$min_sample,]
 
-## EApub if: covariates removal ----
+## EApub: covariates removal ----
 message("====== adjusting covariates for visualization ...")
 if(!is.null(estCount) && !is.null(effeL)){
     if(is.null(config$covariates_adjust)){
@@ -100,7 +104,7 @@ if(!is.null(estCount) && !is.null(effeL)){
         yaxisLab <- paste0("log2(estTPM+",config$count_prior,")")
     }
     logTPM <- covariateRM(estCount,effeL,batchX=batchX,method='limma',
-                          prior=config$count_prio)
+                          prior=config$count_prior)
 }
 if(is.null(logTPM)){
     stop("Gene quantification is missing, please provide either raw counts with effective length or TPM")
