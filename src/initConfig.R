@@ -42,15 +42,10 @@ message("Extracting effective length ...")
 a <- getEffectLength(strPath)
 ## format meta information ----
 message("Formatting the sample meta information ...")
-studyInfo <- tryCatch(
-    {
-        rjson::fromJSON(gsub('^.','',readLines(paste0(strPath,"/samplesheet.tsv"),n=1)))
-    },
-    error=function(cond){
-        list(Sample_count=NA,#as.numeric(gsub('#Sample number: ','',readLines(paste0(strPath,"/samplesheet.tsv"),n=1))),
-             Study_Title=NULL)
-    }
-)
+pInfo <- list()
+if(file.exists(paste0(strPath,"/samplesheet.json")))
+    pInfo <- rjson::fromJSON(file=paste0(strPath,"/samplesheet.json"))
+
 # Use data.table fread here - problem is if we strip the comment
 # line off sample sheet (for reordering for example), this will
 # no longer work. comment.char="#" doesn't seem to work for the 
@@ -124,9 +119,9 @@ cat(paste(comTitle,collapse=","),"\n",sep="",file=strComp)
 ## generate a config file ----------
 configTmp <- readLines(paste0(args[1],"config.tmp.yml"))
 configTmp <- gsub("initPrjName",getProjectID(paste0(strPath,"/config.json")),configTmp)
-configTmp <- gsub("initPrjTitle",ifelse(is.null(studyInfo$Study_Title),
+configTmp <- gsub("initPrjTitle",ifelse(is.null(pInfo$Project$Study_Title),
                                         getProjectID(paste0(strPath,"/config.json")),
-                                        studyInfo$Study_Title),configTmp)
+                                        pInfo$Project$Study_Title),configTmp)
 configTmp <- gsub("initPrjPath",strPath,configTmp)
 configTmp <- gsub("initPrjMeta",strMeta,configTmp)
 configTmp <- gsub("initPrjFactor",strMetaFactor,configTmp)
