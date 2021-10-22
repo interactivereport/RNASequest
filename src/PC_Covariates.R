@@ -114,7 +114,7 @@ plot_covariate_PC<-function(res_file, pc, var, out_file, width=10, height=8, add
   selVar=res$selVar_All
   if (!(var %in% names(data.all))) {cat("Covariate ", var, " not in MetaData. Please check the spelling of covariate.\n", sep=""); return(NULL)}
   if (!(pc %in% names(data.all))) {cat(pc, " not in principle component scores. Please check the spelling.\n", sep=""); return(NULL)}
-  Num_names=names(select_if(data.all, is.numeric))
+  Num_names=names(dplyr::select_if(data.all, is.numeric))
   if (var %in% Num_names) { #numeric covariate
     p<-ggplot(data.all, aes(x=!!sym(var), y=!!sym(pc)) )+geom_point()+
       stat_summary(fun.data= mean_cl_normal) + geom_smooth(method='lm')+theme_half_open()
@@ -152,7 +152,7 @@ Compute_Corr_Anova<-function(exp, meta, PC_cutoff=5) {
   cor_mat=NULL
   anova_results=NULL
   
-  meta_num=select_if(meta, is.numeric)
+  meta_num=dplyr::select_if(meta, is.numeric)
   if (ncol(meta_num)>0) {
     cov_cor <- corr.test(scores[, 1:Npc, drop=F],
                          data.matrix(meta_num),
