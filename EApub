@@ -3,7 +3,8 @@
 
 if [[ -n "$1" ]]; then
     source /etc/profile.d/modules_bash.sh
-    module add R/3.5.1
+    module purge
+    module load R/3.5.1
     
     Rscript $(dirname $0)/src/publish.R $(dirname $0)/src/ $@
 else
