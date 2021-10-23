@@ -107,7 +107,7 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   }
   S_meta[,group_var] = relevel(S_meta[,group_var], ref = ctrl_group)
   
-  if (!Covariate_levels =="") {
+  if (str_detect(model, "\\*|\\:") && !Covariate_levels =="") {
     Cov_levels = trimws(strsplit(Covariate_levels, ";")[[1]])
     Cov_levels_vec = setNames(trimws(sapply(strsplit(Cov_levels,":"),tail,1)),trimws(sapply(strsplit(Cov_levels,":"),head,1)))
     for (n in 1: length(Cov_levels_vec)) {
@@ -174,7 +174,7 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
     }
   }
   
-  if (!Covariate_levels =="") {
+  if (str_detect(model, "\\*|\\:") && !Covariate_levels =="") {
     Cov_levels = trimws(strsplit(Covariate_levels, ";")[[1]])
     Cov_levels_vec = setNames(trimws(sapply(strsplit(Cov_levels,":"),tail,1)),trimws(sapply(strsplit(Cov_levels,":"),head,1)))
     for (n in 1: length(Cov_levels_vec)) {
@@ -252,6 +252,14 @@ checkComparisonInfo <- function(comp_info, meta, comp_info_file) {
     if(!comp_info[i,"Analysis_method"]%in%c("DESeq2","limma")){
       stop(paste(comp_info[i,"Analysis_method"],"for comparison",i,
                  "is NOT a valide 'Analysis_method' (DESeq2 or limma) in comparison file."))
+    }
+    if(str_detect(comp_info[i,"Group_test"], '-')){
+      stop(paste("'Group_test' entry", comp_info[i,"Group_test"],"for comparison",i,
+                 "contains '-'. It is recommended to use only letters, numbers, and delimiters '_' or '.', as these are safe characters for column names in R."))
+    }
+    if(str_detect(comp_info[i,"Group_ctrl"], '-')){
+      stop(paste("'Group_ctrl' entry", comp_info[i,"Group_ctrl"],"for comparison",i,
+                 "contains '-'. It is recommended to use only letters, numbers, and delimiters '_' or '.', as these are safe characters for column names in R."))
     }
   }
   comp_info$LFC_cutoff <- as.numeric(comp_info$LFC_cutoff)
