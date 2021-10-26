@@ -83,10 +83,13 @@ write.csv(gInfo,file=strGinfo)
 message("Plot alignment QC ...")
 estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"),
                  rownames(sInfo))
+estC <- readData(paste0(strPath,"/combine_rsem_outputs/genes.estcount_table.txt"),
+                 rownames(sInfo))
 rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
+rownames(estC) <- paste(rownames(estC),gInfo[rownames(estC),"Gene.Name"],sep="|")
 qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"),
              rownames(sInfo))
-alignQC(estT,qc,strAlignQC,prioQC=config$qc2meta)
+alignQC(estT,qc,strAlignQC,prioQC=config$qc2meta,estC=estC)
 ## gene length plots -----
 if(length(args)>2 && args[3]=="geneLength"){
     message("Plot gene length against expression ...")

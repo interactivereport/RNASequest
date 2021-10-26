@@ -1,6 +1,6 @@
 suppressWarnings(suppressMessages(require(ggplot2)))
 suppressWarnings(suppressMessages(require(reshape2)))
-alignQC <- function(estT,qc,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,100
+alignQC <- function(estT,qc,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL,estC=NULL){#,50,100
     #estT <- readData(paste0(strPath,"/combine_rsem_outputs/genes.tpm_table.txt"))
     #rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
     #qc <- readQC(paste0(strPath,"/combine_rnaseqc/combined.metrics.tsv"))
@@ -51,24 +51,17 @@ alignQC <- function(estT,qc,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,10
     }
     ## union top genes across samples ------
     topUnion <- 30
-    topG <- unique(as.vector(apply(estT,2,function(x)return(names(sort(x,decreasing=T)[1:topUnion])))))
-    while(length(topG)>90){
-        topUnion <- topUnion-1
-        topG <- unique(as.vector(apply(estT,2,function(x)return(names(sort(x,decreasing=T)[1:topUnion])))))
-    }
-    estTsum <- apply(estT,2,sum)
-    D <- apply(estT[topG,],1,function(x)return(100*x/estTsum))
-    D <- melt(D[,order(apply(D,2,median))])
-    write.csv(D,file=gsub("pdf","unionTop.csv",strPDF),row.names=F)
-    p <- ggplot(D,aes(x=value,y=Var2))+
-        geom_point(color="grey50",alpha=0.4,size=1)+
-        geom_boxplot(color="#ff7f00",outlier.shape = NA,alpha=0)+
-        xlab("% of total TPM")+ylab("")+
-        ggtitle(paste("Union of top",topUnion,"expressed genes"))+
-        theme_minimal()+
-        theme(axis.text.y=element_text(size=12-(length(topG)-10)/10))
+    p <- plotTopGeneRatio(estT,30)
+    write.csv(p$data,file=gsub("pdf","unionTop.TPM.csv",strPDF),row.names=F)
     if(pdfW>8) print(p+theme(aspect.ratio=0.75))
     else print(p)
+    # same genes for counts
+    if(!is.null(estC)){
+        pC <- plotTopGeneRatio(estC,30,selG=levels(p$data[,2]))+
+            xlab("% of total counts")+ggtitle(p$labels$title)
+        if(pdfW>8) print(pC+theme(aspect.ratio=0.75))
+        else print(pC)
+    }
     ## all rest qc -----
     qc <- cbind(sID=factor(rownames(qc),levels=rownames(qc)),qc)
     selQC <- colnames(qc)%in%prioQC
@@ -84,6 +77,29 @@ alignQC <- function(estT,qc,strPDF,prioQC,topN=c(1,10,30),sIDalias=NULL){#,50,10
     }
     ## -----
     a <- dev.off()
+}
+
+plotTopGeneRatio <- function(X,topN,maxN=90,selG=NULL){
+    selLevel <- selG
+    if(is.null(selG)){
+        selG <- unique(as.vector(apply(X,2,function(x)return(names(sort(x,decreasing=T)[1:topN])))))
+        while(length(selG)>maxN){
+            topN <- topN-1
+            selG <- unique(as.vector(apply(X,2,function(x)return(names(sort(x,decreasing=T)[1:topN])))))
+        }
+    }
+    Xsum <- apply(X,2,sum)
+    D <- apply(X[selG,],1,function(x)return(100*x/Xsum))
+    D <- reshape2::melt(D[,order(apply(D,2,median))])
+    if(!is.null(selLevel)) D$Var2 <- factor(D$Var2,selLevel)
+    p <- ggplot(D,aes(x=value,y=Var2))+
+        geom_point(color="grey50",alpha=0.4,size=1)+
+        geom_boxplot(color="#ff7f00",outlier.shape = NA,alpha=0)+
+        xlab("% of total TPM")+ylab("")+
+        ggtitle(paste("Union of top",topN,"expressed genes"))+
+        theme_minimal()+
+        theme(axis.text.y=element_text(size=12-(length(selG)-10)/10))
+    return(p)
 }
 
 #config <- yaml::read_yaml(paste0("/home/zouyang/projects/quickOmics/src/sys.yml"))

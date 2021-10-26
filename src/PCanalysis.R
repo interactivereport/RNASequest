@@ -67,11 +67,14 @@ if(!is.null(config$sample_alias)){
     logTPM <- covariateRM(estCount,effeL,method=NULL,prior=config$count_prior)
     estT <- 2^logTPM-config$count_prior
     rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
+    estC <- estCount
+    rownames(estC) <- paste(rownames(estC),gInfo[rownames(estC),"Gene.Name"],sep="|")
     alignQC(estT,
             qc,
             paste0(config$output,"/alignQC.alias.pdf"),
             prioQC=sys_config$qc2meta,
-            sIDalias=setNames(meta[,config$sample_alias],rownames(meta)))
+            sIDalias=setNames(meta[,config$sample_alias],rownames(meta)),
+            estC=estC)
 }
 ## select covariates for analysis-------
 selCov <- unique(c(config$covariates_check,config$covariates_adjust))
@@ -103,17 +106,21 @@ if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
                               prior=config$count_prior))
         estT <- 2^logTPM-config$count_prior
         rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
+        estC <- estCount
+        rownames(estC) <- paste(rownames(estC),gInfo[rownames(estC),"Gene.Name"],sep="|")
         if(!is.null(config$sample_alias))
             alignQC(estT,
                     qc,
                     paste0(config$output,"/Adjusted.alignQC.pdf"),
                     prioQC=sys_config$qc2meta,
-                    sIDalias=setNames(meta[,config$sample_alias],rownames(meta)))
+                    sIDalias=setNames(meta[,config$sample_alias],rownames(meta)),
+                    estC=estC)
         else
             alignQC(estT,
                     qc,
                     paste0(config$output,"/Adjusted.alignQC.pdf"),
-                    prioQC=sys_config$qc2meta)
+                    prioQC=sys_config$qc2meta,
+                    estC=estC)
         res <- suppressMessages(suppressWarnings(
             Covariate_PC_Analysis(logTPM,meta,
                                   out_prefix=paste0(config$output,"/Adjusted"),
