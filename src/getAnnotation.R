@@ -40,5 +40,10 @@ getSpecies <- function(strF){
 }
 getProjectID <- function(strF){
     gConfig <- rjson::fromJSON(file=strF)
-    return(gConfig$global_params$internal_project_id)
+    pID <- gConfig$global_params$internal_project_id
+    if(!is.null(pID)) return(pID)
+    for(one in gConfig$execution$manifest){
+        pID <- c(pID,one$project)
+    }
+    return(paste(unique(pID),collapse="_"))
 }
