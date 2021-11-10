@@ -30,16 +30,12 @@ source(paste0(args[1],"metaFactor.R"))
 config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 configTmp <- yaml::read_yaml(paste0(args[1],"config.tmp.yml"))
 
-system(paste("mkdir -p",strOut))
 strMeta <- paste0(strOut,"/sampleMeta.csv")
 strMetaFactor <- paste0(strOut,"/sampleMetaFactor.yml")
 strGinfo <- paste0(strOut,"/geneAnnotation.csv")
 strComp <- paste0(strOut,"/compareInfo.csv")
 strAlignQC <- paste0(strOut,"/alignQC.pdf")
 strGlength <- paste0(strOut,"/geneLength.pdf")
-## extract effective length ----------
-message("Extracting effective length ...")
-a <- getEffectLength(strPath)
 ## format meta information ----
 message("Formatting the sample meta information ...")
 pInfo <- list()
@@ -74,10 +70,14 @@ covariates <- c()
 for(i in setdiff(colnames(meta),config$notCovariates)){
     if(length(unique(meta[,i]))>1) covariates <- c(covariates,i)
 }
+## extract effective length ----------
+message("Extracting effective length ...")
+a <- getEffectLength(strPath)
 
 ## gene annotation file ----
 message("Create gene annotation ...")
 gInfo <- getAnnotation(paste0(strPath,"/config.json"),config$genome_path)
+system(paste("mkdir -p",strOut))
 write.csv(gInfo,file=strGinfo)
 ## alignment QC plots ---------
 message("Plot alignment QC ...")

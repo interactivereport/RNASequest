@@ -33,7 +33,7 @@ readQC <- function(strF,sName=NULL){
     if(!is.null(sName)){
         if(sum(!sName%in%rownames(qc))>0)
             stop(paste0("Samples (",paste(sName[!sName%in%rownames(qc)],collapse=","),
-                        ") provided in the sample meta information is not listed in ",strF))
+                        ") provided in the sample sheet is not listed in ",strF))
         qc <- qc[sName,,drop=F]
     }
     #qc <- qc[order(rownames(qc)),,drop=F]
