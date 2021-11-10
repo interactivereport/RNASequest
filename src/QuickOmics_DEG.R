@@ -253,13 +253,13 @@ checkComparisonInfo <- function(comp_info, meta, comp_info_file) {
       stop(paste(comp_info[i,"Analysis_method"],"for comparison",i,
                  "is NOT a valide 'Analysis_method' (DESeq2 or limma) in comparison file."))
     }
-    if(str_detect(comp_info[i,"Group_test"], '-')){
+    if(!grepl("^[A-Zza-z0-9._]+$", comp_info[i,"Group_test"])){
       stop(paste("'Group_test' entry", comp_info[i,"Group_test"],"for comparison",i,
-                 "contains '-'. It is recommended to use only letters, numbers, and delimiters '_' or '.', as these are safe characters for column names in R."))
+                 "contains characters other than letters, numbers, and delimiters '_' or '.'. Please use only letters, numbers, '_' or '.', as these are safe characters for column names in R."))
     }
-    if(str_detect(comp_info[i,"Group_ctrl"], '-')){
+    if(!grepl("^[A-Zza-z0-9._]+$", comp_info[i,"Group_ctrl"])){
       stop(paste("'Group_ctrl' entry", comp_info[i,"Group_ctrl"],"for comparison",i,
-                 "contains '-'. It is recommended to use only letters, numbers, and delimiters '_' or '.', as these are safe characters for column names in R."))
+                 "contains characters other than letters, numbers, and delimiters '_' or '.'. Please use only letters, numbers, '_' or '.', as these are safe characters for column names in R."))
     }
   }
   comp_info$LFC_cutoff <- as.numeric(comp_info$LFC_cutoff)
