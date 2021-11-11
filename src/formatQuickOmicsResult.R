@@ -6,7 +6,7 @@ formatQuickOmicsResult <- function(DEGs,logTPM,grp,gInfo){
         if(sum(grp==i)<1){
             next
             message("===== warning: no sample for ",i)
-        }else if(sum(grp==i)<1){
+        }else if(sum(grp==i)==1){
             tmp <- cbind(logTPM[,grp==i],rep(0,nrow(logTPM)))
             colnames(tmp) <- paste(i,c("Mean","sd"),sep="_")
             Dw <- cbind(Dw,tmp)
