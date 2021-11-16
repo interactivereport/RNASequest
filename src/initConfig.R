@@ -1,10 +1,45 @@
-rm(list=ls())
-.libPaths(grep("home",.libPaths(),invert=T,value=T))
+
 args = commandArgs(trailingOnly=T)
-if(length(args)<1){
+if(length(args)<2){
     stop("A path to a RNAseq project downloaded from DNAnexus is required!")
 }
-library(data.table)
+## initialization -----
+message("loading resource ...")
+source(paste0(args[1],"utility.R"),chdir=T)
+configTmp <- yaml::read_yaml(paste0(args[1],"config.tmp.yml"))
+sysConfig <- yaml::read_yaml(paste0(args[1],"sys.yml"))
+pInfo <- checkInputDir(strInput,sysConfig$genome_path)
+
+
+
+
+
+
+## generate a config file ----------
+configTmp <- readLines(paste0(args[1],"config.tmp.yml"))
+configTmp <- gsub("initPrjName",getProjectID(paste0(strPath,"/config.json")),configTmp)
+configTmp <- gsub("initPrjTitle",ifelse(is.null(pInfo$Project$Study_Title),
+                                        getProjectID(paste0(strPath,"/config.json")),
+                                        pInfo$Project$Study_Title),configTmp)
+configTmp <- gsub("initPrjPath",strPath,configTmp)
+configTmp <- gsub("initPrjMeta",strMeta,configTmp)
+configTmp <- gsub("initPrjFactor",strMetaFactor,configTmp)
+configTmp <- gsub("initSpecies",getSpecies(paste0(strPath,"/config.json")),configTmp)
+configTmp <- gsub("initGeneAnnotation",strGinfo,configTmp)
+configTmp <- gsub("initOutput",strOut,configTmp)
+configTmp <- gsub("initCovariates",paste0("[",paste(covariates,collapse=","),"]"),configTmp)
+configTmp <- gsub("initPrjComp",strComp,configTmp)
+
+cat(paste(configTmp,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
+
+
+
+
+
+
+
+
+
 
 ## initialization -----
 message("loading resource ...")

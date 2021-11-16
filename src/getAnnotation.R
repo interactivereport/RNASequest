@@ -1,11 +1,6 @@
 getAnnotation <- function(strF,strPath=NULL){
     if(grepl("json$",strF)){
         gConfig <- rjson::fromJSON(file=strF)
-        #gtfPath <- paste0(strPath,"/rnaseq/",
-        #                  gConfig$global_params$reference$species,
-        #                  "/",gConfig$global_params$reference$version,
-        #                  "/",gConfig$global_params$reference$version,
-        #                  ".transcript.gtf.gz")
         gtfPath <- list.files(paste0(strPath,"/rnaseq/",
                                      gConfig$global_params$reference$species,
                                      "/",gConfig$global_params$reference$version),

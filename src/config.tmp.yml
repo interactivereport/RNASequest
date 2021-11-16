@@ -1,7 +1,10 @@
 # ====== The project information ==========
 # prj_name: will be used as a part of the output file names, and 
 #           project information in QuickOmics, which can be changed in output CSV file
-# prj_path: RNAseq project folder (DNAnexus folder), which contains config.json; genes.estcount_table.txt
+# prj_counts: 
+# prj_effLength: 
+# prj_seqQC: 
+# prj_TPM: 
 # DA_file_outpath: folder to store the data files used for DiseaseAtlas project import. 
 # sample_meta: sample definition file, meta data, rows as samples, columns as phenotypes
 # sample_name: the column name in the above table which contains the sample name used for the count matrix
@@ -16,7 +19,10 @@
 # output: the result folder
 prj_name: initPrjName
 prj_title: initPrjTitle
-prj_path: initPrjPath
+prj_counts: initCounts
+prj_effLength: initEffLength
+prj_seqQC: initSeqQC
+prj_TPM: initTPM
 sample_meta: initPrjMeta
 sample_factor: initPrjFactor
 sample_name: Sample_Name
@@ -72,19 +78,4 @@ shinyOne_Technology_Platform: RNA-Seq
 shinyOne_Data_Source: Internal
 shinyOne_Data_Cleaning:
 
-# Please do NOT use the following (under construction) ------------
-# if the above DNAnexus project folder is not available, please provide the following:
-# the following will be used only if the DNAnexus prj_path is not available
-# prj_counts: raw/estimated count matrix, genes as rows, samples as columns
-# exp_effective_length: If the effective length is not available, global batches/variants removal will not be performed
-# exp_tpm: if the effective length is not available, please provide TPM (ignored if effective length is provided)
-# species: if no species or version is known, the row names of counts will be used as gene symbol
-# gene_annotation: The gene annotation file with 
-#           the first column contains unique ids which are consistent with rows in expression matrix, 
-#           the second column contains the gene symbols used in the QuickOmics
-#           the thrid column contains gene type (can be all 'unknown')
-#           the other columns are optional and will be stored into the QuickOmics
-exp_counts: 
-exp_effective_length: 
-exp_tpm:
-# ========
+
