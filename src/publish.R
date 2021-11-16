@@ -41,7 +41,7 @@ if(!shinyMsg$Status){
     stop(paste0(paste(paste(names(shinyMsg),shinyMsg,sep=":"),collapse="\n"),
                 "\nPlease contact Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]"))
 }
-system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_test_folder))
+system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_publish_folder))
 
 message("=================================================\nShinyOne access: ",
         sys_config$shinyApp,"app_project_review.php?ID=",shinyMsg$ID)
