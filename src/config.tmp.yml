@@ -64,6 +64,7 @@ gene_network_max_edge: 2e6
 gene_network_min_edge: 2e3
 
 # ====== This section for ShinyOne project manager =========
+shinyOne_Title: 
 shinyOne_Description: 
 shinyOne_Disease_Model:  #e.g. AD, ALS
 shinyOne_Biological_System:  #e.g. Brain, Heart

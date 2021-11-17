@@ -13,15 +13,24 @@ strF <- paste0(sys_config$QuickOmics_publish_folder,config$prj_name,".RData")
 if(file.exists(strF)){
     stop("The project already exists in ShinyOne!\nPlease remove the record and associated files or change prj_name and re-EArun!")
 }
-
 shinyOneData <- config[grep("^shinyOne_",names(config))]
 names(shinyOneData) <- gsub("shinyOne_","",names(shinyOneData))
-shinyOneData[['Title']] <- paste(config$prj_name,config$prj_prj_title,sep=": ")
+
+shinyOneData[['Title']] <-ifelse(is.null(config$shinyOne_Title),
+                                 config$prj_name,
+                                 config$shinyOne_Title)
 shinyOneData[["Species"]] <- config$species
 shinyOneData[["TSTID"]] <- ifelse(grepl("^TST",config$prj_name),substr(config$prj_name,1,8),"")
-shinyOneData[["Data_Generated_By"]] <- system("whoami",intern=T)
+
+fastrUN <- "FASTR_USER_FULLNAME: "
+shinyOneData[["Data_Generated_By"]] <- paste(system("whoami",intern=T),
+                                             gsub(fastrUN,"",
+                                                  system(paste0("grep ",fastrUN," ",config$prj_path,"/analysis-*"),
+                                                         intern=T)),
+                                             sep="; ")
 shinyOneData[["Date"]] <- as.character(Sys.Date())
 shinyOneData[["URL"]] <- paste0(sys_config$QuiclOmics_publish_link,config$prj_name)
+shinyOneData[sapply(shinyOneData,is.null)] <- ""
 
 shinyOneCMD <- paste0("curl -s -k -X POST -d 'data={",
                       paste(paste0('"',names(shinyOneData),'": "',shinyOneData,'"'),collapse = ", "),

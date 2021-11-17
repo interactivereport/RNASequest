@@ -120,10 +120,11 @@ comTitle <- c("CompareName",
 cat(paste(comTitle,collapse=","),"\n",sep="",file=strComp)
 
 ## generate a config file ----------
+prjID <- getProjectID(paste0(strPath,"/config.json"))
 configTmp <- readLines(paste0(args[1],"config.tmp.yml"))
-configTmp <- gsub("initPrjName",getProjectID(paste0(strPath,"/config.json")),configTmp)
+configTmp <- gsub("initPrjName",prjID,configTmp)
 configTmp <- gsub("initPrjTitle",ifelse(is.null(pInfo$Project$Study_Title),
-                                        getProjectID(paste0(strPath,"/config.json")),
+                                        prjID,
                                         pInfo$Project$Study_Title),configTmp)
 configTmp <- gsub("initPrjPath",strPath,configTmp)
 configTmp <- gsub("initPrjMeta",strMeta,configTmp)
@@ -133,6 +134,12 @@ configTmp <- gsub("initGeneAnnotation",strGinfo,configTmp)
 configTmp <- gsub("initOutput",strOut,configTmp)
 configTmp <- gsub("initCovariates",paste0("[",paste(covariates,collapse=","),"]"),configTmp)
 configTmp <- gsub("initPrjComp",strComp,configTmp)
+
+configTmp <- gsub("shinyOne_Title",paste("shinyOne_Title:",prjID),configTmp)
+configTmp <- gsub("shinyOne_Description",paste("shinyOne_Description:",
+                                               ifelse(is.null(pInfo$Project$Study_Title),
+                                                      prjID,
+                                                      pInfo$Project$Study_Title)),configTmp)
 
 cat(paste(configTmp,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
 
