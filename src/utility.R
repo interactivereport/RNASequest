@@ -224,7 +224,8 @@ createInit <- function(strInput,configTmp,pInfo){
         configTmp <- gsub("initCovariates",paste0("[",paste(pInfo$covariates,collapse=","),"]"),configTmp)
         configTmp <- gsub("initPrjComp",strComp,configTmp)
         
-        configTmp <- gsub("^shinyOne_Title:",paste0("shinyOne_Title: ",pInfo$prjID,"-",pInfo$prjTitle),configTmp)
+        configTmp <- gsub("^shinyOne_Title:",paste("shinyOne_Title:",pInfo$prjID),configTmp)
+        configTmp <- gsub("^shinyOne_Description:",paste0("shinyOne_Description:",pInfo$prjTitle),configTmp)
         
     }
     cat(paste(configTmp,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
@@ -244,6 +245,25 @@ finishInit <- function(strMsg){
 }
 
 ## Reading/Checking ALL EA input data -----
+checkConfig <- function(config){
+    if(is.null(config$sample_name)) stop("sample_name is required in the config. Default is Sample_Name")
+    if(config$prj_name!="initPrjName"){
+        if(is.null(config$prj_counts) || !file.exists(config$prj_counts))
+            stop(paste("The count file is required, ",config$prj_counts,", does NOT exist!"))
+        if((is.null(config$prj_effLength) || !file.exists(config$prj_effLength)) && 
+           (is.null(config$prj_TPM) || !file.exists(config$prj_TPM)))
+            stop(paste0("The effective length (",config$prj_effLength,") or TPM (",config$prj_TPM,") is required!"))
+        if(!is.null(config$prj_seqQC) && !file.exists(config$prj_seqQC))
+            stop(paste("The prj_seqQC (",config$prj_seqQC,") does NOT exist!"))
+        
+        if(!file.exists(config$sample_meta)) stop(paste("The sample meta file, ",config$sample_meta,", does NOT exist!"))
+        if(is.null(config$species)) stop("species is required")
+        if(!is.null(config$gene_annotation) && !file.exists(config$gene_annotation))
+            stop(paste("The gene annotation file, ",config$gene_annotation,", does NOT exist!"))
+        if(!file.exists(config$comparison_file))
+            stop(paste("The comparison definition file, ",config$comparison_file,", does NOT exist!"))
+    }
+}
 getEAData <- function(config){
     D <- getMeta(config)
     D <- c(D,getCounts(config,rownames(D$meta)))
@@ -584,13 +604,35 @@ plotTopGeneRatio <- function(X,topN,maxN=90,selG=NULL){
     return(p)
 }
 
-plotGeneLength <- function(X,gL,...){
-    if(!is.null(ncol(gL)))
-        plotGeneLengthOne(cbind(Length=apply(gL,1,median),X),list(mean=mean,median=median,SD=sd),
-                       xlab="log2(median gene effective length +1)",...)
-    else
-        plotGeneLengthOne(cbind(Length=gL,X),list(mean=mean,median=median,SD=sd),
-                       xlab="log2(GTF gene length +1)",...)
+plotGeneLength <- function(config,estC,effL=NULL,logTPM=NULL,gInfo=NULL){
+    if(!config$geneLength_QC) return()
+    if(is.null(effL) && (is.null(gInfo) || !"Length"%in%colnames(gInfo))) return()
+    pdf(paste0(config$output,"/geneLengthQC.pdf"))
+    par(mar=c(3,3,2,0.5)+0.1,mgp=c(1.1,0.2,0),tcl=-0.1)
+    if(!is.null(effL)){
+        plotGeneLengthOne(log2(1+cbind(Length=apply(effL[rownames(estC),],1,median),estC)),
+                          list(mean=mean,median=median,SD=sd),
+                          xlab="log2(median gene effective length +1)",
+                          main="est counts")
+        if(!is.null(logTPM))
+            plotGeneLengthOne(cbind(Length=log2(1+apply(effL[rownames(logTPM),],1,median)),logTPM),
+                              list(mean=mean,median=median,SD=sd),
+                              xlab="log2(median gene effective length +1)",
+                              main="TPM")
+    }
+    if(!is.null(gInfo) && "Length"%in%colnames(gInfo)){
+        plotGeneLengthOne(log2(1+cbind(Length=gInfo[,"Length"],estC)),
+                          list(mean=mean,median=median,SD=sd),
+                          xlab="log2(GTF gene length +1)",
+                          main="est counts")
+        if(!is.null(logTPM))
+            plotGeneLengthOne(cbind(Length=log2(1+gInfo[,"Length"]),logTPM),
+                              list(mean=mean,median=median,SD=sd),
+                              xlab="log2(GTF gene length +1)",
+                              main="TPM")
+    }
+    a <- dev.off()
+
 }
 plotGeneLengthOne <- function(X,funs,...){
     imageCOL <- c("#FFFFFFFF","#3300FF","#2D1CFF","#2839FF","#2255FF","#1C71FF","#178EFF","#11AAFF",
@@ -599,7 +641,6 @@ plotGeneLengthOne <- function(X,funs,...){
                   "#CCFF00","#D2F400","#D7E800","#DDDD00","#E3D200","#E8C600","#EEBB00","#F4B000",
                   "#F9A400","#FF9900","#FF9900","#F68800","#EC7700","#E36600","#D95500","#D04400",
                   "#C63300","#BD2200","#B31100","#AA0000")
-    X <- log2(X+1)
     for(i in names(funs)){
         y <- apply(X[,-1],1,funs[[i]])
         x <- X[,"Length"]
@@ -623,25 +664,6 @@ plotGeneLengthOne <- function(X,funs,...){
 
 
 ## general functions used by all ------
-checkConfig <- function(config){
-    if(is.null(config$sample_name)) stop("sample_name is required in the config. Default is Sample_Name")
-    if(config$prj_name!="initPrjName"){
-        if(is.null(config$prj_counts) || !file.exists(config$prj_counts))
-            stop(paste("The count file is required, ",config$prj_counts,", does NOT exist!"))
-        if((is.null(config$prj_effLength) || !file.exists(config$prj_effLength)) && 
-           (is.null(config$prj_TPM) || !file.exists(config$prj_TPM)))
-            stop(paste0("The effective length (",config$prj_effLength,") or TPM (",config$prj_TPM,") is required!"))
-        if(!is.null(config$prj_seqQC) && !file.exists(config$prj_seqQC))
-            stop(paste("The prj_seqQC (",config$prj_seqQC,") does NOT exist!"))
-        
-        if(!file.exists(config$sample_meta)) stop(paste("The sample meta file, ",config$sample_meta,", does NOT exist!"))
-        if(is.null(config$species)) stop("species is required")
-        if(!is.null(config$gene_annotation) && !file.exists(config$gene_annotation))
-            stop(paste("The gene annotation file, ",config$gene_annotation,", does NOT exist!"))
-        if(!file.exists(config$comparison_file))
-            stop(paste("The comparison definition file, ",config$comparison_file,", does NOT exist!"))
-    }
-}
 saveSeesionInfo <- function(strF,strSRC){
     sink(strF)
     cat("EA version: git-",
