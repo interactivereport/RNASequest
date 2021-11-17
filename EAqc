@@ -6,7 +6,7 @@ if [[ -n "$1" ]]; then
     module purge
     module load R/3.5.1
     
-    Rscript $(dirname $0)/src/PCanalysis.R $(dirname $0)/src/ $@
+    Rscript $(dirname $0)/src/QCanalysis.R $(dirname $0)/src/ $@
 else
     echo "=============== EAqc path/to/config/file"
     exePath=$(dirname $0)

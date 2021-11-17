@@ -38,6 +38,8 @@ DA_file_outpath: initOutput/DA_Import_Files
 core: 2
 qsub: false
 min_median_effective_length: 0
+seqQC_replot: false
+geneLength_QC: false
 
 # ====== The QC parameters ========
 # covariates_check: The listed covariates will checked against PCA of 
