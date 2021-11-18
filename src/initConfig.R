@@ -135,8 +135,8 @@ configTmp <- gsub("initOutput",strOut,configTmp)
 configTmp <- gsub("initCovariates",paste0("[",paste(covariates,collapse=","),"]"),configTmp)
 configTmp <- gsub("initPrjComp",strComp,configTmp)
 
-configTmp <- gsub("shinyOne_Title",paste("shinyOne_Title:",prjID),configTmp)
-configTmp <- gsub("shinyOne_Description",paste("shinyOne_Description:",
+configTmp <- gsub("shinyOne_Title:",paste("shinyOne_Title:",prjID),configTmp)
+configTmp <- gsub("shinyOne_Description:",paste("shinyOne_Description:",
                                                ifelse(is.null(pInfo$Project$Study_Title),
                                                       prjID,
                                                       pInfo$Project$Study_Title)),configTmp)
