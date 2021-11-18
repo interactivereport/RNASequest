@@ -1,11 +1,9 @@
 #source("utility.R",chdir=T)
-
 .libPaths(c(grep("home",.libPaths(),invert=T,value=T),grep("home",.libPaths(),value=T)))
-require(data.table)
 
 ## save session ------
 saveSeesionInfo <- function(strF,strSRC){
-    message("Powered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
+    message("/nPowered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
     sink(strF)
     cat("EA version: git-",
         system(paste('git --git-dir',normalizePath(paste0(strSRC,"../.git")),'rev-parse HEAD'),
@@ -237,6 +235,13 @@ createInit <- function(strInput,configTmp,pInfo){
         
         configTmp <- gsub("^shinyOne_Title:",paste("shinyOne_Title:",pInfo$prjID),configTmp)
         configTmp <- gsub("^shinyOne_Description:",paste("shinyOne_Description:",pInfo$prjTitle),configTmp)
+        fastrUN <- "FASTR_USER_FULLNAME: "
+        configTmp <- gsub("^shinyOne_Data_Generated_By:",
+                          paste("shinyOne_Data_Generated_By:",
+                                gsub(fastrUN,"",
+                                     system(paste0("grep ",fastrUN," ",strInput,"/analysis-*"),
+                                            intern=T))),
+                          configTmp)
         
     }
     cat(paste(configTmp,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
@@ -254,6 +259,7 @@ finishInit <- function(strMsg){
 }
 
 ## Reading/Checking ALL EA input data -----
+require(data.table)
 checkConfig <- function(config){
     if(is.null(config$sample_name)) stop("sample_name is required in the config. Default is Sample_Name")
     if(config$prj_name!="initPrjName"){
@@ -801,14 +807,20 @@ finishQC <- function(strMsg){
     message("----->'EArun' can be used to obtain the QuickOmics object after necessary 'covariates_adjust' is set and comparison definition file is filled:")
     message("\t\t\t",strMsg$comparison_file)
     message("\t\tEArun ",strMsg$output,"/config.yml\n\n")
-    message("-----> (additional) 'EAsplit' can be used to split into sub-project according to one column (split_meta) defined in the sample meta file.\n")
+    message("-----> (additional) 'EAsplit' can be used to split into sub-project according to one column (split_meta) defined in the sample meta file.")
 }
+
+## EAsplit functions -------------
+
+
+
+
+
 
 ## EArun functions ----
 require(dplyr)
 require(Hmisc)
 source("QuickOmics_DEG.R")
-source("qsubDEG.R")
 comparisonAnalysis <- function(config,estC,meta){
     message("====== Starting DEG analyses ...")
     ## comparison file checking
@@ -816,6 +828,7 @@ comparisonAnalysis <- function(config,estC,meta){
                                      meta,config$comparison_file)
     ## comparison -----------
     if(!is.null(config$qsub) && config$qsub){
+        source("qsubDEG.R")
         return(qsubDEG(estC,meta,comp_info,config$output,config$srcDir,core=config$core))
     }else{
         return(Batch_DEG(estC,meta,comp_info,core=config$core))
@@ -947,7 +960,7 @@ formatQuickOmicsMeta <- function(meta,comNames){
                      Order=unique(meta$group),
                      ComparePairs=comNames)
     MetaData <- cbind(as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F),
-                      meta[,-1,drop=F])
+                      meta[,-grep("^group$",colnames(meta)),drop=F])
     suppressWarnings(MetaData[is.na(MetaData)] <- "")
     return(MetaData)
 }
@@ -994,9 +1007,62 @@ finishRun <- function(strMsg){
     message("=================================================\nResults are saved in ",strMsg$output)
     system(paste0("cp ",strMsg$output,"/",strMsg$prj_name,"* ",strMsg$QuickOmics_test_folder))
     message(paste0("\n-----> Please visit: ",strMsg$QuickOmics_test_link,strMsg$prj_name))
+    message("Please carefully review the results before publishing:")
+    message("----->'EApub' can be used to publish the project into ShinyOne project manager: ",
+            sapply(strsplit(strMsg$shinyApp,"\\/"),
+                   function(x)return(paste(x[1:grep("shiny",x)],collapse="/"))))
     
 }
 
 
+## EApub functions --------
+getShinyOneInfo <- function(config){
+    shinyOneData <- config[grep("^shinyOne_",names(config))]
+    names(shinyOneData) <- gsub("shinyOne_","",names(shinyOneData))
+    
+    shinyOneData[['Title']] <- ifelse(is.null(config$shinyOne_Title),
+                                      config$prj_name,
+                                      config$shinyOne_Title)
+    shinyOneData[["Species"]] <- config$species
+    shinyOneData[["TSTID"]] <- ifelse(grepl("^TST",config$prj_name),substr(config$prj_name,1,8),"")
+    
+    shinyOneData[["Data_Generated_By"]] <- paste(system("whoami",intern=T),
+                                                 shinyOneData[["Data_Generated_By"]],
+                                                 sep="; ")
+    shinyOneData[["Date"]] <- as.character(Sys.Date())
+    shinyOneData[["URL"]] <- paste0(sys_config$QuiclOmics_publish_link,config$prj_name)
+    return(shinyOneData)
+}
+pubShinyOne <- function(config){
+    strF <- paste0(sys_config$QuickOmics_publish_folder,config$prj_name,".RData")
+    if(file.exists(strF)){
+        stop("The project already exists in ShinyOne!\nPlease remove the record and associated files or change prj_name and re-EArun!")
+    }
+    message("preparing information for ShinyOne")
+    shinyOneData <- getShinyOneInfo(config)
+    shinyOneCMD <- paste0("curl -s -k -X POST -d 'data={",
+                          paste(paste0('"',names(shinyOneData),'": "',shinyOneData,'"'),collapse = ", "),
+                          "}' '",sys_config$shinyApp,"api_add_project.php?api_key=lnpJMJ5ClbuHCylWqfBY8BoxxdrpU0'")
 
+    message("submitting to ShinyOne manager ...")
+    res <- system(shinyOneCMD,intern=T)
+    shinyMsg <- tryCatch({
+        rjson::fromJSON(res)
+    },error=function(eMsg){
+        stop(paste0(paste(res,collapse="\n"),
+                    "\nPlease contact Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]"))
+    })
+    if(!shinyMsg$Status){
+        stop(paste0(paste(paste(names(shinyMsg),shinyMsg,sep=":"),collapse="\n"),
+                    "\nPlease contact Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]"))
+    }
+    system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_test_folder))
+    return(shinyMsg$ID)
+}
+finishShinyOne <- function(shinyMsg){
+    message("=================================================\nShinyOne access: ",
+            shinyMsg$shinyApp,"app_project_review.php?ID=",shinyMsg$ID)
+    
+}
 
+## others ----------

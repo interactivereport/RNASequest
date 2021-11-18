@@ -1,4 +1,3 @@
-#args <- c("/home/zouyang/projects/quickOmics/src/","./config.yml")
 args = commandArgs(trailingOnly=T)
 if(length(args)<2){
     message("'EAinit' can be used to create a config file for an RNAseq project")
