@@ -3,6 +3,17 @@
 .libPaths(c(grep("home",.libPaths(),invert=T,value=T),grep("home",.libPaths(),value=T)))
 require(data.table)
 
+## save session ------
+saveSeesionInfo <- function(strF,strSRC){
+    message("Powered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
+    sink(strF)
+    cat("EA version: git-",
+        system(paste('git --git-dir',normalizePath(paste0(strSRC,"../.git")),'rev-parse HEAD'),
+               intern=T),sep="","\n\n")
+    print(sessionInfo())
+    sink()
+    
+}
 ## EAinit functions -----
 source("gtf.gz_to_gene_info.R")
 checkInputDir <- function(strInput,strGenome=NULL){
@@ -225,7 +236,7 @@ createInit <- function(strInput,configTmp,pInfo){
         configTmp <- gsub("initPrjComp",strComp,configTmp)
         
         configTmp <- gsub("^shinyOne_Title:",paste("shinyOne_Title:",pInfo$prjID),configTmp)
-        configTmp <- gsub("^shinyOne_Description:",paste0("shinyOne_Description:",pInfo$prjTitle),configTmp)
+        configTmp <- gsub("^shinyOne_Description:",paste("shinyOne_Description:",pInfo$prjTitle),configTmp)
         
     }
     cat(paste(configTmp,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
@@ -240,8 +251,6 @@ finishInit <- function(strMsg){
     message("\t\t\t",strMsg$strComp)
     message("\t\tEArun ",strMsg$strOut,"/config.yml\n\n")
     message("-----> (additional) 'EAsplit' can be used to split into sub-project according to one column (split_meta) defined in the sample meta file.\n")
-    
-    message("Powered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
 }
 
 ## Reading/Checking ALL EA input data -----
@@ -286,6 +295,7 @@ getMeta <- function(config){
     meta <- read.csv(config$sample_meta,check.names=F,as.is=T)
     checkMeta(meta,config)
     rownames(meta) <- meta[,config$sample_name]
+    meta <- metaFactor(meta,config$sample_factor)
     return(list(meta=meta))
 }
 checkMeta <- function(meta,config){
@@ -318,6 +328,14 @@ checkMeta <- function(meta,config){
         for(one in config$covariates_adjust){
             if(length(unique(meta[,one]))<2)
                 stop(paste0("covariates_adjust (",one,") only contains one unique value in the sample meta and cannot be used for adjusting"))
+        }
+    }
+    
+    if(!is.null(config$sample_group) && length(config$sample_group)>0){
+        if(sum(!config$sample_group%in%colnames(meta))>0){
+            stop(paste0("sample_group (",
+                        paste(config$sample_group[!config$sample_group%in%colnames(meta)],collapse=","),
+                        ") defined in config is NOT included in the sample meta file"))
         }
     }
 }
@@ -502,7 +520,89 @@ covariateRM_estTPM <- function(X,L,sizeF=NULL,prior=0.25){
     return(log2(prior+eTPM))
 }
 
+## meta factor ---
+metaFactor <- function(meta,strMetaFactor,addFactor=NULL){
+    if(is.null(strMetaFactor))return(meta)
+    ## retrieve the meta factor or initialize one ----
+    meta <- metaFactor_checkNAempty(meta)
+    if(file.exists(strMetaFactor)){
+        metaFactor <- yaml::read_yaml(strMetaFactor)
+    }else{
+        metaFactor <- metaFactor_addFactor(meta,strMetaFactor)
+    }
+    ## if any annotation removed from meta but existing in the meta factor ----
+    if(sum(!names(metaFactor)%in%colnames(meta))>0){
+        warning("The following removed from sampleMeta table, updating metaFactor file:")
+        message(paste(names(metaFactor)[!names(metaFactor)%in%colnames(meta)],collapse=","))
+        metaFactor <- metaFactor[names(metaFactor)%in%colnames(meta)]
+        metaFactor_saveYaml(metaFactor,strMetaFactor)
+    }
+    ## add additional (new) meta annotation into the meta factor -------
+    # since there are numerical annotation, the following mostly always will be executed
+    if(sum(!colnames(meta)%in%names(metaFactor))>0)
+        metaFactor <- metaFactor_addFactor(meta,strMetaFactor,metaFactor)
+    
+    ## apply the meta factor to the meta table -----
+    for(i in names(metaFactor)){
+        ## add additional (new) entry into the meta factor
+        oneMetaUnique <- unique(meta[,i])
+        if(sum(!oneMetaUnique%in%metaFactor[[i]])>0){
+            warning(paste0(paste(oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]],collapse=","),
+                           " from ",i," are not defined in meta factor file"))
+            message("Please update metaFactor file to avoid this warning message")
+            metaFactor[[i]] <- c(metaFactor[[i]],oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]])
+        }
+        if(sum(!metaFactor[[i]]%in%oneMetaUnique)>0){
+            warning(paste0(paste(metaFactor[[i]][!metaFactor[[i]]%in%oneMetaUnique],collapse=","),
+                           " from ",i," are missing from sample file"))
+            message("Please update metaFactor file to avoid this warning message")
+            metaFactor[[i]] <- metaFactor[[i]][metaFactor[[i]]%in%oneMetaUnique]
+        }
+        if(sum(!oneMetaUnique%in%metaFactor[[i]])>0){
+            warning(paste0(paste(oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]],collapse=","),
+                           " from ",i," are not defined in meta factor file"))
+            message("Please update metaFactor file to avoid this warning message")
+            metaFactor[[i]] <- c(metaFactor[[i]],oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]])
+        }
+        meta[,i] <- factor(meta[,i],levels = metaFactor[[i]])
+    }
+    ## mandatory annotation to be factor since in comparison ------
+    if(!is.null(addFactor)){
+        for(i in addFactor){
+            if(!is.factor(meta[,i])){
+                meta[,i] <- factor(meta[,i],levels=unique(meta[,i]))
+            }
+        }
+    }
+    return(meta)
+}
+metaFactor_checkNAempty <- function(meta){
+    for(i in colnames(meta)){
+        if(grepl("URL",i)) next
+        if(is.character(meta[,i]) || is.factor(meta)){
+            meta[,i] <- as.character(meta[,i])
+            meta[is.na(meta[,i])|nchar(meta[,i])==0,i] <- "NA"
+        }
+    }
+    return(meta)
+}
+metaFactor_addFactor <- function(meta,strMetaFactor,metaFactor=list()){
+    for(i in colnames(meta)){
+        if(grepl("URL",i)) next
+        if(is.character(meta[,i]) || is.factor(meta))
+            metaFactor[[i]] <- unique(meta[,i])
+    }
+    metaFactor_saveYaml(metaFactor,strMetaFactor)
+    return(metaFactor)
+}
+metaFactor_saveYaml <- function(ymlist,strF){
+    cat(paste(paste0(names(ymlist),": ['",
+                     sapply(ymlist,paste,collapse="','"),"']"),
+              collapse="\n"),
+        "\n",sep="",file=strF)
+}
 ## EAqc functions ------
+source("PC_Covariates.R")
 require(ggplot2)
 require(reshape2)
 plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,10,30),gInfo=NULL,replot=F){#,50,100
@@ -512,7 +612,6 @@ plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,10,30
         rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
         if(!is.null(estC)) rownames(estC) <- paste(rownames(estC),gInfo[rownames(estC),"Gene.Name"],sep="|")
     }
-    
     pdfW <- max(ncol(estT)/10+2,6)
     pdf(strPDF,width=pdfW,height=6)
     ## top genes ratio----
@@ -603,7 +702,6 @@ plotTopGeneRatio <- function(X,topN,maxN=90,selG=NULL){
         theme(axis.text.y=element_text(size=12-(length(selG)-10)/10))
     return(p)
 }
-
 plotGeneLength <- function(config,estC,effL=NULL,logTPM=NULL,gInfo=NULL){
     if(!config$geneLength_QC) return()
     if(is.null(effL) && (is.null(gInfo) || !"Length"%in%colnames(gInfo))) return()
@@ -658,21 +756,247 @@ plotGeneLengthOne <- function(X,funs,...){
         points(x[index],y[index],pch=20,col=imageCOL[2],cex=1)
     }
 }
+plotPCanlaysis <- function(config,logTPM,meta,estC=NULL,effL=NULL){
+    selCov <- unique(c(config$covariates_check,config$covariates_adjust))
+    if(!is.null(selCov)) meta <- meta[,selCov]
+    ## change the Well_Row from charactor to numeric
+    oneMeta <- "Well_Row"
+    if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
+    # remove meta with only one unique value
+    meta <- meta[,apply(meta,2,function(x)return(length(unique(x))>1)),drop=F]
+    
+    strPrefix <- paste0(config$output,"/notAdjusted")
+    suppressMessages(suppressWarnings(
+        Covariate_PC_Analysis(logTPM,meta,
+                              out_prefix=strPrefix,
+                              PC_cutoff=config$covariates_check_PCcutoff,
+                              FDR_cutoff=config$covariates_check_FDRcutoff,
+                              N_col=config$covariates_check_plotNcol)))
+    message("-----> PC analysis without covariate adjusted:\n\t",strPrefix)
+    
+    if(!is.null(estC) && !is.null(effL)){
+        if(is.null(config$covariates_adjust) || length(config$covariates_adjust)==0){
+            warning("< covariates_adjust is NOT set in the config file, no covariate was adjusted! >")
+        }else{
+            message("====== removing covariates for visualization ...")
+            batchX <- meta[,config$covariates_adjust,drop=F]
+            logTPM <- suppressMessages(covariateRM(estC,effL,batchX=batchX,method='limma',
+                                                   prior=config$count_prior))
+            strPrefix <- paste0(config$output,"/Adjusted")
+            suppressMessages(suppressWarnings(
+                Covariate_PC_Analysis(logTPM,meta,
+                                      out_prefix=strPrefix,
+                                      PC_cutoff=config$covariates_check_PCcutoff,
+                                      FDR_cutoff=config$covariates_check_FDRcutoff,
+                                      N_col=config$covariates_check_plotNcol)))
+            message("-----> PC analysis with covariate removal:\n\t",strPrefix)
+            return(logTPM)
+        }
 
+    }
+    return(NULL)
+}
+finishQC <- function(strMsg){
+    message("==========================================")
+    message("----->'EArun' can be used to obtain the QuickOmics object after necessary 'covariates_adjust' is set and comparison definition file is filled:")
+    message("\t\t\t",strMsg$comparison_file)
+    message("\t\tEArun ",strMsg$output,"/config.yml\n\n")
+    message("-----> (additional) 'EAsplit' can be used to split into sub-project according to one column (split_meta) defined in the sample meta file.\n")
+}
 
+## EArun functions ----
+require(dplyr)
+require(Hmisc)
+source("QuickOmics_DEG.R")
+source("qsubDEG.R")
+comparisonAnalysis <- function(config,estC,meta){
+    message("====== Starting DEG analyses ...")
+    ## comparison file checking
+    comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
+                                     meta,config$comparison_file)
+    ## comparison -----------
+    if(!is.null(config$qsub) && config$qsub){
+        return(qsubDEG(estC,meta,comp_info,config$output,config$srcDir,core=config$core))
+    }else{
+        return(Batch_DEG(estC,meta,comp_info,core=config$core))
+    }
+}
+Hmisc.rcorr <- function (x, y, type = "pearson"){
+    type <- match.arg(type)#c("pearson", "spearman")
+    if (!missing(y))
+        x <- cbind(x, y)
+    x[is.na(x)] <- 1e+50
+    storage.mode(x) <- "double"
+    p <- as.integer(ncol(x))
+    if (p < 1)
+        stop("must have >1 column")
+    n <- as.integer(nrow(x))
+    if (n < 5)
+        stop("must have >4 observations")
+    h <- .Fortran(Hmisc:::F_rcorr, x, n, p, itype = as.integer(1 + (type =="spearman")),
+                  hmatrix = double(p * p), npair = integer(p * p), double(n),
+                  double(n), double(n), double(n), double(n),
+                  integer(n))
+    npair <- matrix(h$npair, ncol = p)
+    h <- matrix(h$hmatrix, ncol = p)
+    h[h > 1e+49] <- NA
+    nam <- dimnames(x)[[2]]
+    dimnames(h) <- list(nam, nam)
+    dimnames(npair) <- list(nam, nam)
+    #https://stackoverflow.com/questions/63994852/r-in-sqrt1-h-h-nans-produced-from-within-rcorr-full-sample-data-avai
+    #P <- matrix(2 * (1 - pt(abs(h) * sqrt(npair - 2)/sqrt(1 - h * h), npair - 2)), ncol = p)
+    P <- matrix(2 * (1 - pt(abs(h) * sqrt(npair - 2)/max(0, 1-h^2), npair - 2)), ncol = p)
+    P[abs(h) == 1] <- 0
+    diag(P) <- NA
+    dimnames(P) <- list(nam, nam)
+    structure(list(r = h, n = npair, P = P), class = "rcorr")
+}
+saveNetwork <- function(X,config){
+    message("Obtaining networks ...")
+    cor_cutoff <- config$gene_network_cor_cutoff
+    p_cutoff <- config$gene_network_p_cutoff
+    variableN <- config$gene_network_high_variable_N
+    edge_max <- as.numeric(config$gene_network_max_edge)
+    edge_min <- as.numeric(config$gene_network_min_edge)
 
-
-
-## general functions used by all ------
-saveSeesionInfo <- function(strF,strSRC){
-    sink(strF)
-    cat("EA version: git-",
-        system(paste('git --git-dir',normalizePath(paste0(strSRC,"../.git")),'rev-parse HEAD'),
-               intern=T),sep="","\n\n")
-    print(sessionInfo())
-    sink()
+    suppressMessages(require(tibble))
+    if(nrow(X)>variableN){
+        X <- X[order(apply(X,1,sd),decreasing=T)[1:variableN],]
+    }
+    print(system.time(cor_res <- Hmisc.rcorr(as.matrix(t(X)))))
+    cormat <- cor_res$r
+    pmat <- cor_res$P
+    ut <- upper.tri(cormat)
+    network <- tibble (
+        from = rownames(cormat)[row(cormat)[ut]],
+        to = rownames(cormat)[col(cormat)[ut]],
+        cor  = signif(cormat[ut], 2),
+        p = signif(pmat[ut], 2),
+        direction = as.integer(sign(cormat[ut]))
+    )
+    selEdge <- sum(!is.na(network$cor) & abs(network$cor) > cor_cutoff & network$p < p_cutoff)
+    #check network size. If it has>5 million rows, use higher cor and lower p to futher reduce size
+    if(selEdge>edge_max){
+        cor_cutoff <- sort(abs(network$cor),decreasing=T)[edge_max]
+        p_cutoff <- sort(network$p)[edge_max]
+    }else if(selEdge<edge_min){
+        cor_cutoff <- sort(abs(network$cor),decreasing=T)[edge_min]
+        p_cutoff <- sort(network$p)[edge_min]
+    }
+    network <- network %>% dplyr::mutate_if(is.factor, as.character) %>%
+        dplyr::filter(!is.na(cor) & abs(cor) > cor_cutoff & p < p_cutoff)
+    save(network,file=paste0(config$output,"/",config$prj_name,"_network.RData"))
+}
+updateMeta <- function(config,meta){
+    comp <- read_file(config$comparison_file,T)
+    meta <- metaFactor(meta,config$sample_factor,unique(comp$Group_name))
+    if(!"group" %in% colnames(meta)){
+        selG <- c(grep("^group$",colnames(meta),ignore.case=T,value=T),
+                  comp[1,"Group_name"])[1]
+        meta <- cbind(meta,group=meta[,selG])
+    }
+    return(meta)
+}
+formatQuickOmicsResult <- function(DEGs,logTPM,grp,gInfo){
+    Dw <- data.frame(gInfo[rownames(logTPM),c("UniqueID","Gene.Name",'id')],
+                     Intensity=apply(logTPM,1,mean))
+    for(i in unique(grp)){
+        if(sum(grp==i)<1){
+            next
+            message("===== warning: no sample for ",i)
+        }else if(sum(grp==i)==1){
+            tmp <- cbind(logTPM[,grp==i],rep(0,nrow(logTPM)))
+            colnames(tmp) <- paste(i,c("Mean","sd"),sep="_")
+            Dw <- cbind(Dw,tmp)
+            message("===== warning: one sample for ",i)
+        }else{
+            Dw <- cbind(Dw,t(apply(logTPM[,grp==i,drop=F],1,
+                                   function(x)return(setNames(c(mean(x),sd(x)),paste(i,c("Mean","sd"),sep="_"))))) )
+        }
+    }
+    for(i in names(DEGs)){
+        Dw <- merge(Dw,DEGs[[i]]$DEG,by="row.names",all=T,sort=F)
+        rownames(Dw) <- Dw[,1]
+        Dw <- Dw[,-1]
+    }
+    for(i in grep("logFC$",colnames(Dw))){
+        Dw[is.na(Dw[,i]),i] <- 0
+    }
+    for(i in grep("P.value$",colnames(Dw))){
+        Dw[is.na(Dw[,i]),i] <- 1
+    }
+    
+    Dl <- NULL
+    for(i in names(DEGs)){
+        res <- DEGs[[i]]$DEG
+        colnames(res) <- c("logFC","P.Value","Adj.P.Value")
+        res <- cbind(UniqueID=rownames(res),
+                     test=factor(i,levels=names(DEGs)),
+                     res)
+        if(is.null(Dl)){
+            Dl <- res
+        }else{
+            Dl <- rbind(Dl,res)
+        }
+    }
+    return(list(Dw=Dw,Dl=Dl))
+}
+formatQuickOmicsMeta <- function(meta,comNames){
+    MetaData <- list(sampleid=rownames(meta),
+                     group=meta$group,
+                     Order=unique(meta$group),
+                     ComparePairs=comNames)
+    MetaData <- cbind(as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F),
+                      meta[,-1,drop=F])
+    suppressWarnings(MetaData[is.na(MetaData)] <- "")
+    return(MetaData)
+}
+saveQuickOmics <- function(config,EAdata,DEGs){
+    message("saving QuickOmics object ...")
+    EAdata$meta <- updateMeta(config,EAdata$meta)
+    comp_info <- read_file(config$comparison_file,T)
+    
+    message("\tFormating the expression data")
+    data_wide <- EAdata$logTPM
+    data_long <- melt(as.matrix(EAdata$logTPM))
+    colnames(data_long) <- c("UniqueID","sampleid","expr")
+    config$sample_group <- ifelse(length(config$sample_group)<1,"group",config$sample_group)
+    data_long <- cbind(data_long,group=EAdata$meta[data_long$sampleid,config$sample_group])
+    
+    message("\tFormating the DEG results")
+    compRes <- formatQuickOmicsResult(DEGs,EAdata$logTPM,EAdata$meta[,"group"],EAdata$gInfo)
+    data_results <- compRes$Dw
+    results_long <- compRes$Dl
+    
+    message("\tFormating the sample meta information")
+    MetaData <- formatQuickOmicsMeta(EAdata$meta,names(DEGs))
+    ProteinGeneName <- EAdata$gInfo
+    
+    message("\tsaving...")
+    save(data_results,results_long,
+         data_wide,data_long,
+         MetaData,ProteinGeneName,
+         comp_info,
+         file=paste0(config$output,"/",config$prj_name,".RData"))
+    ## save the project csv file -------
+    write.csv(data.frame(Name=ifelse(is.null(config$prj_title),
+                                     config$prj_name,
+                                     paste(config$prj_name,config$prj_title,sep=": ")),
+                         ShortName=config$prj_name,
+                         ProjectID=config$prj_name,
+                         Species=config$species, 
+                         ExpressionUnit=config$ylab,
+                         Path=config$output),
+              file=paste0(config$output,"/",config$prj_name,".csv"),
+              row.names=F)
+}
+finishRun <- function(strMsg){
+    message("=================================================\nResults are saved in ",strMsg$output)
+    system(paste0("cp ",strMsg$output,"/",strMsg$prj_name,"* ",strMsg$QuickOmics_test_folder))
+    message(paste0("\n-----> Please visit: ",strMsg$QuickOmics_test_link,strMsg$prj_name))
     
 }
+
 
 
 

@@ -6,7 +6,7 @@ if [[ -n "$1" ]]; then
     module purge
     module load R/3.5.1
     
-    Rscript $(dirname $0)/src/quickOmics.R $(dirname $0)/src/ $@
+    Rscript $(dirname $0)/src/DEanalysis.R $(dirname $0)/src/ $@
 else
     echo "=============== EArun path/to/config/file"
     echo "This function is used to process the bulk RNAseq data and produce the QuickOmics R object."
