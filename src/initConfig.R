@@ -64,6 +64,7 @@ strkey <- c("Concentration","Volume")
 if(sum(strkey%in%colnames(meta))==2){
     meta <- cbind(meta,Vol_Conc=apply(meta[,strkey],1,prod))
 }
+system(paste("mkdir -p",strOut))
 meta <- metaFactor(meta,strMetaFactor)
 write.csv(meta,file=strMeta,row.names=F)#
 covariates <- c()
@@ -77,7 +78,6 @@ a <- getEffectLength(strPath)
 ## gene annotation file ----
 message("Create gene annotation ...")
 gInfo <- getAnnotation(paste0(strPath,"/config.json"),config$genome_path)
-system(paste("mkdir -p",strOut))
 write.csv(gInfo,file=strGinfo)
 ## alignment QC plots ---------
 message("Plot alignment QC ...")
