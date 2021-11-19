@@ -41,4 +41,4 @@ if(!is.null(newLogTPM)){
 
 ## finishing ----
 finishQC(list(comparison_file=config$comparison_file,output=config$output))
-saveSeesionInfo(paste0(config$output,"/session.EAqc"),args[1])
+saveSessionInfo(paste0(config$output,"/session.EAqc"),args[1])

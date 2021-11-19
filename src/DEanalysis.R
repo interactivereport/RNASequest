@@ -35,4 +35,4 @@ saveQuickOmics(config,D,DEGs)
 
 ## finishing ----
 finishRun(c(config,sysConfig))
-saveSeesionInfo(paste0(config$output,"/session.EArun"),args[1])
+saveSessionInfo(paste0(config$output,"/session.EArun"),args[1])

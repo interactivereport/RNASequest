@@ -18,5 +18,5 @@ pInfo <- getCovariates(pInfo,sysConfig$notCovariates)
 strMsg <- createInit(args[2],readLines(paste0(args[1],"config.tmp.yml")),pInfo)
 
 finishInit(strMsg)
-saveSeesionInfo(paste0(strMsg$strOut,"/session.EAinit"),args[1])
+saveSessionInfo(paste0(strMsg$strOut,"/session.EAinit"),args[1])
 

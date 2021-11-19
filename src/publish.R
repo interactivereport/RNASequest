@@ -1,4 +1,3 @@
-#args <- c("/home/zouyang/projects/quickOmics/src/","./config.yml")
 
 args = commandArgs(trailingOnly=T)
 if(length(args)<2){
@@ -17,4 +16,4 @@ finishShinyOne(list(shinyApp=sysConfig$shinyApp,ID=id))
 ## R markdown
 
 ## finishing
-saveSeesionInfo(paste0(config$output,"/session.EApub"),args[1])
+saveSessionInfo(paste0(config$output,"/session.EApub"),args[1])
