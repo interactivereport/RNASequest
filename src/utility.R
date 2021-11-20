@@ -3,7 +3,7 @@
 
 ## save session ------
 saveSessionInfo <- function(strF,strSRC){
-    message("/nPowered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
+    message("\nPowered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
     sink(strF)
     cat("EA version: git-",
         system(paste('git --git-dir',normalizePath(paste0(strSRC,"../.git")),'rev-parse HEAD'),
@@ -198,6 +198,7 @@ createInit <- function(strInput,configTmp,pInfo){
     
     strComp <- paste0(strOut,"/data/compareInfo.csv")
     createEmptyComp(strComp)
+    message("saving initialization ...")
     if(is.null(pInfo)){
         configTmp <- gsub("initPrjName"," #required",configTmp)
         configTmp <- gsub("initPrjTitle"," #optional",configTmp)
@@ -279,14 +280,17 @@ checkConfig <- function(config){
             stop(paste("The comparison definition file, ",config$comparison_file,", does NOT exist!"))
     }
 }
-getEAData <- function(config){
+getEAData <- function(config,withCom=F){
     D <- getMeta(config)
+    if(withCom)
+        D$comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
+                                           D$meta,config$comparison_file)
     D <- c(D,getCounts(config,rownames(D$meta)))
     D <- c(D,getEffLength(config,colnames(D$counts),rownames(D$counts)))
     D <- c(D,getTPM(config,colnames(D$counts),rownames(D$counts)))
     D <- c(D,getSeqQC(config,colnames(D$counts)))
     if(is.null(D$logTPM)){
-        D$logTPM <- covariateRM(D$counts,D$effLength,prior=config$count_prior)
+        D$logTPM <- as.data.frame(covariateRM(D$counts,D$effLength,prior=config$count_prior))
     }
     if(is.null(D$gInfo)){
         D$gInfo <- data.frame(row.names = rownames(D),
@@ -812,6 +816,55 @@ finishQC <- function(strMsg){
 
 ## EAsplit functions -------------
 # EAdata: meta, counts, gInfo, effLength, logTPM, seqQC
+splitUpdatePrj <- function(config,one,strOut){
+    config$prj_name <- paste(config$prj_name,one,sep="_")
+    config$prj_title <- paste0("(",one,") ",config$prj_name)
+    config$output <- strOut
+    config$DA_file_outpath <- paste0(strOut,"/DA_Import_Files")
+    return(config)
+}
+splitSaveData <- function(X,strF,selRow=NULL,selCol=NULL,saveRowNames=NULL,...){
+    message("\t",basename(strF))
+    if(is.null(X)) return("")
+    if(!is.null(selCol))
+        X <- X[,selCol,drop=F]
+    if(!is.null(selRow))
+        X <- X[selRow,,drop=F]
+    if(!is.null(saveRowNames))
+        X <- setNames(cbind(rownames(X),X),c(saveRowNames,colnames(X)))
+    write.table(X,strF,row.names=F,...)
+    return(strF)
+}
+splitSaveFactor <- function(strSrc,strDest,rmOne){
+    if(file.exists(strSrc)){
+        cat(paste(grep(paste0("^",rmOne,":"),readLines(config$sample_factor),invert=T,value=T),
+                  collapse="\n"),"\n",sep="",file=strDest)
+    }
+    return(strDest)
+}
+splitSaveComp <- function(strSrc,strDest,rmOne){
+    comp <- read_file(strSrc,T)
+    if(nrow(comp)>0){
+        message("\textracting comparison information")
+        selCom <- gsub(" ","",comp[,"Subsetting_group"])==paste(config$split_meta,rmOne,sep=":")
+        if(sum(selCom)>0){
+            comp <- comp[selCom,]
+            comp[,"Subsetting_group"] <- ""
+        }
+    }
+    return(splitSaveData(comp,strDest,saveRowNames="CompareName",sep=","))
+}
+splitSaveConfig <- function(config,strF){
+    cat(paste(paste(names(config),
+                sapply(config,function(x){
+                    if(is.null(x)) return("")
+                    if(length(x)==1) return(x)
+                    return(paste0("['",paste(x,collapse="','"),"']"))
+                }),
+                sep=": "),collapse="\n"),
+        "\n",sep="",file=strF)
+    
+}
 splitOne <- function(config,EAdata,one){
     if(sum(EAdata$meta[,config$split_meta]==one)<2){
         message("ignore: ",one," with less than 2 samples")
@@ -819,82 +872,52 @@ splitOne <- function(config,EAdata,one){
     }
     message("====== Creating sub project: ",one," ...")
     EAdata$meta <- EAdata$meta[EAdata$meta[,config$split_meta]==one,]
-    strD <- normalizePath(paste0(config$output,"/",one,"/data"))
+    strD <- paste0(config$output,"/",one,"/data")
     system(paste("mkdir -p",strD))
-    config$output <- dirname(strD)
-    config$DA_file_outpath <- paste0(dirname(strD),"/DA_Import_Files")
-    message("\t",config$output)
+    strD <- normalizePath(strD)
+    config <- splitUpdatePrj(config,one,dirname(strD))
+    message("\t@",config$output)
     
-    if(!is.null(EAdata$counts))
-        config$prj_counts <- splitSaveData(cbind(gene_id=rownames(EAdata$counts),
-                                                 EAdata$counts[,rownames(EAdata$meta)]),
-                                           paste0(strD,"/count.tsv"),
-                                           row.name=F,sep="\t")
-    if(!is.null(EAdata$effLength))
-        config$prj_effLength <- splitSaveData(cbind(gene_id=rownames(EAdata$effLength),
-                                                    EAdata$effLength[,rownames(EAdata$meta)]),
-                                              paste0(strD,"/effLength.tsv"),
-                                              row.name=F,sep="\t")
-    if(!is.null(EAdata$logTPM))
-        config$prj_TPM <- splitSaveData(cbind(gene_id=rownames(EAdata$logTPM),
-                                              2^EAdata$logTPM[,rownames(EAdata$meta)]-config$count_prior),
-                                        paste0(strD,"/TPM.tsv"),
-                                        row.name=F,sep="\t")
-    if(!is.null(EAdata$seqQC))
-        config$prj_seqQC <- splitSaveData(cbind(Sample=rownames(EAdata$seqQC),
-                                                EAdata$seqQC[rownames(EAdata$meta),]),
-                                          paste0(strD,"/seqQC.tsv"),
-                                          row.name=F,sep="\t")
-    if(!is.null(EAdata$gInfo))
-        config$gene_annotation <- splitSaveData(cbind(gID=rownames(EAdata$gInfo),
-                                                      EAdata$gInfo),
-                                          paste0(strD,"/geneAnnotation.csv"),
-                                          row.name=F,sep=",")
-    if(!is.null(EAdata$meta)){
-        config$sample_meta <- splitSaveData(EAdata$meta,
-                                            paste0(strD,"/sampleMeta.csv"),
-                                            row.name=F,sep=",")
-        metaF <- grep(paste0("^",one,":"),readLines(config$sample_factor),invert=T,value=T)
-        config$sample_factor <- paste0(strD,"/sampleMetaFactor.yml")
-        cat(paste(metaF,collapse="\n"),file=config$sample_factor)
-        
-    }
-    
-    comp <- read_file(config$comparison_file,T)
-    if(nrow(comp_info)>0){
-        message("\textracting comparison information")
-        selCom <- gsub(" ","",comp[,"Subsetting_group"])==paste(config$split_meta,one,sep=":")
-        if(sum(selCom)>0){
-            comp <- comp[selCom,]
-            comp[,"Subsetting_group"] <- ""
-        }
-    }
-    config$comparison_file <- splitSaveData(comp,
+    config$prj_counts <- splitSaveData(EAdata$counts,
+                                       paste0(strD,"/count.tsv"),
+                                       selCol=rownames(EAdata$meta),
+                                       saveRowNames="gene_id",
+                                       sep="\t")
+    config$prj_counts <- splitSaveData(EAdata$effLength,
+                                       paste0(strD,"/effLength.tsv"),
+                                       selCol=rownames(EAdata$meta),
+                                       saveRowNames="gene_id",
+                                       sep="\t")
+    config$prj_TPM <- splitSaveData(2^EAdata$logTPM-config$count_prior,
+                                    paste0(strD,"/TPM.tsv"),
+                                    selCol=rownames(EAdata$meta),
+                                    saveRowNames="gene_id",
+                                    sep="\t")
+    config$prj_seqQC <- splitSaveData(EAdata$seqQC,
+                                      paste0(strD,"/seqQC.tsv"),
+                                      selRow=rownames(EAdata$meta),
+                                      saveRowNames="Sample",
+                                      sep="\t")
+    config$gene_annotation <- splitSaveData(EAdata$gInfo,
+                                      paste0(strD,"/geneAnnotation.csv"),
+                                      saveRowNames="gene_id",
+                                      sep=",")
+    config$sample_meta <- splitSaveData(EAdata$meta,
+                                        paste0(strD,"/sampleMeta.csv"),
+                                        sep=",")
+    config$sample_factor <- splitSaveFactor(config$sample_factor,
+                                            paste0(strD,"/sampleMetaFactor.yml"),
+                                            one)
+    config$comparison_file <- splitSaveComp(config$comparison_file,
                                             paste0(strD,"/compareInfo.csv"),
-                                            row.name=F,sep=",")
+                                            one)
     splitSaveConfig(config,paste0(dirname(strD),"/config.yml"))
     return(dirname(strD))
-}
-splitSaveConfig(config,strF){
-    paste(paste(names(config),
-                sapply(config,function(x){
-                    if(is.null(x)) return("")
-                    if(length(x)==1) return(x)
-                    return(paste0("['",paste(x,collapse="','"),"']"))
-                }),
-                sep=": "),collapse="\n")
-}
-splitSaveData <- function(X,strF,sep="\t",row.name=NULL){
-    write.table(X,strF,...)
-    return(strF)
 }
 splitPrj <- function(config,EAdata){
     if(is.null(config$split_meta))
         stop("split_meta is not speicified in the config file")
-    comp_info <- read_file(config$comparison_file,T)
-    if(nrow(comp_info)>0) comp_info <- checkComparisonInfo(comp_info,
-                                                           EAdata$meta,
-                                                           config$comparison_file)
+
     for(one in unique(EAdata$meta[,config$split_meta])){
         strOut <- splitOne(config,EAdata,one)
         suppressMessages(saveSessionInfo(paste0(strOut,"/session.EAsplit"),config$src))
@@ -911,14 +934,11 @@ finishSplit <- function(){
 require(dplyr)
 require(Hmisc)
 source("QuickOmics_DEG.R")
-comparisonAnalysis <- function(config,estC,meta){
+comparisonAnalysis <- function(config,estC,meta,comp_info){
     message("====== Starting DEG analyses ...")
-    ## comparison file checking
-    comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
-                                     meta,config$comparison_file)
     ## comparison -----------
     if(!is.null(config$qsub) && config$qsub){
-        source("qsubDEG.R")
+        source(paste0(config$srcDir,"/qsubDEG.R"))
         return(qsubDEG(estC,meta,comp_info,config$output,config$srcDir,core=config$core))
     }else{
         return(Batch_DEG(estC,meta,comp_info,core=config$core))

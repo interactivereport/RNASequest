@@ -12,11 +12,11 @@ config$ylab <- paste0("log2(TPM+",config$count_prior,")")
 
 ## loading EA data --------
 checkConfig(config)
-D <- getEAData(config)
+D <- getEAData(config,withCom=T)
 D <- useAlias(config,D)
 
 ## comparison file checking ---------
-DEGs <- comparisonAnalysis(config,D$counts,D$meta)
+DEGs <- comparisonAnalysis(config,D$counts,D$meta,D$comp_info)
 
 ## covariate removal -----
 if(!is.null(config$covariates_adjust) && length(config$covariates_adjust)>0){
