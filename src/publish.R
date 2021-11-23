@@ -10,7 +10,7 @@ config <- sapply(yaml::read_yaml(args[2]),unlist)
 sysConfig <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 
 ## submit to ShinyOne ------------
-id <- pubShinyOne(config)
+id <- pubShinyOne(c(config,sysConfig))
 finishShinyOne(list(shinyApp=sysConfig$shinyApp,ID=id))
 
 ## R markdown

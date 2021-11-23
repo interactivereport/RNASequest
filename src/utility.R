@@ -1146,11 +1146,11 @@ getShinyOneInfo <- function(config){
                                                  shinyOneData[["Data_Generated_By"]],
                                                  sep="; ")
     shinyOneData[["Date"]] <- as.character(Sys.Date())
-    shinyOneData[["URL"]] <- paste0(sys_config$QuiclOmics_publish_link,config$prj_name)
+    shinyOneData[["URL"]] <- paste0(config$QuiclOmics_publish_link,config$prj_name)
     return(shinyOneData)
 }
 pubShinyOne <- function(config){
-    strF <- paste0(sys_config$QuickOmics_publish_folder,config$prj_name,".RData")
+    strF <- paste0(config$QuickOmics_publish_folder,config$prj_name,".RData")
     if(file.exists(strF)){
         stop("The project already exists in ShinyOne!\nPlease remove the record and associated files or change prj_name and re-EArun!")
     }
@@ -1158,7 +1158,7 @@ pubShinyOne <- function(config){
     shinyOneData <- getShinyOneInfo(config)
     shinyOneCMD <- paste0("curl -s -k -X POST -d 'data={",
                           paste(paste0('"',names(shinyOneData),'": "',shinyOneData,'"'),collapse = ", "),
-                          "}' '",sys_config$shinyApp,"api_add_project.php?api_key=lnpJMJ5ClbuHCylWqfBY8BoxxdrpU0'")
+                          "}' '",config$shinyApp,"api_add_project.php?api_key=lnpJMJ5ClbuHCylWqfBY8BoxxdrpU0'")
 
     message("submitting to ShinyOne manager ...")
     res <- system(shinyOneCMD,intern=T)
@@ -1172,7 +1172,7 @@ pubShinyOne <- function(config){
         stop(paste0(paste(paste(names(shinyMsg),shinyMsg,sep=":"),collapse="\n"),
                     "\nPlease contact Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]"))
     }
-    system(paste0("cp ",config$output,"/",config$prj_name,"* ",sys_config$QuickOmics_test_folder))
+    system(paste0("cp ",config$output,"/",config$prj_name,"* ",config$QuickOmics_publish_folder))
     return(shinyMsg$ID)
 }
 finishShinyOne <- function(shinyMsg){
