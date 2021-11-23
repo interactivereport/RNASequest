@@ -65,7 +65,7 @@ limmaRM <- function(X,batchX,prior=0.25){
     }
     if(!is.null(factorX)) design <- cbind(design,factorX)
     design <- cbind(design,batchX)
-    
+
     message("Starting limma batch RM")
     M <- edgeR::DGEList(counts=X)
     M <- edgeR::calcNormFactors(M,method="TMM")

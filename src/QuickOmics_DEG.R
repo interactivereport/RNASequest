@@ -167,7 +167,7 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
   var_list= unique(trimws(str_split(model, "~|\\+|\\*|\\:", simplify =T)[1,]))
   var_list = var_list[!var_list ==""]
   for (n in 1: length(var_list)) {
-    if(is.numeric(Sample_meta[,var_list[n]])) {
+    if(is.numeric(S_meta[,var_list[n]])) {
       assign(var_list[n], S_meta[, var_list[n]])
     } else {
       assign(var_list[n], as.factor(S_meta[, var_list[n]]))
