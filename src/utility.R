@@ -940,8 +940,12 @@ finishSplit <- function(){
 require(dplyr)
 require(Hmisc)
 source("QuickOmics_DEG.R")
+saveCountsAlias <- function(config,estC){
+    saveRDS(estC,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
+}
 comparisonAnalysis <- function(config,estC,meta,comp_info){
     message("====== Starting DEG analyses ...")
+    saveCountsAlias(config,estC)
     ## comparison -----------
     if(!is.null(config$qsub) && config$qsub){
         source(paste0(config$srcDir,"/qsubDEG.R"))
