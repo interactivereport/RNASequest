@@ -599,8 +599,14 @@ metaFactor_checkNAempty <- function(meta){
 metaFactor_addFactor <- function(meta,strMetaFactor,metaFactor=list()){
     for(i in colnames(meta)){
         if(grepl("URL",i)) next
-        if(is.character(meta[,i]) || is.factor(meta))
-            metaFactor[[i]] <- unique(meta[,i])
+        if(i %in%names(metaFactor)){
+            if(sum(!meta[,i]%in%metaFactor[[i]])>0){
+                metaFactor[[i]] <- c(metaFactor[[i]],unique(meta[!meta[,i]%in%metaFactor[[i]],i]))
+            }
+        }else{
+            if(is.character(meta[,i]) || is.factor(meta))
+                metaFactor[[i]] <- unique(meta[,i])
+        }
     }
     metaFactor_saveYaml(metaFactor,strMetaFactor)
     return(metaFactor)
