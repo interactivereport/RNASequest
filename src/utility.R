@@ -491,14 +491,15 @@ covariateRM_limmaRM <- function(X,batchX,prior=0.25){
     }
     if(!is.null(factorX)) design <- cbind(design,factorX)
     design <- cbind(design,batchX)
-    
+    #print(head(design))
     message("Starting limma batch RM")
     M <- edgeR::DGEList(counts=X)
     M <- edgeR::calcNormFactors(M,method="TMM")
     logCPM <- edgeR::cpm(M,log = TRUE,prior.count = prior)
     ## modified from limma::removeBatchEffect
-    fit <- limma::lmFit(logCPM,design)
+    fit <- limma::lmFit(logCPM,design,method="robust")
     beta <- fit$coefficients[, -1, drop = FALSE]
+    #print(apply(beta,2,summary))
     beta[is.na(beta)] <- 0
     logCPM <- as.matrix(logCPM) - beta %*% t(design[,-1,drop=F])
     
