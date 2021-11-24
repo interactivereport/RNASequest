@@ -1080,8 +1080,17 @@ formatQuickOmicsMeta <- function(meta,comNames){
                      group=meta$group,
                      Order=unique(meta$group),
                      ComparePairs=comNames)
-    MetaData <- cbind(as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F),
-                      meta[,-grep("^group$",colnames(meta)),drop=F])
+    MetaData <- as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F)
+    if(nrow(MetaData)>nrow(meta))
+        MetaData <- cbind(MetaData,
+                          rbind(meta[,-1,drop=F],
+                                data.frame(matrix(NA,
+                                                  nrow=nrow(MetaData)-nrow(meta),
+                                                  ncol=ncol(meta),
+                                                  dimnames=list(1:(nrow(MetaData)-nrow(meta)),colnames(meta))))))
+    else
+        MetaData <- cbind(MetaData,meta[,-1,drop=F])
+
     suppressWarnings(MetaData[is.na(MetaData)] <- "")
     return(MetaData)
 }
