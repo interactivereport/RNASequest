@@ -56,8 +56,8 @@ formatQuickOmicsMeta <- function(meta,comNames){
                           rbind(meta[,-1,drop=F],
                                 data.frame(matrix(NA,
                                                   nrow=nrow(MetaData)-nrow(meta),
-                                                  ncol=ncol(meta),
-                                                  dimnames=list(1:(nrow(MetaData)-nrow(meta)),colnames(meta))))))
+                                                  ncol=ncol(meta)-1,
+                                                  dimnames=list(1:(nrow(MetaData)-nrow(meta)),colnames(meta)[-1])))))
     else
         MetaData <- cbind(MetaData,meta[,-1,drop=F])
     suppressWarnings(MetaData[is.na(MetaData)] <- "")
