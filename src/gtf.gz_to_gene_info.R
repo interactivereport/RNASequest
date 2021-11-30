@@ -44,9 +44,14 @@ gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     ERCC<-gtf%>%filter(str_detect(V1, "ERCC"))%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F) %>%
         tidyr::extract(V9, c("gene_name"), 'gene_name "(.+?)";', remove=F)%>%
         tidyr::extract(V9, c("gene_type"), str_c(gene_type_key, ' "(.+?)";'), remove=F)
+    #add plasmid genes. If no plasmid genes, get empty data.table which won't affect the results
+    plasmid_genes<-gtf%>%filter(V2=="gb2gtf")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F) %>%
+        tidyr::extract(V9, c("gene_name"), 'transcript_id "(.+?)";', remove=F)%>%
+        tidyr::extract(V9, c("gene_type"), 'Feature_type "(.+?)"', remove=F)
     
-    all_genes<-rbind(tx_info%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type),
-                     ERCC%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type) )
+    all_genes<-rbind(ERCC%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type),
+    plasmid_genes%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type),
+    tx_info%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type) ) %>%filter(!duplicated(geneID))
     
     #now get gene length by combining all exons for a gene
     exons<-gtf%>%filter(V3=="exon")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F)
