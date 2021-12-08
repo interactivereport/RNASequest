@@ -153,12 +153,16 @@ appendMeta <- function(pInfo,sample_name,selQC){
         rownames(qc) <- qc[,1]
         qc <- qc[,selQC,drop=F]
         colnames(qc) <- gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc))))))
+        ## only the sequenced samples will be included (remove not sequenced samples from sample sheet)
+        pInfo$sInfo <- pInfo$sInfo[pInfo$sInfo[,sample_name]%in%rownames(qc),]
+        
         rownames(pInfo$sInfo) <- pInfo$sInfo[,sample_name]
-        if(sum(!rownames(pInfo$sInfo)%in%rownames(qc))>0)
-            stop(paste0("Sample Names (",
-                       paste(rownames(pInfo$sInfo)[!rownames(pInfo$sInfo)%in%rownames(qc)],collapse=", "),
-                       ") specified in sample sheet cannot be found in seqQC file ",
-                       pInfo$strSeqQC))
+        
+        #if(sum(!rownames(pInfo$sInfo)%in%rownames(qc))>0)
+        #    stop(paste0("Sample Names (",
+        #               paste(rownames(pInfo$sInfo)[!rownames(pInfo$sInfo)%in%rownames(qc)],collapse=", "),
+        #               ") specified in sample sheet cannot be found in seqQC file ",
+        #               pInfo$strSeqQC))
         meta <- merge(pInfo$sInfo,qc,by="row.names",sort=F)
         rownames(meta) <- meta[,1]
         meta <- meta[,-1]
@@ -1081,15 +1085,16 @@ formatQuickOmicsMeta <- function(meta,comNames){
                      Order=unique(meta$group),
                      ComparePairs=comNames)
     MetaData <- as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F)
+    meta <- meta[,-grep("group",colnames(meta)),drop=F]
     if(nrow(MetaData)>nrow(meta))
         MetaData <- cbind(MetaData,
-                          rbind(meta[,-1,drop=F],
+                          rbind(meta,
                                 data.frame(matrix(NA,
                                                   nrow=nrow(MetaData)-nrow(meta),
                                                   ncol=ncol(meta),
                                                   dimnames=list(1:(nrow(MetaData)-nrow(meta)),colnames(meta))))))
     else
-        MetaData <- cbind(MetaData,meta[,-1,drop=F])
+        MetaData <- cbind(MetaData,meta)
 
     suppressWarnings(MetaData[is.na(MetaData)] <- "")
     return(MetaData)

@@ -10,8 +10,8 @@ gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/mouse/Mouse.GRCm38.102/Mus_musculus.GRCm38.transcript.gtf.gz"
     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/monkey/Monkey.Macaca_fascicularis_5.0_NCBI_RefSeq.aavhSMN1.REV4_2/Monkey_REV4b.transcript.gtf.gz"
     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/monkey/Monkey.macFas5.v100.l1_5/Monkey.macFas5.v100.l1_5.transcript.transcript.gtf.gz"
-     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/rat/Rattus_norvegicus_ensemble_Rnor6.0.89/Rattus_norvegicus_ensemble_Rnor6.0.89.transcript.transcript.gtf.gz"
-
+    #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/rat/Rattus_norvegicus_ensemble_Rnor6.0.89/Rattus_norvegicus_ensemble_Rnor6.0.89.transcript.transcript.gtf.gz"
+    
     gene_info_file <- strOut
     #if(is.null(gene_info_file)) gene_info_file=str_replace(strGTF, "gtf.gz", "gene_info.csv")  #will save gene information file here
     if(is.null(gene_info_file)) gene_info_file=str_replace(str_replace(strGTF, "gtf.gz", "gene_info.csv"),"gtf$","gene_info.csv") #O'Young
@@ -44,9 +44,14 @@ gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     ERCC<-gtf%>%filter(str_detect(V1, "ERCC"))%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F) %>%
         tidyr::extract(V9, c("gene_name"), 'gene_name "(.+?)";', remove=F)%>%
         tidyr::extract(V9, c("gene_type"), str_c(gene_type_key, ' "(.+?)";'), remove=F)
+    #add plasmid genes. If no plasmid genes, get empty data.table which won't affect the results
+    plasmid_genes<-gtf%>%filter(V2=="gb2gtf")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F) %>%
+        tidyr::extract(V9, c("gene_name"), 'transcript_id "(.+?)";', remove=F)%>%
+        tidyr::extract(V9, c("gene_type"), 'Feature_type "(.+?)"', remove=F)
     
-    all_genes<-rbind(tx_info%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type),
-                     ERCC%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type) )
+    all_genes<-rbind(ERCC%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type),
+                     plasmid_genes%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type),
+                     tx_info%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type) ) %>%filter(!duplicated(geneID))
     
     #now get gene length by combining all exons for a gene
     exons<-gtf%>%filter(V3=="exon")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F)
