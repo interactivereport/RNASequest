@@ -17,7 +17,7 @@ config <- yaml::read_yaml(args[2])
 sys_config <- yaml::read_yaml(file.path(args[1],"sys.yml"))
 source(file.path(args[1],"QuickOmics_DEG.R"))
 
-R_file = normalizePath(file.path(sys_config$QuickOmics_path, paste0(config$prj_name, ".RData")))
+R_file = normalizePath(file.path(config$output, paste0(config$prj_name, ".RData")))
 if(!file.exists(R_file)){
   stop(paste(R_file, "is not found."))
 }
@@ -81,7 +81,8 @@ Meta_complete$SampleID[grepl("^[[:digit:]]+", Meta_complete$SampleID)] = str_c("
 write.csv(Meta_complete, file.path(output_path, "Sample_Info_complete.csv"), row.names=F)
 
 ## Expression & Counts ------
-estCount = readRDS(paste0(config$output,"/",config$prj_name,"_estCount.rds"))
+
+estCount = readRDS(file.path(config$output, paste0(config$prj_name, "_estCount.rds")))
 
 Expression = 2^data_wide - config$count_prior
 
