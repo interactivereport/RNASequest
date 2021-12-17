@@ -1,0 +1,46 @@
+# Getting started
+
+## Installation
+
+Download ExpressionAnalysis from GitHub and add it to the environment:
+
+```{bash, eval=FALSE}
+git clone https://github.com/interactivereport/ExpressionAnalysis.git
+cd ExpressionAnalysis
+git checkout publication
+
+#Check the path of current directory and add it to $PATH:
+CurrentDir=`pwd`
+PATH="$CurrentDir:$PATH"
+export $PATH
+```
+
+## File hierarchy
+
+Here is the hierarchy of input files for ExpressionAnalysis:
+
+```
+DNAnexus_result_folder/
+    ├── analysis-G62b6X00G3b14F4PByb5PZz9
+    ├── combine_rnaseqc/
+      └── combined.metrics.tsv
+    ├── combine_rsem_outputs/
+      ├── genes.effective_length.txt
+      ├── genes.estcount_table.txt
+      ├── genes.fpkm_table.txt
+      ├── genes.tpm_table.txt
+      ├── isoforms.estcount_table.txt
+      ├── isoforms.fpkm_table.txt
+      ├── isoforms.isopct_table.txt
+      ├── isoforms.tpm_table.txt
+      └── rsem_sample_list.txt
+    ├── config.json
+    ├── rsem
+      ├── sample1.genes.results.gz
+      ├── sample1.isoforms.results.gz
+      ├── sample2.genes.results.gz
+      ├── sample2.isoforms.results.gz
+      ...
+    ├── samplesheet.json
+    └── samplesheet.tsv
+```

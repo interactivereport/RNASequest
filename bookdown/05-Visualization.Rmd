@@ -1,0 +1,3 @@
+# Visualization
+
+The output results will be piped to QuickOmics for visualization.
