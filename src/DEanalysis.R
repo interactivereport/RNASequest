@@ -20,7 +20,7 @@ DEGs <- comparisonAnalysis(config,D$counts,D$meta,D$comp_info)
 
 ## covariate removal -----
 if(!is.null(config$covariates_adjust) && length(config$covariates_adjust)>0){
-    batchX <- meta[,config$covariates_adjust,drop=F]
+    batchX <- D$meta[,config$covariates_adjust,drop=F]
     D$logTPM <- suppressMessages(covariateRM(D$counts,D$effLength,
                                              batchX=batchX,method='limma',
                                              prior=config$count_prior))

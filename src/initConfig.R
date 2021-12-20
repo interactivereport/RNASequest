@@ -10,7 +10,7 @@ configTmp <- yaml::read_yaml(paste0(args[1],"config.tmp.yml"))
 sysConfig <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 
 checkConfig(configTmp)
-pInfo <- checkInputDir(args[2],sysConfig$genome_path)
+pInfo <- checkInputDir(args[2],sysConfig)
 pInfo <- appendMeta(pInfo,
                     configTmp$sample_name,
                     sysConfig$qc2meta)

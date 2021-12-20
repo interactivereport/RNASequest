@@ -14,3 +14,12 @@ shinyApp: http://ngs.biogen.com/shinyone/app/core/
 DA_columns: [SampleID, ProjectName, PlatformName, CellType, Collection, DataSource, Description, DiseaseStage, DiseaseState,
              Ethnicity, Gender, Infection, Organism, Response, SamplePathology, SampleSource, SampleType, 
              SamplingTime, SubjectID, Symptom, Tissue, Title, Transfection, Treatment, Age]
+DNAnexus:
+  prjID: FASTR_NGS_PROJECT_ID
+  species: FASTR_REFERENCE_SPECIES
+  ref: FASTR_REFERENCE_VERSION
+  uName: FASTR_USER_FULLNAME
+  count: genes.estcount_table
+  effL: genes.effective_length
+  indFlag: genes.results.gz
+  seqQC: combined.metrics

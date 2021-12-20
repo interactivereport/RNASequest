@@ -14,26 +14,35 @@ saveSessionInfo <- function(strF,strSRC){
 }
 ## EAinit functions -----
 source("gtf.gz_to_gene_info.R")
-checkInputDir <- function(strInput,strGenome=NULL){
+checkInputDir <- function(strInput,sysConfig=NULL){
     strInput <- normalizePath(strInput)
     if(!dir.exists(strInput)){
         stop(paste(strInput, "is not a valid path"))
     }
     #for internal data structure
-    return(initInternal(strInput,strGenome))
+    return(initInternal(strInput,sysConfig))
 }
-initInternal <- function(strInput,strGannotation){
-    strSample <- paste0(strInput,"/samplesheet.tsv")
+
+initInternal <- function(strInput,sysConfig){
     pInfo <- NULL
-    if(file.exists(strSample)){
+    strSample <- paste0(strInput,"/samplesheet.tsv")
+    strConfig <- list.files(strInput,"^analysis-",full.names=T)
+    if(file.exists(strSample) && length(strConfig)>0){
         pInfo <- list()
         pInfo[["sInfo"]] <- data.frame(fread(strSample),stringsAsFactors=F)
         pInfo$sInfo <- pInfo$sInfo[,apply(pInfo$sInfo,2,function(x)return(sum(!is.na(x))>0))]
-        strConfig <- paste0(strInput,"/config.json")
-        if(!file.exists(strConfig)) stop("Incomplete DNAnexus download: missing ",strConfig)
-        pInfo[["prjID"]] <- pInfo[["prjTitle"]] <- getProjectID(strConfig)
-        pInfo[["species"]] <- getSpecies(strConfig)
-        pInfo[["gAnnotion"]] <- extractAnnotation(strConfig,strGannotation)
+        strConfig <- strConfig[1]
+        message("\tusing ",strConfig)
+        analysisP <- yaml::read_yaml(strConfig)
+        if('properties' %in% names(analysisP)){
+            analysisP <- analysisP$properties
+        }
+        pInfo[["prjID"]] <- pInfo[["prjTitle"]] <- analysisP[[sysConfig$DNAnexus$prjID]]
+        pInfo[["uName"]] <- analysisP[[sysConfig$DNAnexus$uName]]
+        pInfo[["species"]] <- analysisP[[sysConfig$DNAnexus$species]]
+        pInfo[["gAnnotion"]] <- extractAnnotation(analysisP[[sysConfig$DNAnexus$species]],
+                                                  analysisP[[sysConfig$DNAnexus$ref]],
+                                                  sysConfig$genome_path)
         
         strPrj <- gsub("tsv$","json",strSample)
         if(file.exists(strPrj)){
@@ -41,55 +50,38 @@ initInternal <- function(strInput,strGannotation){
             pInfo[["prjID"]] <- prjInfo$TSTID
             pInfo[["prjTitle"]] <- prjInfo$Study_Title
         }
+        res <- list.files(strInput,"estcount",recursive=T,full.names=T)
         
-        pInfo[["strCount"]] <- normalizePath(paste0(strInput,"/combine_rsem_outputs/genes.estcount_table.txt"))
-        pInfo[["strEffLength"]] <- normalizePath(extractEffectLength(strInput))
-        pInfo[["strSeqQC"]] <- normalizePath(paste0(strInput,"/combine_rnaseqc/combined.metrics.tsv"))
+        
+        pInfo[["strCount"]] <- getCountFile(strInput,sysConfig$DNAnexus$count)
+        pInfo[["strEffLength"]] <- getEffectLengthFile(strInput,
+                                                       sysConfig$DNAnexus$effL,
+                                                       sysConfig$DNAnexus$indFlag)
+        pInfo[["strSeqQC"]] <- getQCfile(strInput,sysConfig$DNAnexus$seqQC)
     }
     return(pInfo)
 }
-extractEffectLength<-function(strPath){
-    message("Extracting effective length ...")
-    strF <- paste0(strPath,"/combine_rsem_outputs/genes.effective_length.txt")
-    if(file.exists(strF)) return(strF)
-    if(dir.exists(paste0(strPath,"/rsem"))){
-        D <- NULL
-        selColumn <- c("gene_id","effective_length")
-        for(i in list.files(paste0(strPath,"/rsem"),"genes.results.gz",full.names=T)){
-            X <- fread(i,sep="\t",header=T)[,..selColumn]#,as.is=T,row.names=1
-            colnames(X) <- c(selColumn[1],gsub(".genes.results.gz",paste0("|",selColumn[2]),basename(i)))
-            if(is.null(D)) D <- X
-            else D <- merge(D,X,by=selColumn[1],all=T)
-        }
-        write.table(D,file=strF,sep="\t",row.names=F,quote=F)
-    }else{
-        stop("Cannot create Effective length file, check DNAnexus 'rsem' folder")
-    }
-    return(strF)
-}
-extractAnnotation <- function(strF,strPath=NULL){
+extractAnnotation <- function(species,sVersion,genome_path=NULL){
     message("Create gene annotation ...")
-    if(grepl("json$",strF)){
-        gConfig <- rjson::fromJSON(file=strF)
-        gtfPath <- list.files(paste0(strPath,"/rnaseq/",
-                                     gConfig$global_params$reference$species,
-                                     "/",gConfig$global_params$reference$version),
-                              "gtf.gz$",full.names=T)[1]
-        strF <- gsub("gtf.gz$","gene_info.csv",gtfPath)
-        if(!file.exists(strF)){
-            gtf.gz_to_gene_info(gtfPath)
-        }
+    gtfPath <- list.files(paste0(genome_path,"/rnaseq/",
+                                 species,"/",sVersion),
+                          "gtf.gz$",full.names=T)[1]
+    if(is.na(gtfPath)) stop(paste("missing reference GTF for",species,sVersion))
+    strF <- gsub("gtf.gz$","gene_info.csv",gtfPath)
+    if(!file.exists(strF)){
+        gtf.gz_to_gene_info(gtfPath)
     }
+
     #columns in strF: unique ID, gene_name, gene_type,....
+    message("\t",strF)
     gInfo <- read.csv(strF,as.is=T,check.names=F)
     gInfoName <- colnames(gInfo)
     gInfo <- cbind(0:(nrow(gInfo)-1),gInfo)
     dimnames(gInfo) <- list(gInfo[,2],
                             c("id","UniqueID","Gene.Name","Biotype",tail(gInfoName,-3)))
     ## if the lookup table is available
-    strLookup <- paste0(strPath,"/rnaseq/lookup/",
-                        gConfig$global_params$reference$version,
-                        ".csv")
+    strLookup <- paste0(genome_path,"/rnaseq/lookup/",
+                        sVersion,".csv")
     if(file.exists(strLookup)){
         gLookup <- read.csv(strLookup,row.names=1,as.is=T,check.names = F)
         gInfo <- merge(gInfo,gLookup,by="row.names",all=T,sort=F)
@@ -98,18 +90,50 @@ extractAnnotation <- function(strF,strPath=NULL){
     }
     return(gInfo)
 }
-getSpecies <- function(strF){
-    gConfig <- rjson::fromJSON(file=strF)
-    return(gConfig$global_params$reference$species)
-}
-getProjectID <- function(strF){
-    gConfig <- rjson::fromJSON(file=strF)
-    pID <- gConfig$global_params$internal_project_id
-    if(!is.null(pID)) return(pID)
-    for(one in gConfig$execution$manifest){
-        pID <- c(pID,one$project)
+getCountFile <- function(strInput,pattern){
+    res <- list.files(strInput,pattern,full.names=T)
+    if(length(res)==0){
+        res <- list.files(paste0(strInput,"/combine_rsem_outputs"),
+                          pattern,full.names=T)
     }
-    return(paste(unique(pID),collapse="_"))
+    return(normalizePath(res[order(nchar(res))][1]))
+}
+getEffectLengthFile <-function(strInput,pattern,indFlag){
+    message("Extracting effective length ...")
+    res <- list.files(strInput,pattern,full.names=T)
+    if(length(res)==0){
+        res <- list.files(paste0(strInput,"/combine_rsem_outputs"),
+                          pattern,full.names=T)
+    }
+    if(length(res)>0){
+        return(normalizePath(res[order(nchar(res))][1]))
+    }
+    ## extract from each individual files
+    strFs <- list.files(strInput,indFlag,full.names=T)
+    if(length(strFs)==0){
+        strFs <- list.files(paste0(strInput,"/rsem"),indFlag,full.names=T)
+    }
+    if(length(strFs)==0) stop("Imcomplete DNAnexus results without effective length")
+    
+    D <- NULL
+    selColumn <- c("gene_id","effective_length")
+    for(i in strFs){
+        X <- fread(i,sep="\t",header=T)[,..selColumn]#,as.is=T,row.names=1
+        colnames(X) <- c(selColumn[1],gsub(paste0(indFlag,"|\\.",indFlag),paste0("|",selColumn[2]),basename(i)))
+        if(is.null(D)) D <- X
+        else D <- merge(D,X,by=selColumn[1],all=T)
+    }
+    strF <- paste0(strInput,"/",pattern,".tsv")
+    write.table(D,file=strF,sep="\t",row.names=F,quote=F)
+    return(strF)
+}
+getQCfile <- function(strInput,pattern){
+    res <- list.files(strInput,pattern,full.names=T)
+    if(length(res)==0){
+        res <- list.files(paste0(strInput,"/combine_rnaseqc"),
+                          pattern,full.names=T)
+    }
+    return(normalizePath(res[order(nchar(res))][1]))
 }
 
 createEmptyComp <- function(strComp){
@@ -134,6 +158,7 @@ saveGeneAnnotation <- function(gAnno,strF){
 cleanTST <- function(strSrc,strDest=NULL,sep="\t"){
     if(is.null(strSrc) || !file.exists(strSrc)) return(NULL)
     D <- read.table(strSrc,sep=sep,header=T,as.is=T,check.names=F,quote="")
+    if(nchar(colnames(D)[1])==0) colnames(D)[1] <- "gene_id"
     if(sum(grepl("^TST",colnames(D)))>0){
         colnames(D) <- sapply(strsplit(sapply(strsplit(colnames(D),"\\|"),head,1),
                                        "_"),
@@ -142,6 +167,7 @@ cleanTST <- function(strSrc,strDest=NULL,sep="\t"){
         D[,1] <- sapply(strsplit(gsub(".genome.sorted","",D[,1]),
                                  "_"),
                         function(x)return(paste(grep("^TST",x,invert=T,value=T),collapse="_")))
+        D <- D[!duplicated(D[,1])&nchar(D[,1])>0,]
     }
     if(!is.null(strDest)) write.table(D,strDest,row.names=F,sep=sep)
     else return(D)
@@ -242,12 +268,8 @@ createInit <- function(strInput,configTmp,pInfo){
         configTmp <- gsub("^shinyOne_Description:",paste("shinyOne_Description:",pInfo$prjTitle),configTmp)
         fastrUN <- "FASTR_USER_FULLNAME: "
         configTmp <- gsub("^shinyOne_Data_Generated_By:",
-                          paste("shinyOne_Data_Generated_By:",
-                                gsub(fastrUN,"",
-                                     system(paste0("grep ",fastrUN," ",strInput,"/analysis-*"),
-                                            intern=T))),
+                          paste("shinyOne_Data_Generated_By:",pInfo$uName),
                           configTmp)
-        
     }
     cat(paste(configTmp,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
     return(list(strOut=strOut,strComp=strComp))
@@ -375,7 +397,7 @@ getCounts <- function(config,sID){
 }
 checkSampleName <- function(D,sID){
     if(sum(!sID%in%colnames(D))>0)
-        stop(paste0("samples (",paste(sID[!sID%in%colnames(D)],collapse=","),
+        stop(paste0("samples (",paste(c(head(sID[!sID%in%colnames(D)],5),"..."),collapse=","),
                     ") defined in sample meta table are NOT available in count matrix"))
     D <- D[,sID,drop=F]
     return(D)
