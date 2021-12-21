@@ -869,7 +869,7 @@ finishQC <- function(strMsg){
 # EAdata: meta, counts, gInfo, effLength, logTPM, seqQC
 splitUpdatePrj <- function(config,one,strOut){
     config$prj_name <- paste(config$prj_name,one,sep="_")
-    config$prj_title <- paste0("(",one,") ",config$prj_name)
+    config$prj_title <- paste0("(",one,") ",config$prj_title)
     config$output <- strOut
     config$DA_file_outpath <- paste0(strOut,"/DA_Import_Files")
     return(config)
@@ -934,7 +934,7 @@ splitOne <- function(config,EAdata,one){
                                        selCol=rownames(EAdata$meta),
                                        saveRowNames="gene_id",
                                        sep="\t")
-    config$prj_counts <- splitSaveData(EAdata$effLength,
+    config$prj_effLength <- splitSaveData(EAdata$effLength,
                                        paste0(strD,"/effLength.tsv"),
                                        selCol=rownames(EAdata$meta),
                                        saveRowNames="gene_id",
