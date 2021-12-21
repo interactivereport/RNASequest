@@ -886,10 +886,16 @@ splitSaveData <- function(X,strF,selRow=NULL,selCol=NULL,saveRowNames=NULL,...){
     write.table(X,strF,row.names=F,...)
     return(strF)
 }
-splitSaveFactor <- function(strSrc,strDest,rmOne){
+splitSaveFactor <- function(strSrc,strDest,strMeta,sep=","){
     if(file.exists(strSrc)){
-        cat(paste(grep(paste0("^",rmOne,":"),readLines(config$sample_factor),invert=T,value=T),
-                  collapse="\n"),"\n",sep="",file=strDest)
+        meta <- read.table(strMeta,sep=sep,header=T,check.names=F,as.is=T)
+        metaF <- yaml::read_yaml(strSrc)
+        conn <- file(strDest,"w")
+        for(one in names(metaF)){
+            res <- metaF[[one]][metaF[[one]]%in%meta[,one]]
+            cat(one,": ['",paste(res,collapse="','"),"']\n",sep="")
+        }
+        close(conn)
     }
     return(strDest)
 }
@@ -958,7 +964,7 @@ splitOne <- function(config,EAdata,one){
                                         sep=",")
     config$sample_factor <- splitSaveFactor(config$sample_factor,
                                             paste0(strD,"/sampleMetaFactor.yml"),
-                                            one)
+                                            config$sample_meta)
     config$comparison_file <- splitSaveComp(config$comparison_file,
                                             paste0(strD,"/compareInfo.csv"),
                                             one)
