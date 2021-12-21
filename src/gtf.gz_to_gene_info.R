@@ -2,6 +2,8 @@ suppressWarnings(suppressMessages(require(tidyverse)))
 suppressMessages(require(data.table))
 suppressMessages(require(GenomicRanges))
 suppressMessages(require(R.utils))
+suppressMessages(require(stringr))
+suppressMessages(require(dplyr))
 
 gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     #I have tested the script with the following files

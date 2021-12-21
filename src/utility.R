@@ -94,6 +94,7 @@ extractAnnotation <- function(species,sVersion,genome_path=NULL){
     return(gInfo)
 }
 getCountFile <- function(strInput,pattern){
+    message("\tgetting ",pattern)
     res <- list.files(strInput,pattern,full.names=T)
     if(length(res)==0){
         res <- list.files(paste0(strInput,"/combine_rsem_outputs"),
@@ -134,11 +135,13 @@ getEffectLengthFile <-function(strInput,pattern,indFlag){
     return(strF)
 }
 getQCfile <- function(strInput,pattern){
+    message("\tgetting ",pattern)
     res <- list.files(strInput,pattern,full.names=T)
     if(length(res)==0){
         res <- list.files(paste0(strInput,"/combine_rnaseqc"),
                           pattern,full.names=T)
     }
+    if(length(res)==0) stop("Internal alignment QC file is missing!")
     return(normalizePath(res[order(nchar(res))][1]))
 }
 
