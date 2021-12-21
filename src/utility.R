@@ -57,6 +57,9 @@ initInternal <- function(strInput,sysConfig){
         pInfo[["strEffLength"]] <- getEffectLengthFile(strInput,
                                                        sysConfig$DNAnexus$effL,
                                                        sysConfig$DNAnexus$indFlag)
+        if(is.null(pInfo[["strEffLength"]])){
+            pInfo[["strTPM"]] <- getCountFile(strInput,sysConfig$DNAnexus$tpm)
+        }
         pInfo[["strSeqQC"]] <- getQCfile(strInput,sysConfig$DNAnexus$seqQC)
     }
     return(pInfo)
@@ -113,7 +116,10 @@ getEffectLengthFile <-function(strInput,pattern,indFlag){
     if(length(strFs)==0){
         strFs <- list.files(paste0(strInput,"/rsem"),indFlag,full.names=T)
     }
-    if(length(strFs)==0) stop("Imcomplete DNAnexus results without effective length")
+    if(length(strFs)==0){
+        message("No effective length, TPM is used for visualization (covariate adjustment is disabled).")
+        return(NULL)
+    }
     
     D <- NULL
     selColumn <- c("gene_id","effective_length")
@@ -219,6 +225,7 @@ createInit <- function(strInput,configTmp,pInfo){
     
     strCount <- paste0(strOut,"/data/count.tsv")
     strEffLength <- paste0(strOut,"/data/effLength.tsv")
+    strTPM <- paste0(strOut,"/data/TPM.tsv")
     strSeqQC <- paste0(strOut,"/data/seqQC.tsv")
     
     strMeta <- paste0(strOut,"/data/sampleMeta.csv")
@@ -245,7 +252,15 @@ createInit <- function(strInput,configTmp,pInfo){
         configTmp <- gsub("initPrjComp",strComp,configTmp)
     }else{
         cleanTST(pInfo[["strCount"]],strDest=strCount)
-        cleanTST(pInfo[["strEffLength"]],strDest=strEffLength)
+        if(is.null(pInfo[["strEffLength"]])){
+            cleanTST(pInfo[["strTPM"]],strDest=strTPM)
+            configTmp <- gsub("initTPM",strTPM,configTmp)
+            configTmp <- gsub("initEffLength","",configTmp)
+        }else{
+            cleanTST(pInfo[["strEffLength"]],strDest=strEffLength)
+            configTmp <- gsub("initTPM","",configTmp)
+            configTmp <- gsub("initEffLength",strEffLength,configTmp)
+        }
         cleanTST(pInfo[["strSeqQC"]],strDest=strSeqQC)
         write.csv(pInfo$sInfo,file=strMeta,row.names=F)
         
@@ -254,7 +269,7 @@ createInit <- function(strInput,configTmp,pInfo){
         configTmp <- gsub("initCounts",strCount,configTmp)
         configTmp <- gsub("initEffLength",strEffLength,configTmp)
         configTmp <- gsub("initSeqQC",strSeqQC,configTmp)
-        configTmp <- gsub("initTPM","",configTmp)
+        
         
         configTmp <- gsub("initPrjMeta",strMeta,configTmp)
         configTmp <- gsub("initPrjFactor",strMetaFactor,configTmp)

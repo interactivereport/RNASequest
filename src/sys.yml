@@ -21,5 +21,6 @@ DNAnexus:
   uName: FASTR_USER_FULLNAME
   count: genes.estcount_table
   effL: genes.effective_length
+  tpm: genes.tpm_table
   indFlag: genes.results.gz
   seqQC: combined.metrics
