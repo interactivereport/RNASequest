@@ -893,7 +893,7 @@ splitSaveFactor <- function(strSrc,strDest,strMeta,sep=","){
         conn <- file(strDest,"w")
         for(one in names(metaF)){
             res <- metaF[[one]][metaF[[one]]%in%meta[,one]]
-            cat(one,": ['",paste(res,collapse="','"),"']\n",sep="")
+            cat(one,": ['",paste(res,collapse="','"),"']\n",sep="",file=conn)
         }
         close(conn)
     }
