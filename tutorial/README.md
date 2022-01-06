@@ -1,6 +1,6 @@
 # Bookdown tutorial for EA
 
-Link not activated yet:
+Please find the bookdown tutorial for EA here:
 
-https://interactivereport.github.io/ExpressionAnalysis/bookdown/docs/index.html
+https://interactivereport.github.io/ExpressionAnalysis/tutorial/docs/index.html
 
