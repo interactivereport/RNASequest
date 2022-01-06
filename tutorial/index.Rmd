@@ -5,33 +5,24 @@ author:
   - name: Jing Zhu
     email: jing.zhu@biogen.com
     affiliation: Biogen
-  - name: Xinmin Zhang
-    email: xinmin.zhang@biogen.com ???
-    affiliation: BioInfoRx
-  - name: Zhengyu Ouyang
-    email: oyoung@bioinforx.com
-    affiliation: BioInfoRx
-  - name: Wei Li
-    email: weili@bioinforx.com
-    affiliation: BioInfoRx
-  - name: Hima Yalamanchili
-    email: hima.yalamanchili@biogen.com
-    affiliation: Biogen
-  - name: Maria Zavodszky
-    email: maria.zavodszky@biogen.com
+  - name: Fergal Casey
+    email: fergal.casey@biogen.com
     affiliation: Biogen
   - name: Yu (Henry) Sun
     email: yuhenry.sun@biogen.com
     affiliation: Biogen
-  - name: David Sexton
-    email: david.sexton@biogen.com
-    affiliation: Biogen
   - name: Kejie Li
     email: kejie.li@biogen.com
     affiliation: Biogen
-  - name: Fergal Casey
-    email: fergal.casey@biogen.com
+  - name: Maria Zavodszky
+    email: maria.zavodszky@biogen.com
     affiliation: Biogen
+  - name: Zhengyu Ouyang
+    email: oyoung@bioinforx.com
+    affiliation: BioInfoRx
+  - name: Xinmin Zhang
+    email: xinmin.zhang@biogen.com
+    affiliation: BioInfoRx
   - name: Baohong Zhang (Corresponding Author)
     email: baohong.zhang@biogen.com
     affiliation: Biogen
