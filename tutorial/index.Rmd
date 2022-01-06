@@ -1,7 +1,7 @@
 --- 
 title: "Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics"
 author:
-  - name: This name list has not been finalized!!!
+  - name: This name list has not been finalized!
   - name: Jing Zhu
     email: jing.zhu@biogen.com
     affiliation: Biogen
