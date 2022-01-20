@@ -20,7 +20,11 @@ checkInputDir <- function(strInput,sysConfig=NULL){
         stop(paste(strInput, "is not a valid path"))
     }
     #for internal data structure
-    return(initInternal(strInput,sysConfig))
+    prjInfo <- initInternal(strInput,sysConfig)
+    if(is.null(prjInfo)){
+        prjInfo <- initFileNameMatch(strInput,sysConfig)
+    }
+    return(prjInfo)
 }
 
 initInternal <- function(strInput,sysConfig){
@@ -61,6 +65,8 @@ initInternal <- function(strInput,sysConfig){
             pInfo[["strTPM"]] <- getCountFile(strInput,sysConfig$DNAnexus$tpm)
         }
         pInfo[["strSeqQC"]] <- getQCfile(strInput,sysConfig$DNAnexus$seqQC)
+        pInfo <- getCovariates(pInfo,sysConfig$notCovariates)
+        pInfo$datatype <- "DNAnexus"
     }
     return(pInfo)
 }
@@ -145,8 +151,51 @@ getQCfile <- function(strInput,pattern){
     return(normalizePath(res[order(nchar(res))][1]))
 }
 
-createEmptyComp <- function(strComp){
-    message("Create empty comparison template ...")
+initFileNameMatch <- function(strInput,sysConfig){
+    pInfo <- NULL
+    fList <- list.files(strInput)
+    strF <- setNames(rep("",length(sysConfig$FileName)),names(sysConfig$FileName))
+    for(one in names(strF)){
+        if(length(sysConfig$FileName[[one]])>1) next
+        a <- grep(sysConfig$FileName[[one]],fList,value=T,ignore.case = T)
+        strF[one] <- ifelse(length(a)==0,"",normalizePath(paste0(strInput,"/",a[1])))
+    }
+    if(file.exists(strF["prj_counts"]) && file.exists(strF["sample_meta"]) &&
+       (file.exists(strF["prj_TPM"]) || file.exists(strF["prj_effLength"]))){
+        pInfo <- list(prjID=basename(strInput),
+                      prjTitle=basename(strInput),
+                      species="human")
+        if(file.exists(strF["projectFile"])){
+            prjInfo <- yaml::read_yaml(strF["projectFile"])
+            for(one in names(sysConfig$FileName$projectEntry)){
+                prjInfo[[one]] <- prjInfo[[sysConfig$FileName$projectEntry[[one]]]]
+            }
+        }
+        if(file.exists(strF["gene_annotation"])){
+            pInfo[["gAnnotion"]] <- data.frame(fread(strF["gene_annotation"]),stringsAsFactors=F)
+            rownames(pInfo[["gAnnotion"]]) <- pInfo[["gAnnotion"]][,1]
+            pInfo[["gAnnotion"]] <- pInfo[["gAnnotion"]][,-1]
+        }
+        pInfo[["strCount"]] <- strF["prj_counts"]
+        
+        if(file.exists(strF["prj_effLength"]))
+            pInfo[["strEffLength"]] <- strF["prj_effLength"]
+        if(file.exists(strF["prj_TPM"]))
+            pInfo[["strTPM"]] <- strF["prj_TPM"]
+        pInfo[["sInfo"]] <- data.frame(fread(strF["sample_meta"]),stringsAsFactors=F)
+        colnames(pInfo[["sInfo"]])[1] <- "Sample_Name"
+        if(file.exists(strF["prj_seqQC"]))
+            pInfo[["strSeqQC"]] <- strF["prj_seqQC"]
+        pInfo <- getCovariates(pInfo,sysConfig$notCovariates)
+        if(file.exists(strF[["comparison_file"]]))
+            pInfo[["comparison_file"]] <- data.frame(fread(strF[["comparison_file"]]),stringsAsFactors=F)
+        
+        pInfo$datatype <- "FileMatch"
+    }
+    return(pInfo)
+}
+
+createComparison <- function(strComp,comp=NULL){
     comTitle <- c("CompareName",
                   "Subsetting_group",
                   "Model",
@@ -157,7 +206,18 @@ createEmptyComp <- function(strComp){
                   "Analysis_method",
                   "Shrink_logFC",
                   "LFC_cutoff")
-    cat(paste(comTitle,collapse=","),"\n",sep="",file=strComp)
+    if(is.null(comp)){
+        message("Create empty comparison template ...")
+        cat(paste(comTitle,collapse=","),"\n",sep="",file=strComp)
+    }else{
+        compTable <- matrix("",nrow=nrow(comp),ncol=length(comTitle),dimnames=list(1:nrow(comp),comTitle))
+        compTable[,"CompareName"] <- apply(comp,1,function(x)return(paste0(x[1],"_",x[2],".vs.",x[3])))
+        compTable[,"Group_name"] <- comp[,1]
+        compTable[,"Group_test"] <- comp[,2]
+        compTable[,"Group_ctrl"] <- comp[,3]
+        compTable[,"Analysis_method"] <- "DESeq2"
+        write.csv(compTable,file=strComp,row.names=F)
+    }
 }
 saveGeneAnnotation <- function(gAnno,strF){
     if(!is.null(gAnno)){
@@ -237,15 +297,15 @@ createInit <- function(strInput,configTmp,pInfo){
     saveGeneAnnotation(pInfo$gAnnotion,strGinfo)
     
     strComp <- paste0(strOut,"/data/compareInfo.csv")
-    createEmptyComp(strComp)
+    createComparison(strComp,pInfo[["comparison_file"]])
     message("saving initialization ...")
     if(is.null(pInfo)){
         configTmp <- gsub("initPrjName"," #required",configTmp)
         configTmp <- gsub("initPrjTitle"," #optional",configTmp)
-        configTmp <- gsub("prj_counts"," #required",configTmp)
-        configTmp <- gsub("prj_effLength"," #if provided prj_TPM is ignored",configTmp)
-        configTmp <- gsub("prj_seqQC"," #optional",configTmp)
-        configTmp <- gsub("prj_TPM","  #prj_effLength or prj_TPM is required",configTmp)
+        configTmp <- gsub("initCounts"," #required",configTmp)
+        configTmp <- gsub("initEffLength"," #if provided prj_TPM is ignored",configTmp)
+        configTmp <- gsub("initSeqQC"," #optional",configTmp)
+        configTmp <- gsub("initTPM"," #prj_effLength or prj_TPM is required",configTmp)
         configTmp <- gsub("initPrjMeta"," #required",configTmp)
         configTmp <- gsub("initPrjFactor",strMetaFactor,configTmp)
         configTmp <- gsub("initSpecies"," #required",configTmp)
@@ -253,7 +313,7 @@ createInit <- function(strInput,configTmp,pInfo){
         configTmp <- gsub("initOutput",strOut,configTmp)
         configTmp <- gsub("initCovariates","",configTmp)
         configTmp <- gsub("initPrjComp",strComp,configTmp)
-    }else{
+    }else if(pInfo$datatype=="DNAnexus"){
         cleanTST(pInfo[["strCount"]],strDest=strCount)
         if(is.null(pInfo[["strEffLength"]])){
             cleanTST(pInfo[["strTPM"]],strDest=strTPM)
@@ -288,7 +348,45 @@ createInit <- function(strInput,configTmp,pInfo){
         configTmp <- gsub("^shinyOne_Data_Generated_By:",
                           paste("shinyOne_Data_Generated_By:",pInfo$uName),
                           configTmp)
-    }
+    }else if(pInfo$datatype=="FileMatch"){
+        file.copy(pInfo[["strCount"]],strCount)
+        write.csv(pInfo$sInfo,file=strMeta,row.names=F)
+        
+        configTmp <- gsub("initPrjName",pInfo[["prjID"]],configTmp)
+        configTmp <- gsub("initPrjTitle",pInfo[["prjTitle"]],configTmp)
+        configTmp <- configTmp <- gsub("initCounts",strCount,configTmp)
+        if(!is.null(pInfo[["strEffLength"]]) && file.exists(pInfo[["strEffLength"]])){
+            file.copy(pInfo[["strEffLength"]],strEffLength)
+            configTmp <- gsub("initEffLength",strEffLength,configTmp)
+        }else{
+            configTmp <- gsub("initEffLength"," #if provided prj_TPM is ignored",configTmp)
+        }
+        if(!is.null(pInfo[["strTPM"]]) && file.exists(pInfo[["strTPM"]])){
+            file.copy(pInfo[["strTPM"]],strTPM)
+            configTmp <- gsub("initTPM",strTPM,configTmp)
+        }else{
+            configTmp <- gsub("initTPM"," #prj_effLength or prj_TPM is required",configTmp)
+        }
+        if(!is.null(pInfo[["strSeqQC"]]) && file.exists(pInfo[["strSeqQC"]])){
+            file.copy(pInfo[["strSeqQC"]],strSeqQC)
+            configTmp <- gsub("initSeqQC",strSeqQC,configTmp)
+        }else{
+            configTmp <- gsub("initSeqQC"," #optional",configTmp)
+        }
+        configTmp <- gsub("initPrjMeta",strMeta,configTmp)
+        configTmp <- gsub("initPrjFactor",strMetaFactor,configTmp)
+        configTmp <- gsub("initSpecies",pInfo$species,configTmp)
+        if(!is.null(pInfo$gAnnotion)){
+            configTmp <- gsub("initGeneAnnotation",strGinfo,configTmp)
+        }else{
+            configTmp <- gsub("initGeneAnnotation"," #optional",configTmp)
+        }
+        configTmp <- gsub("initOutput",strOut,configTmp)
+        configTmp <- gsub("initCovariates",paste0("[",paste(pInfo$covariates,collapse=","),"]"),configTmp)
+        configTmp <- gsub("initPrjComp",strComp,configTmp)
+        
+    }else
+        stop("Unknown data input")
     cat(paste(configTmp,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
     return(list(strOut=strOut,strComp=strComp))
 }
@@ -669,7 +767,7 @@ require(reshape2)
 plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,10,30),gInfo=NULL,replot=F){#,50,100
     if(file.exists(strPDF) && !replot) return()
     message("plotting sequencing QC @",strPDF)
-    if(!is.null(gInfo) & sum(rownames(gInfo)!=gInfo$Gene.Name)>0){
+    if(!is.null(gInfo) & sum(rownames(gInfo)!=gInfo$Gene.Name,na.rm=T)>0){
         rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
         if(!is.null(estC)) rownames(estC) <- paste(rownames(estC),gInfo[rownames(estC),"Gene.Name"],sep="|")
     }

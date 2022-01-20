@@ -1,3 +1,4 @@
+#. /home/zouyang/anaconda3/etc/profile.d/conda.sh;conda activate ExpressionAnalysis
 ## path to the reference genome is on HPC
 genome_path: /camhpc/ngs/genomes/DNAnexus_references #/camhpc/ngs/genomes/dnanexus/core/references
 notCovariates: [Sapio_Submission_ID,Sapio_Sample_ID,Sapio_Request_Name,Sapio_Request_ID,Sapio_URL,Sapio_Plate_ID,Sapio_Profile,
@@ -24,3 +25,17 @@ DNAnexus:
   tpm: genes.tpm_table
   indFlag: genes.results.gz
   seqQC: combined.metrics
+FileName:
+  projectFile: project.yml
+  prj_counts: counts
+  prj_effLength: length
+  prj_seqQC: seqQC
+  prj_TPM: tpm
+  sample_meta: meta
+  gene_annotation: annotation
+  comparison_file: comparison
+  projectEntry:
+    prjID: project
+    prjTitle: project
+    species: species
+
