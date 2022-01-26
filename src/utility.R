@@ -33,7 +33,7 @@ initInternal <- function(strInput,sysConfig){
     strConfig <- list.files(strInput,"^analysis-",full.names=T)
     if(file.exists(strSample) && length(strConfig)>0){
         pInfo <- list()
-        pInfo[["sInfo"]] <- data.frame(fread(strSample),stringsAsFactors=F, header=T)
+        pInfo[["sInfo"]] <- data.frame(fread(strSample, header=T),stringsAsFactors=F)
         pInfo$sInfo <- pInfo$sInfo[,apply(pInfo$sInfo,2,function(x)return(sum(!is.na(x))>0))]
         strConfig <- strConfig[1]
         message("\tusing ",strConfig)
@@ -172,7 +172,7 @@ initFileNameMatch <- function(strInput,sysConfig){
             }
         }
         if(file.exists(strF["gene_annotation"])){
-            pInfo[["gAnnotion"]] <- data.frame(fread(strF["gene_annotation"]),stringsAsFactors=F, header=T)
+            pInfo[["gAnnotion"]] <- data.frame(fread(strF["gene_annotation"], header=T),stringsAsFactors=F)
             rownames(pInfo[["gAnnotion"]]) <- pInfo[["gAnnotion"]][,1]
             pInfo[["gAnnotion"]] <- pInfo[["gAnnotion"]][,-1]
         }
@@ -182,13 +182,13 @@ initFileNameMatch <- function(strInput,sysConfig){
             pInfo[["strEffLength"]] <- strF["prj_effLength"]
         if(file.exists(strF["prj_TPM"]))
             pInfo[["strTPM"]] <- strF["prj_TPM"]
-        pInfo[["sInfo"]] <- data.frame(fread(strF["sample_meta"]),stringsAsFactors=F, header=T)
+        pInfo[["sInfo"]] <- data.frame(fread(strF["sample_meta"], header=T),stringsAsFactors=F)
         colnames(pInfo[["sInfo"]])[1] <- "Sample_Name"
         if(file.exists(strF["prj_seqQC"]))
             pInfo[["strSeqQC"]] <- strF["prj_seqQC"]
         pInfo <- getCovariates(pInfo,sysConfig$notCovariates)
         if(file.exists(strF[["comparison_file"]]))
-            pInfo[["comparison_file"]] <- data.frame(fread(strF[["comparison_file"]]),stringsAsFactors=F, header=T)
+            pInfo[["comparison_file"]] <- data.frame(fread(strF[["comparison_file"]], header=T),stringsAsFactors=F)
         
         pInfo$datatype <- "FileMatch"
     }
