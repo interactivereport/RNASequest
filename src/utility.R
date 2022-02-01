@@ -501,11 +501,13 @@ getCounts <- function(config,sID){
     gInfo <- NULL
     if(!is.null(config$gene_annotation)){
         gInfo <-  read.csv(config$gene_annotation,row.names=1,as.is=T)
+        if(sum(!c("UniqueID","Gene.Name",'id')%in%colnames(gInfo))>0)
+            stop("Columns of 'UniqueID', 'Gene.Name' and 'id' have to be defined in gene annotation file")
         gID <- intersect(rownames(D),rownames(gInfo))
         if(length(gID)<nrow(D)){
+            message("\tFiltering genes (",length(gID),") from (",nrow(D),") by gene annotation")
             D <- D[gID,]
             gInfo <- gInfo[gID,]
-            message("\tFiltering genes (",length(gID),") by gene annotation")
         }
     }
     D <- checkSampleName(D,sID)
