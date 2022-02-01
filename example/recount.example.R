@@ -32,7 +32,7 @@ gInfo <- cbind(gInfo[,!colnames(gInfo)%in%c("gene_id","symbol"),drop=F],
                UniqueID=gInfo$gene_id,
                Gene.Name=sapply(gInfo$symbol,head,1))
 # counts
-X <- assays(rse_gene)$counts
+X <- transform_counts(rse_gene)
 
 # saving 
 write.csv(meta,file=paste0(strPath,"meta.csv"))
