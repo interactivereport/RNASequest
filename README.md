@@ -2,5 +2,5 @@
 
 Please find the bookdown tutorial for EA here:
 
-https://interactivereport.github.io/ExpressionAnalysis/tutorial/docs/index.html
+https://interactivereport.github.io/RNASequest/tutorial/docs/index.html
 
