@@ -28,4 +28,4 @@ dependencies:
   - r-psych=2.1.9
   - r-cowplot=1.1.1
   - r-broom=0.7.11
-  
+  - r-rjson=0.2.20

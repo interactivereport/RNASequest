@@ -459,7 +459,7 @@ checkMeta <- function(meta,config){
     if(sum(duplicated(meta[,config$sample_name])))
         stop(paste0("sample_name column (",config$sample_name,") contains duplicates in sample meta file."))
     if(!is.null(config$sample_alias)){
-        if(config$sample_alias%in%colnames(meta))
+        if(!config$sample_alias%in%colnames(meta))
             stop(paste0("sample_alias (",config$sample_alias,") is NOT a column in the sample meta file"))
         if(sum(duplicated(meta[,config$sample_alias]))>0)
             stop(paste0("sample_alias column (",config$sample_alias,") contains duplicates in the sample meta file"))
