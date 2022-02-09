@@ -563,7 +563,7 @@ useAlias <- function(config,D){
         colnames(D$counts) <- rownames(D$meta) <- D$meta[,config$sample_alias]
         if(!is.null(D$effLength)) colnames(D$effLength) <- rownames(D$meta)
         if(!is.null(D$TPM)) colnames(D$TPM) <- rownames(D$meta)
-        if(!is.null(D$seqQC)) colnames(D$seqQC) <- rownames(D$meta)
+        if(!is.null(D$seqQC)) rownames(D$seqQC) <- rownames(D$meta)
     }
     return(D)
 }
@@ -1231,7 +1231,7 @@ formatQuickOmicsMeta <- function(meta,comNames){
                      Order=unique(meta$group),
                      ComparePairs=comNames)
     MetaData <- as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F)
-    meta <- meta[,-grep("group",colnames(meta)),drop=F]
+    meta <- meta[,-grep("group",colnames(meta),ignore.case=T),drop=F]
     if(nrow(MetaData)>nrow(meta))
         MetaData <- cbind(MetaData,
                           rbind(meta,
