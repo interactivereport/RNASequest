@@ -4,7 +4,7 @@ args <- commandArgs(trailingOnly=T)
 qsubDEGsrcFile <- "qsubDEGsrc.RData"
 qsubDEG <- function(estCount,meta,comp_info,strWK,strSrc,core=8){
     jID <- paste0("j",sample(10:99,1))
-    qsubDEGsh <- "#!/bin/bash
+    qsubDEGsh <- paste0("#!/bin/bash
 #$ -N jID_cName
 #$ -wd wkPath
 #$ -pe node qsubCore
@@ -16,9 +16,8 @@ qsubDEG <- function(estCount,meta,comp_info,strWK,strSrc,core=8){
 cat $PE_HOSTFILE
 echo 'end of HOST'
 
-source /etc/profile.d/modules_bash.sh
-module add R/3.5.1
-"
+",substring(readLines(paste0(strSrc,"sys.yml"),n=1),2),"\n")
+    
     strOut <- paste0(strWK,"/qsubOut/")
     system(paste0("rm -f -R ",strOut,";mkdir -p ",strOut))
     save(estCount,meta,comp_info,core,file=paste0(strOut,qsubDEGsrcFile))
@@ -39,7 +38,12 @@ module add R/3.5.1
     return(DEGs)
 }
 qsubRM <- function(jID,allJOB=F){
-    qJob <- tail(system("qstat",intern=T),-2)
+    tryN <- 0
+    while(tryN<5){
+        qStat <- system("qstat",intern=T)
+        if(is.null(attr(qStat,"status")) || attr(qStat,"status")==0) break
+    }
+    qJob <- tail(qStat,-2)
     nJob <- length(qJob)
     if(!is.null(qJob) && length(qJob)>0){
         nJob<- sapply(strsplit(qJob," "),function(x){
@@ -88,16 +92,41 @@ qsubCheckStatus <- function(jID,strOut,qsubDEGsh,sID){
 }
 qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL){
     for(i in sID){
+        Sys.sleep(1)
         strQsub <- paste0(strOut,i,".sh")
-        if(!file.exists(strQsub))
-            cat(paste0(gsub("jID",jID,
-                            gsub("cName",i,
-                                 gsub("wkPath",strOut,
-                                      gsub("qsubCore",core,qsubDEGsh)))),
-                       "Rscript ",strSrc,"qsubDEG.R ",strSrc," ",qsubDEGsrcFile," ",i,"\n"),
-                file=strQsub)
-        if(is.null(badNodes)){system(paste("qsub",strQsub))}
-        else{system(paste0("qsub -l h='!(",paste(badNodes,collapse="|"),")' ",strQsub))}
+        if(!file.exists(strQsub)){
+            tryN <- 0
+            while(tryN<5 && tryCatch({
+                cat(paste0(gsub("jID",jID,
+                                gsub("cName",i,
+                                     gsub("wkPath",strOut,
+                                          gsub("qsubCore",core,qsubDEGsh)))),
+                           "Rscript ",strSrc,"qsubDEG.R ",strSrc," ",qsubDEGsrcFile," ",i,"\n"),
+                    file=strQsub)
+                F
+            },error=function(err){
+                print(err)
+                T
+            })){
+                Sys.sleep(1)
+                tryN <- tryN+1
+            }
+        }
+        if(is.null(badNodes)){
+            tryN <- 0
+            while(tryN<5){
+                a <- system(paste("qsub",strQsub))
+                if(a==0) break
+                tryN <- tryN + 1
+            }
+        }else{
+            tryN <- 0
+            while(tryN<5){
+                a <- system(paste0("qsub -l h='!(",paste(badNodes,collapse="|"),")' ",strQsub))
+                if(a==0) break
+                tryN <- tryN + 1
+            }
+        }
     }
     ix <- qsubCheckStatus(jID,strOut,qsubDEGsh,sID)
     if(sum(ix)>0 && reN<5)
@@ -109,8 +138,20 @@ getBadNodes <- function(sID,strOut){
     badNODEs <- c()
     for(i in sID){
         strLog <- paste0(strOut,i,".log")
-        if(!file.exists(strLog)) next
-        tmp <- readLines(strLog)
+        tryN <- 0
+        tmp <- NULL
+        while(tryN<5 && tryCatch({
+            if(file.exists(strLog))
+                tmp <- readLines(strLog)
+            F
+        },error=function(err){
+            print(err)
+            T
+        })){
+            Sys.sleep(1)
+            tryN <- tryN+1
+        }
+        if(is.null(tmp)) next
         badNODEs <- c(badNODEs,sapply(strsplit(tmp[1:(grep("end of HOST",tmp)[1]-1)]," "),head,1))
     }
     return(unique(badNODEs))

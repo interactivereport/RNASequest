@@ -562,9 +562,10 @@ useAlias <- function(config,D){
         message("Applying alias")
         colnames(D$counts) <- rownames(D$meta) <- D$meta[,config$sample_alias]
         if(!is.null(D$effLength)) colnames(D$effLength) <- rownames(D$meta)
-        if(!is.null(D$TPM)) colnames(D$TPM) <- rownames(D$meta)
+        if(!is.null(D$logTPM)) colnames(D$logTPM) <- rownames(D$meta)
         if(!is.null(D$seqQC)) rownames(D$seqQC) <- rownames(D$meta)
     }
+    print(names(D))
     return(D)
 }
 
