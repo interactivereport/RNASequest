@@ -28,21 +28,20 @@ echo 'end of HOST'
     for(i in rownames(comp_info)){
         message("===== ",i," =====")
         strRDS <- paste0(strOut,i,".rds")
-        system(paste("cat",gsub("rds$","log",strRDS)))
-        if(!file.exists(strRDS)){
+        
+        tryIO({system(paste("cat",gsub("rds$","log",strRDS)))})
+        one <- NULL
+        tryIO({one <- readRDS(strRDS)})
+        if(is.null(one)){
             message("too many bad nodes: ",strOut,"badNODEs.txt")
             stop(paste("above @",i))
         }
-        DEGs <- c(DEGs,readRDS(strRDS))
+        DEGs <- c(DEGs,one)
     }
     return(DEGs)
 }
 qsubRM <- function(jID,allJOB=F){
-    tryN <- 0
-    while(tryN<5){
-        qStat <- system("qstat",intern=T)
-        if(is.null(attr(qStat,"status")) || attr(qStat,"status")==0) break
-    }
+    qStat <- trySys("qstat",intern=T)
     qJob <- tail(qStat,-2)
     nJob <- length(qJob)
     if(!is.null(qJob) && length(qJob)>0){
@@ -94,38 +93,27 @@ qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL){
     for(i in sID){
         Sys.sleep(1)
         strQsub <- paste0(strOut,i,".sh")
-        if(!file.exists(strQsub)){
-            tryN <- 0
-            while(tryN<5 && tryCatch({
+        tryIO({
+            if(!file.exists(strQsub)){
                 cat(paste0(gsub("jID",jID,
                                 gsub("cName",i,
                                      gsub("wkPath",strOut,
                                           gsub("qsubCore",core,qsubDEGsh)))),
                            "Rscript ",strSrc,"qsubDEG.R ",strSrc," ",qsubDEGsrcFile," ",i,"\n"),
                     file=strQsub)
-                F
-            },error=function(err){
-                print(err)
-                T
-            })){
-                Sys.sleep(1)
-                tryN <- tryN+1
             }
-        }
+        })
+
         if(is.null(badNodes)){
-            tryN <- 0
-            while(tryN<5){
+            tryIO({
                 a <- system(paste("qsub",strQsub))
-                if(a==0) break
-                tryN <- tryN + 1
-            }
+                if(a!=0) stop()
+                })
         }else{
-            tryN <- 0
-            while(tryN<5){
+            tryIO({
                 a <- system(paste0("qsub -l h='!(",paste(badNodes,collapse="|"),")' ",strQsub))
-                if(a==0) break
-                tryN <- tryN + 1
-            }
+                if(a!=0) stop()
+                })
         }
     }
     ix <- qsubCheckStatus(jID,strOut,qsubDEGsh,sID)
@@ -140,21 +128,32 @@ getBadNodes <- function(sID,strOut){
         strLog <- paste0(strOut,i,".log")
         tryN <- 0
         tmp <- NULL
-        while(tryN<5 && tryCatch({
-            if(file.exists(strLog))
-                tmp <- readLines(strLog)
-            F
-        },error=function(err){
-            print(err)
-            T
-        })){
-            Sys.sleep(1)
-            tryN <- tryN+1
-        }
+        tryIO({tmp <- readLines(strLog)})
         if(is.null(tmp)) next
         badNODEs <- c(badNODEs,sapply(strsplit(tmp[1:(grep("end of HOST",tmp)[1]-1)]," "),head,1))
     }
     return(unique(badNODEs))
+}
+tryIO <- function(cmd,returnV=NULL,tryN=5){
+    N <- 0
+    while(N<tryN && tryCatch({
+        eval(cmd)
+        F
+        },error=function(err){
+        print(err)
+        T
+    })){
+        Sys.sleep(1)
+        N <- N +1
+    }
+}
+trySys <- function(cmd,tryN=5,...){
+    N <- 0
+    while(N<tryN){
+        qStat <- system(cmd,...)
+        if(is.null(attr(qStat,"status")) || attr(qStat,"status")==0) break
+    }
+    return(qStat)
 }
 
 if(length(args)>2 && !grepl("yml$",args[2])){
@@ -163,14 +162,15 @@ if(length(args)>2 && !grepl("yml$",args[2])){
     load(args[2])
     DEGs <- Batch_DEG(estCount, meta, comp_info[args[3],],core=core)
     reN <- 0
-    while(reN<5 && tryCatch({
-        saveRDS(DEGs,file=paste0(args[3],".rds"))
-        F
-    },error=function(err){
-        print(err)
-        T
-    })){
-        Sys.sleep(1)
-        reN <- reN+1
-    }
+    tryIO(saveRDS(DEGs,file=paste0(args[3],".rds")))
+    #while(reN<5 && tryCatch({
+    #    saveRDS(DEGs,file=paste0(args[3],".rds"))
+    #    F
+    #},error=function(err){
+    #    print(err)
+    #    T
+    #})){
+    #    Sys.sleep(1)
+    #    reN <- reN+1
+    #}
 }
