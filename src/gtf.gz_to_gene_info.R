@@ -2,6 +2,8 @@ suppressWarnings(suppressMessages(require(tidyverse)))
 suppressMessages(require(data.table))
 suppressMessages(require(GenomicRanges))
 suppressMessages(require(R.utils))
+suppressMessages(require(stringr))
+suppressMessages(require(dplyr))
 
 gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     #I have tested the script with the following files
@@ -10,8 +12,8 @@ gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/mouse/Mouse.GRCm38.102/Mus_musculus.GRCm38.transcript.gtf.gz"
     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/monkey/Monkey.Macaca_fascicularis_5.0_NCBI_RefSeq.aavhSMN1.REV4_2/Monkey_REV4b.transcript.gtf.gz"
     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/monkey/Monkey.macFas5.v100.l1_5/Monkey.macFas5.v100.l1_5.transcript.transcript.gtf.gz"
-     #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/rat/Rattus_norvegicus_ensemble_Rnor6.0.89/Rattus_norvegicus_ensemble_Rnor6.0.89.transcript.transcript.gtf.gz"
-
+    #file="/camhpc/ngs/projects/DNAnexus_references/rnaseq/rat/Rattus_norvegicus_ensemble_Rnor6.0.89/Rattus_norvegicus_ensemble_Rnor6.0.89.transcript.transcript.gtf.gz"
+    
     gene_info_file <- strOut
     #if(is.null(gene_info_file)) gene_info_file=str_replace(strGTF, "gtf.gz", "gene_info.csv")  #will save gene information file here
     if(is.null(gene_info_file)) gene_info_file=str_replace(str_replace(strGTF, "gtf.gz", "gene_info.csv"),"gtf$","gene_info.csv") #O'Young
@@ -52,7 +54,7 @@ gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     all_genes<-rbind(ERCC%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type),
     plasmid_genes%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type),
     tx_info%>%filter(!duplicated(geneID))%>%select(geneID, gene_name, gene_type) ) %>%filter(!duplicated(geneID))
-    
+   
     #now get gene length by combining all exons for a gene
     exons<-gtf%>%filter(V3=="exon")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F)
     gr1=GRanges(seqnames=exons$V1,  ranges=IRanges(exons$V4, exons$V5), strand=exons$V7, geneID=exons$geneID)

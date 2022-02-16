@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 if [[ -n "$1" ]]; then
-    source /etc/profile.d/modules_bash.sh
-    module purge
-    module load R/3.5.1
-    
+    condaEnv=$(head -n 1 $(dirname $0)/src/sys.yml)
+    condaEnv=${condaEnv:1}
+    eval "$condaEnv"
+
     Rscript $(dirname $0)/src/initConfig.R $(dirname $0)/src/ $@
 else
     echo "=============== EAinit path/to/a/DNAnexus/download/folder"
@@ -14,3 +14,5 @@ else
     echo "==============="
     exit 0
 fi
+
+

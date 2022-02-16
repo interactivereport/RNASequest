@@ -1,35 +1,15 @@
-rm(list=ls())
-.libPaths(grep("home",.libPaths(),invert=T,value=T))
+
 args = commandArgs(trailingOnly=T)
-if(length(args)<1){
+if(length(args)<2){
     stop("A path to a RNAseq project downloaded from DNAnexus is required!")
 }
-library(data.table)
-
-## initialization -----
 message("loading resource ...")
-strPath <- normalizePath(args[2])
-if(!dir.exists(strPath)){
-    stop(paste(strPath, "is not a valid path"))
-}
-strOut <- paste0(strPath,"/EA",gsub("\\-","",Sys.Date()),"_0")
-ix <- 0
-while(dir.exists(strOut)){
-    ix <- ix+1
-    strOut <- paste0(strPath,"/EA",gsub("\\-","",Sys.Date()),"_",ix)
-}
-if(length(args)>2 && dir.exists(args[3])) strOut <- normalizePath(args[3])
+suppressMessages(source(paste0(args[1],"utility.R"),chdir=T))
 
-source(paste0(args[1],"gtf.gz_to_gene_info.R"))
-source(paste0(args[1],"getAnnotation.R"))
-source(paste0(args[1],"extractEffectiveLength.R"))
-source(paste0(args[1],"alignQC.R"))
-source(paste0(args[1],"readData.R"))
-source(paste0(args[1],"lengthQC.R"))
-source(paste0(args[1],"metaFactor.R"))
-config <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 configTmp <- yaml::read_yaml(paste0(args[1],"config.tmp.yml"))
+sysConfig <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 
+<<<<<<< HEAD
 strMeta <- paste0(strOut,"/sampleMeta.csv")
 strMetaFactor <- paste0(strOut,"/sampleMetaFactor.yml")
 strGinfo <- paste0(strOut,"/geneAnnotation.csv")
@@ -155,8 +135,15 @@ message("-----> (additional) 'EAsplit' can be used to split into sub-project acc
 
 message("Powered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
 
+=======
+checkConfig(configTmp)
+pInfo <- checkInputDir(args[2],sysConfig)
+pInfo <- appendMeta(pInfo,
+                    configTmp$sample_name,
+                    sysConfig$qc2meta)
+strMsg <- createInit(args[2],readLines(paste0(args[1],"config.tmp.yml")),pInfo)
+>>>>>>> publication
 
-sink(paste0(strOut,"/session.EAinit"))
-sessionInfo()
-sink()
+finishInit(strMsg)
+saveSessionInfo(paste0(strMsg$strOut,"/session.EAinit"),args[1])
 

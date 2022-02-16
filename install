@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+condaPath=$(which conda)
+if [[ ${#condaPath} -lt 3 ]]; then
+    echo "Missing conda"
+    echo "Please install conda and add it into PATH"
+    exit
+else
+    echo "conda in $condaPath"
+fi
+
+conda env create -f install.yml
+condaPath=$(dirname $(dirname $condaPath))
+sed -i "1s|^|#. $condaPath/etc/profile.d/conda.sh;conda activate ExpressionAnalysis\n|" src/sys.yml
+

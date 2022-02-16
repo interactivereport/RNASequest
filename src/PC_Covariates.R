@@ -20,14 +20,16 @@ Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0
   if (!is.null(selVarN) && !is.null(out_prefix)) { #output correlation results
     graphH=ceiling(nrow(selVarN)/3)*4
     graphW=min(nrow(selVarN)*4+1, 12)
-    ggsave(str_c(out_prefix, "_Significant_Numeric_Covariates.pdf"), sel_dataN$plot, width=graphW, height=graphH)
+    graphH=min(50, graphH); graphW=min(50, graphW)
+    ggsave(str_c(out_prefix, "_Significant_Numeric_Covariates.pdf"), sel_dataN$plot, width=graphW, height=graphH,limitsize = FALSE)
   }  
   sel_dataC<-get_PC_meta_plot(res1, 'categorical', FDR_cutoff, N_col=N_col)
   selVarC=sel_dataC$selVar
   if (!is.null(selVarC) && !is.null(out_prefix)) { #output anova results
     graphH=ceiling(nrow(selVarC)/3)*4
     graphW=min(nrow(selVarC)*4+1, 12)
-    ggsave(str_c(out_prefix, "_Significant_Categorical_Covariates.pdf"), sel_dataC$plot, width=graphW, height=graphH)
+    graphH=min(50, graphH); graphW=min(50, graphW)
+    ggsave(str_c(out_prefix, "_Significant_Categorical_Covariates.pdf"), sel_dataC$plot, width=graphW, height=graphH,limitsize = FALSE)
   }  
   
   if (!is.null(selVarC)) {selVarC<-selVarC%>%arrange(fdr)}
