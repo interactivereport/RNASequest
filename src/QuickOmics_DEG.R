@@ -354,7 +354,7 @@ checkComparisonModel <- function(comp_info, meta) {
             if (sum(grepl(var, Cov_remove)) > 0 )
               Cov_remove_list = c(Cov_remove_list, var)
           }
-          stop(paste("Error in", comp_name, "model:", paste(LinearCombos_list, collapse = ' and '), "are linear_combinated variables. Please remove", paste(Cov_remove_list, collapse = ',')))          
+          #stop(paste("Error in", comp_name, "model:", paste(LinearCombos_list, collapse = ' and '), "are linear_combinated variables. Please remove", paste(Cov_remove_list, collapse = ',')))          
         }
       }
     }

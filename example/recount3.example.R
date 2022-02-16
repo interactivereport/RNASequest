@@ -38,7 +38,8 @@ meta$group <- as.vector(grpN[grp])
 gInfo <- as.data.frame(rowRanges(rse_gene))
 gInfo$id <- 1:nrow(gInfo)
 # checked with biomaRt, it is the same as transcript_length, when only one transcript
-gLength <- matrix(rep(gInfo[,"score"],nrow(meta)),nrow=nrow(gInfo),
+gLname <- c(grep("bp_length",colnames(gInfo),value=T),grep("score",colnames(gInfo),value=T))[1]
+gLength <- matrix(rep(gInfo[,gLname],nrow(meta)),nrow=nrow(gInfo),
                   dimnames=list(rownames(gInfo),rownames(meta)))
 colnames(gInfo) <- gsub("gene_id","UniqueID",
                         gsub("gene_name","Gene.Name",
@@ -46,7 +47,7 @@ colnames(gInfo) <- gsub("gene_id","UniqueID",
                                   colnames(gInfo))))
 # counts -------
 X <- transform_counts(rse_gene)
-
+stop()
 # saving ------
 strPath <- paste0(strOut,prjID,"/")
 if(!dir.exists(strPath)) dir.create(strPath)

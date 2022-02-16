@@ -19,6 +19,7 @@ dependencies:
   - bioconductor-DESeq2=1.34.0
   - bioconductor-biocparallel=1.28.0
   - bioconductor-apeglm=1.16.0
+  - bioconductor-recount3=1.4.0
   - r-caret=6.0_90
   - r-ggplot2=3.3.5
   - r-dplyr=1.0.7
