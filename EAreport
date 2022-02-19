@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# EAreport generates a bookdown summary of the current project
+
+if [[ -n "$1" ]]; then
+    condaEnv=$(head -n 1 $(dirname $0)/src/sys.yml)
+    condaEnv=${condaEnv:1}
+    eval "$condaEnv"
+    
+    workingdir=$(dirname $1)
+    echo -e "Building bookdown report in: \n    "$workingdir/BookdownReport/
+    rm -rf $workingdir/BookdownReport && cp -r $(dirname $0)/src/BookdownTemplates $workingdir/BookdownReport
+
+    #Create a bookdown.info.txt file
+    echo -e "Source_code\t"$(dirname $0)/src/ > $workingdir/BookdownReport/bookdown.info.txt
+    echo -e "Working_dir\t"$workingdir/BookdownReport/ >> $workingdir/BookdownReport/bookdown.info.txt
+    echo -e "Config_file\t"$1 >> $workingdir/BookdownReport/bookdown.info.txt
+
+    Rscript $(dirname $0)/src/BookdownReport.R $(dirname $0)/src/ $workingdir/BookdownReport/ $@ && \
+        echo -e "Done building report ..." && \
+        echo -e "Please find the report in: \n    "$workingdir/BookdownReport/docs/index.html
+else
+    echo "=============== EAreport path/to/config/file"
+    exePath=$(dirname $0)
+    echo "An example config file can be found: $exePath/example/config.yml"
+    echo "'EAinit' can be used to create a config file for a RNAseq project downloaded from DNAnexus"
+    echo "==============="
+    exit 0
+fi
