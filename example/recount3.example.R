@@ -47,7 +47,7 @@ colnames(gInfo) <- gsub("gene_id","UniqueID",
                                   colnames(gInfo))))
 # counts -------
 X <- transform_counts(rse_gene)
-stop()
+
 # saving ------
 strPath <- paste0(strOut,prjID,"/")
 if(!dir.exists(strPath)) dir.create(strPath)
