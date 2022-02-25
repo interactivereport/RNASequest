@@ -30,3 +30,4 @@ dependencies:
   - r-cowplot=1.1.1
   - r-broom=0.7.11
   - r-rjson=0.2.20
+  - r-bookdown=0.24
