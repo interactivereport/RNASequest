@@ -3,9 +3,12 @@
 The principle component analysis (PCA) plot displays, by default, the first 2 PC’s in the dataset and colors study groups.
 
 ```{r, echo=TRUE}
-library(ggfortify)
+library(ggplot2)
 df <- iris[1:4]
 pca_res <- prcomp(df, scale. = TRUE)
 
-autoplot(pca_res, data = iris, colour = 'Species')
+pca_final <- as.data.frame(pca_res$x)
+pca_final$Species <- iris$Species
+
+ggplot(data = pca_final, aes(x=PC1,y=PC2)) + geom_point(aes(color=Species),size=1.5)
 ```
