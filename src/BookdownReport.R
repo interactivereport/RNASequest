@@ -18,3 +18,7 @@ message("Rendering book ...")
 suppressMessages(invisible(capture.output(
   bookdown::render_book(args[2]), 
   file = NULL)))
+
+## finishing ----
+finishRun(c(config,sysConfig))
+saveSessionInfo(paste0(config$output,"/session.EAreport"),args[1])
