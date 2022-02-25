@@ -1,0 +1,9 @@
+# Heatmap plots
+
+Heatmaps are useful to visualize the differentially expressed genes across multiple contiditions at the same time.
+
+```{r, echo=FALSE}
+data("iris")
+library(pheatmap)
+pheatmap(iris[,1:4])
+```

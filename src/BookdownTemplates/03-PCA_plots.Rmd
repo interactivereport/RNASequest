@@ -1,0 +1,11 @@
+# PCA plots
+
+The principle component analysis (PCA) plot displays, by default, the first 2 PC’s in the dataset and colors study groups.
+
+```{r, echo=TRUE}
+library(ggfortify)
+df <- iris[1:4]
+pca_res <- prcomp(df, scale. = TRUE)
+
+autoplot(pca_res, data = iris, colour = 'Species')
+```

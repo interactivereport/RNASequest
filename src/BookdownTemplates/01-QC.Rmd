@@ -1,0 +1,8 @@
+# QC plots
+
+Quality control (QC) is critical to examine the basic QC metrics of the data. In this section, we present xxx
+
+```{r, echo=FALSE}
+data(mtcars)
+boxplot(mtcars)
+```

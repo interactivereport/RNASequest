@@ -1,0 +1,9 @@
+# Covariates plots
+
+This Covariates section provides flexibility to visualize the covariates, such as Age, group, Genotype showing here. This table contains several columns including the Significance, p-value, and FDR for each covariates listed. Users can also adjust the covariates and cutoffs on the left.
+
+```{r, echo=FALSE}
+library(knitr)
+data(mtcars)
+kable(mtcars[1:5,], caption = "A test table")
+```
