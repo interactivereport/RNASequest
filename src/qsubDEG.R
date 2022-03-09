@@ -7,6 +7,7 @@ qsubDEG <- function(estCount,meta,comp_info,strWK,strSrc,core=8){
     qsubDEGsh <- paste0("#!/bin/bash
 #$ -N jID_cName
 #$ -wd wkPath
+#$ -q short.q
 #$ -pe node qsubCore
 #$ -l h_rt=1:00:00
 #$ -o cName.log
