@@ -920,7 +920,7 @@ plotGeneLengthOne <- function(X,funs,...){
 }
 plotPCanlaysis <- function(config,logTPM,meta,estC=NULL,effL=NULL){
     selCov <- unique(c(config$covariates_check,config$covariates_adjust))
-    if(!is.null(selCov)) meta <- meta[,selCov]
+    if(!is.null(selCov)) meta <- meta[,selCov,drop=F]
     ## change the Well_Row from charactor to numeric
     oneMeta <- "Well_Row"
     if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
