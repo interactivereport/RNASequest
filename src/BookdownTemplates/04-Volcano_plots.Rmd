@@ -1,0 +1,10 @@
+# Volcano plots
+
+This volcano plot reveals the differentially expressed genes provided in the input data file. By default, the Fold change Cutoff is set to 1.2 and the P value Cutoff is set to 0.01. Users have the option to change any of these parameters.
+
+The red dots are indicative of all genes that pass the Fold Change and P value cutoff, while the green dots are indicative of genes that only pass the P value cutoff. Fifty random genes are labelled for both the up-regulated and down-regulated genes by default.
+
+```{r, echo=FALSE}
+data("mtcars")
+plot(mtcars$mpg, mtcars$disp)
+```

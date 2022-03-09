@@ -1,0 +1,10 @@
+# Heatmap plots
+
+Heatmaps are useful to visualize the differentially expressed genes across multiple contiditions at the same time.
+
+```{r, echo=FALSE}
+data("iris")
+data=iris[,1:4]
+ggplot(data, aes(Sepal.Length, Sepal.Width , fill = Petal.Length)) + 
+  geom_tile()
+```

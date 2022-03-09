@@ -7,15 +7,43 @@ if [[ -n "$1" ]]; then
     eval "$condaEnv"
     
     workingdir=$(dirname $1)
+    configdir=$1
+
+    if [[ $workingdir = ..* ]];then 
+        CurrentPath=`pwd`"/"
+        workingdir=$CurrentPath$workingdir
+        configdir=$CurrentPath$configdir
+    fi
+
+    if [[ $workingdir = .* ]];then 
+        CurrentPath=`pwd`
+        RestPath=`echo $workingdir|sed 's/^\.//'`
+        RestConfigPath=`echo $1|sed 's/^\.//'`
+        workingdir=$CurrentPath$RestPath
+        if [[ ! $RestConfigPath = /* ]];then
+            configdir=$CurrentPath"/"$RestConfigPath
+        else
+            configdir=$CurrentPath$RestConfigPath
+        fi
+    fi
+
+    if [[ ! $workingdir = /* ]];then
+        CurrentPath=`pwd`
+        workingdir=$CurrentPath"/"$workingdir
+        configdir=$CurrentPath"/"$configdir
+    fi
+
     echo -e "Building bookdown report in: \n    "$workingdir/BookdownReport/
     rm -rf $workingdir/BookdownReport && cp -r $(dirname $0)/src/BookdownTemplates $workingdir/BookdownReport
 
     #Create a bookdown.info.txt file
     echo -e "Source_code\t"$(dirname $0)/src/ > $workingdir/BookdownReport/bookdown.info.txt
     echo -e "Working_dir\t"$workingdir/BookdownReport/ >> $workingdir/BookdownReport/bookdown.info.txt
-    echo -e "Config_file\t"$1 >> $workingdir/BookdownReport/bookdown.info.txt
+    echo -e "Config_file\t"$configdir >> $workingdir/BookdownReport/bookdown.info.txt
 
-    Rscript $(dirname $0)/src/BookdownReport.R $(dirname $0)/src/ $workingdir/BookdownReport/ $@ && \
+    echo "Running the following command:"
+    echo -e "Rscript $(dirname $0)/src/BookdownReport.R \ \n    $(dirname $0)/src/ \ \n    $workingdir/BookdownReport/ \ \n    $configdir"
+    Rscript $(dirname $0)/src/BookdownReport.R $(dirname $0)/src/ $workingdir/BookdownReport/ $configdir && \
         echo -e "Done building report ..." && \
         echo -e "Please find the report in: \n    "$workingdir/BookdownReport/docs/index.html
 else
