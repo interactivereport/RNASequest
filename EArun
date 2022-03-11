@@ -4,9 +4,10 @@
 if [[ -n "$1" ]]; then
     condaEnv=$(head -n 1 $(dirname $0)/src/sys.yml)
     condaEnv=${condaEnv:1}
-    eval "$condaEnv"
     
-    Rscript $(dirname $0)/src/DEanalysis.R $(dirname $0)/src/ $@
+    eval "$condaEnv"
+    env -i PATH="$PATH" Rscript $(dirname $0)/src/DEanalysis.R $(dirname $0)/src/ $@
+    
 else
     echo "=============== EArun path/to/config/file"
     echo "This function is used to process the bulk RNAseq data and produce the QuickOmics R object."
