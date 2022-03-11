@@ -181,6 +181,8 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
       assign(names(Cov_levels_vec)[n], relevel(eval(as.name(names(Cov_levels_vec)[n])), ref = Cov_levels_vec[n]))
     }
   }
+
+  assign(group_var, relevel(eval(as.name(group_var)), ref = ctrl_group))
   
   design = model.matrix(as.formula(str_c('~', model)))
   rownames(design) = rownames(S_meta)
