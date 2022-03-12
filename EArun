@@ -2,11 +2,11 @@
 # sva::ComBat_seq is not available in R/3.5.1
 
 if [[ -n "$1" ]]; then
-    condaEnv=$(head -n 1 $(dirname $0)/src/sys.yml)
+    src="$(dirname $0)/src"
+    condaEnv=$(head -n 1 $src/sys.yml)
     condaEnv=${condaEnv:1}
     
-    eval "$condaEnv"
-    env -i PATH="$PATH" Rscript $(dirname $0)/src/DEanalysis.R $(dirname $0)/src/ $@
+    env -i PATH="$PATH" $(eval "$condaEnv";Rscript $src/DEanalysis.R $src/ $@)
     
 else
     echo "=============== EArun path/to/config/file"
