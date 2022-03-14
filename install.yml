@@ -439,6 +439,7 @@ dependencies:
   - zlib=1.2.11=h36c2ea0_1013
   - zstd=1.5.2=ha95c52a_0
   - r-bookdown=0.24
+  - r-kableExtra=1.3.4
   - pip:
     - setuptools==60.5.0
 prefix: /share/miniconda/Miniconda3/envs/QuickOmics
