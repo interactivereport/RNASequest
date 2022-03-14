@@ -1,8 +1,43 @@
 # QC plots
 
-Quality control (QC) is critical to examine the basic QC metrics of the data. In this section, we present xxx
+**Quality control (QC)** is critical to examine the basic QC metrics of the data. In this section, we present several QC plots to visualize the quality of each dataset within the project.
 
-```{r, echo=FALSE}
-data(mtcars)
-boxplot(mtcars)
+```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9}
+# Retrieve information from the previously saved bookdown.info.txt file
+PWD <- system("pwd", intern = TRUE)
+Info <- paste0(PWD, "/bookdown.info.txt")
+Data <- read.table(Info)
+Source_code <- Data$V2[1]
+Working_dir <- Data$V2[2]
+Config_file <- Data$V2[3]
+
+# load Plot_Functions.R
+setwd(Source_code)
+PlotFunctions <- paste0(Source_code, "Plot_Functions.R")
+suppressWarnings(source("Plot_Functions.R"))
+
+# Extract information from the Config_file
+config <- sapply(yaml::read_yaml(Config_file),unlist)
+sysConfig <- yaml::read_yaml(paste0(Source_code,"sys.yml"))
+ProjectName <- config$prj_name
+
+checkConfig(config)
+D <- getEAData(config)
+D <- useAlias(config,D)
+
+## plotting sequencing QC ----
+tmp <- plotAlignQC(2^D$logTPM-config$count_prior,
+            paste0(config$output,"/sequenceQC.pdf"),
+            estC=D$counts,
+            qc=D$seqQC,
+            prioQC=sysConfig$qc2meta,
+            gInfo=D$gInfo,
+            replot=config$seqQC_replot)
+print(tmp)
+
+## plotting gene length against expression-----
+plotGeneLength(config,D$counts,effL=D$effLength,logTPM=D$logTPM,gInfo=D$gInfo)
+
 ```
+
+R plotting function path: `r PlotFunctions`
