@@ -1,0 +1,44 @@
+# Covariates
+
+This **Covariates** chapter provides flexibility to visualize the covariates in the current dataset, such as Age, Group, Genotype, etc. This dynamic table contains several columns, including the PC, Covariate, Type, Significance, p-value, and FDR for each covariate listed.
+
+The **PC** column shows the principal component that the covariate belongs to. We will see the same covariate name appears in different PC, such as PC1 and PC2, with different Significance.
+
+The **Covariate** column displays the name of each covariate, and the terms are self-explainable. For example, some covariates are the sample annotation of the dataset, such as Age, Group, Genotype. On the other hand, some covariates are related to the data analysis steps, such as the metrics from the genome mapping step. If the data is downloaded from GEO and incorporated into the pipeline using [recount3](http://rna.recount.bio/){target="_blank"}, metrics from the recount3 pipeline will also show up in the **Covariate** column.
+
+The **Type** column indicates the type of each covariate. Covariates can be Numeric or Categorical types.
+
+The **Significance** column lists the ANOVA FDR information between each covariate v.s. PC. For Numeric covariates, an r value is associated with each ANOVA test. However, for Categorical covariates, only FDR values are displayed.
+
+The last two columns, **P-value** and **FDR**, indicate the results of statistical tests (P-value) and adjusted P-values.
+
+```{r, echo=FALSE}
+suppressMessages(library(knitr))
+suppressMessages(library(kableExtra))
+options(width = 100)
+
+# Retrieve information from the previously saved bookdown.info.txt file
+PWD <- system("pwd", intern = TRUE)
+Info <- paste0(PWD, "/bookdown.info.txt")
+Data <- read.table(Info)
+Source_code <- Data$V2[1]
+Working_dir <- Data$V2[2]
+Config_file <- Data$V2[3]
+
+# Load Plot_Functions.R
+setwd(Source_code)
+suppressWarnings(source("Plot_Functions.R"))
+
+# Extract information from the Config_file
+config <- sapply(yaml::read_yaml(Config_file),unlist)
+sysConfig <- yaml::read_yaml(paste0(Source_code,"sys.yml"))
+ProjectName <- config$prj_name
+
+load(paste0(Working_dir,"../",ProjectName,".RData"))
+res <- PC_covariates_out(data_wide, MetaData)
+sig_covariates=res$selVar_All
+kable(sig_covariates, caption = "Significant covariates", booktabs = TRUE) %>% 
+  kable_styling() %>%
+  column_spec(2, width_min = "2in") %>% 
+  kableExtra::scroll_box(width = "100%", height = "1000px")
+```
