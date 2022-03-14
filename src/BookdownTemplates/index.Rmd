@@ -42,7 +42,7 @@ The following sections are included in this bookdown report:
 
 1, QC
 
-2, Covariates plots
+2, Covariates
 
 3, PCA plots
 
