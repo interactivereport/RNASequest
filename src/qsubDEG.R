@@ -2,14 +2,16 @@
 
 args <- commandArgs(trailingOnly=T)
 qsubDEGsrcFile <- "qsubDEGsrc.RData"
-qsubDEG <- function(estCount,meta,comp_info,strWK,strSrc,core=8){
+qsubDEG <- function(estCount,meta,comp_info,strWK,strSrc,core=8,qsubTime=180){
+    qsubH <- floor(qsubTime/60)
+    qsubM <- gsub(" ","0",format(qsubTime%%60,width=2,justify="right"))
     jID <- paste0("j",sample(10:99,1))
     qsubDEGsh <- paste0("#!/bin/bash
 #$ -N jID_cName
 #$ -wd wkPath
 #$ -q short.q
 #$ -pe node qsubCore
-#$ -l h_rt=1:00:00
+#$ -l h_rt=",qsubH,":",qsubM,":00
 #$ -o cName.log
 #$ -e cName.log
 #- End UGE embedded arguments
@@ -23,7 +25,7 @@ echo 'end of HOST'
     system(paste0("rm -f -R ",strOut,";mkdir -p ",strOut))
     save(estCount,meta,comp_info,core,file=paste0(strOut,qsubDEGsrcFile))
     ## submit each comparison job
-    badNODEs <- qsubSID(rownames(comp_info),jID,strOut,core,qsubDEGsh,strSrc)
+    badNODEs <- qsubSID(rownames(comp_info),jID,strOut,core,qsubDEGsh,strSrc,qsubTime=qsubTime)
     cat(paste(badNODEs,collapse="\n"),file=paste0(strOut,"badNODEs.txt"))
     DEGs <- list()
     for(i in rownames(comp_info)){
@@ -90,7 +92,7 @@ qsubCheckStatus <- function(jID,strOut,qsubDEGsh,sID){
     ix <- sapply(sID,function(x)return(!file.exists(paste0(strOut,x,".rds"))))
     return(ix)
 }
-qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL){
+qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL,qsubTime=180){
     for(i in sID){
         Sys.sleep(1)
         strQsub <- paste0(strOut,i,".sh")
@@ -120,7 +122,8 @@ qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL){
     ix <- qsubCheckStatus(jID,strOut,qsubDEGsh,sID)
     if(sum(ix)>0 && reN<5)
         badNodes <- qsubSID(sID[ix],jID,strOut,core,qsubDEGsh,strSrc,reN+1,
-                            unique(c(badNodes,getBadNodes(sID[ix],strOut))))
+                            unique(c(badNodes,getBadNodes(sID[ix],strOut))),
+                            qsubTime=qsubTime)
     return(badNodes)
 }
 getBadNodes <- function(sID,strOut){

@@ -1101,7 +1101,8 @@ comparisonAnalysis <- function(config,estC,meta,comp_info){
     ## comparison -----------
     if(!is.null(config$qsub) && config$qsub){
         source(paste0(config$srcDir,"/qsubDEG.R"))
-        return(qsubDEG(estC,meta,comp_info,config$output,config$srcDir,core=config$core))
+        return(qsubDEG(estC,meta,comp_info,config$output,config$srcDir,
+                       core=config$core,qsubTime=config$qsubTime))
     }else{
         return(Batch_DEG(estC,meta,comp_info,core=config$core))
     }
