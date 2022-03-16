@@ -21,6 +21,9 @@ Moreover, this chapter will display volcano plots of all comparison groups.
 
 ```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9, results = "asis"}
 #Retrieve information from the previously saved bookdown.info.txt file
+suppressMessages(library(knitr))
+suppressMessages(library(kableExtra))
+
 PWD <- system("pwd", intern = TRUE)
 Info <- paste0(PWD, "/bookdown.info.txt")
 Data <- read.table(Info)
@@ -41,7 +44,11 @@ ProjectName <- config$prj_name
 #Parsing the data
 load(paste0(Working_dir,"../",ProjectName,".RData"))
 ComparisonGroups <- as.character(unique(results_long$test))
-cat("There is/are total ", length(ComparisonGroups), " comparison(s) in this project.\n")
+cat("There is/are total ", length(ComparisonGroups), " comparison(s) in this project.\n\n")
+
+kable(comp_info, caption = "Comparisons", align = "c", booktabs = TRUE) %>% 
+  kable_styling() %>%
+  kableExtra::scroll_box(width = "100%")
 
 #Loop through all comparisons
 for (i in 1:length(ComparisonGroups)){

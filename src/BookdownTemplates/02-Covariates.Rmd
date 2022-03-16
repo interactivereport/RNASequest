@@ -37,7 +37,7 @@ ProjectName <- config$prj_name
 load(paste0(Working_dir,"../",ProjectName,".RData"))
 res <- PC_covariates_out(data_wide, MetaData)
 sig_covariates=res$selVar_All
-kable(sig_covariates, caption = "Significant covariates", booktabs = TRUE) %>% 
+kable(sig_covariates, caption = "Significant covariates", align = "c", booktabs = TRUE) %>% 
   kable_styling() %>%
   column_spec(2, width_min = "2in") %>% 
   kableExtra::scroll_box(width = "100%", height = "1000px")
