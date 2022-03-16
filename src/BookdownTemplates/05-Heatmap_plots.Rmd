@@ -1,10 +1,68 @@
 # Heatmap plots
 
-Heatmaps are useful to visualize the differentially expressed genes across multiple contiditions at the same time.
+**Heatmaps** are useful to visualize the differentially expressed genes across multiple conditions at the same time. In this chapter, we present two different types of heatmap: 1) A heatmap plotted using the top 1000 most variable genes and 2) Heatmaps for significantly changed genes of all comparison groups.
 
-```{r, echo=FALSE}
-data("iris")
-data=iris[,1:4]
-ggplot(data, aes(Sepal.Length, Sepal.Width , fill = Petal.Length)) + 
-  geom_tile()
+In the first heatmap, the variance was calculated for each gene, and then ranked in decreasing order. To reduce the size and plotting time of the heatmap, only the top 1000 most variable genes were chosen. Although genes with large variances may not refect differentially expressed genes among specific comparison groups, they remain meaningful when referring to the global changes within the current dataset.
+
+Then we present heatmap(s) of all comparison groups by subsetting the samples. For each comparison, only samples involved in the comparison will be plotted on the heatmap. The number of heatmaps will also be adjusted based on the number of comparisons analyzed by the pipeline. Only the top 1000 significantly changed genes will be plotted if too many different genes are differentially expressed. If no more than 1000 significantly changed genes for the comparison, all significantly changed genes will be plotted.
+
+The heatmaps were drawn using the log2(TPM+1) expression values with Z-score transformation. By default, hierarchical clusterings were performed on both row (genes) and column (samples), indicating the similarities between genes and samples. Thus, similar genes and samples will be clustered closely. The heatmaps also display the grouping information provided before running the pipeline. It provides additional information for the users to compare the biological grouping information and the unsupervised hierarchical clustering results. All heatmaps in this chapter were plotted using the same design, and they only differ in the genes and samples selected during the plotting step.
+
+```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9}
+#Retrieve information from the previously saved bookdown.info.txt file
+PWD <- system("pwd", intern = TRUE)
+Info <- paste0(PWD, "/bookdown.info.txt")
+Data <- read.table(Info)
+Source_code <- Data$V2[1]
+Working_dir <- Data$V2[2]
+Config_file <- Data$V2[3]
+
+#load Plot_Functions.R
+setwd(Source_code)   #This is critical!
+PlotFunctions <- paste0(Source_code, "Plot_Functions.R")    ### Can be deleted
+suppressWarnings(source("Plot_Functions.R"))
+
+#Extract information from the Config_file
+config <- sapply(yaml::read_yaml(Config_file),unlist)
+sysConfig <- yaml::read_yaml(paste0(Source_code,"sys.yml"))
+ProjectName <- config$prj_name
+
+#Parsing the data
+load(paste0(Working_dir,"../",ProjectName,".RData"))
+```
+
+## Heatmap of 1000 most variable genes
+
+This heatmap plots the top 1000 most variable genes across all samples. The x-axis displays the sample names, and colors indicate the expression Z-scores, shown as the color bar at the lower right corner.
+
+```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9}
+p <- Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName, heatmap_subset = "variable", maxgenes = 1000)
+draw(p, merge_legend = TRUE, auto_adjust = FALSE)
+```
+
+## Heatmap of all comparisons
+
+The heatmaps in this section select the most significant genes to plot, with a maximum of 1000 genes if there are more than 1000 significantly expressed genes. These genes have been pre-computed and selected before running the EAreport step, and they were based on the differential expression analysis results when running EArun.
+
+```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9, results = "asis"}
+suppressMessages(library(knitr))
+suppressMessages(library(kableExtra))
+
+ComparisonGroups <- as.character(unique(results_long$test))
+cat("There is/are total ", length(ComparisonGroups), " comparison(s) in this data.\n\n")
+
+kable(comp_info, caption = "Comparisons", align = "c", booktabs = TRUE) %>% 
+  kable_styling() %>%
+  kableExtra::scroll_box(width = "100%")
+
+#Loop through all comparisons
+for (i in 1:length(ComparisonGroups)){
+   cat('\n')  
+   cat("### Comparison: ", ComparisonGroups[i], "\n") 
+   p <- Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName, heatmap_subset = "subset", 
+                     comparison = ComparisonGroups[i],
+                     maxgenes = 1000)
+   draw(p, merge_legend = TRUE, auto_adjust = FALSE)
+   cat('\n') 
+}
 ```
