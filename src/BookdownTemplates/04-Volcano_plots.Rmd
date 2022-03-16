@@ -44,7 +44,11 @@ ProjectName <- config$prj_name
 #Parsing the data
 load(paste0(Working_dir,"../",ProjectName,".RData"))
 ComparisonGroups <- as.character(unique(results_long$test))
-cat("There is/are total ", length(ComparisonGroups), " comparison(s) in this project.\n\n")
+if (length(ComparisonGroups) == 1){
+  cat("There is only ", length(ComparisonGroups), " comparison in this project.\n\n")
+}else{
+  cat("There are total ", length(ComparisonGroups), " comparisons in this project.\n\n")
+}
 
 kable(comp_info, caption = "Comparisons", align = "c", booktabs = TRUE) %>% 
   kable_styling() %>%
