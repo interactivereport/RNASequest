@@ -1,10 +1,54 @@
 # Volcano plots
 
-This volcano plot reveals the differentially expressed genes provided in the input data file. By default, the Fold change Cutoff is set to 1.2 and the P value Cutoff is set to 0.01. Users have the option to change any of these parameters.
+```{r, echo = FALSE}
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+      x)
+  } else x
+}
+```
 
-The red dots are indicative of all genes that pass the Fold Change and P value cutoff, while the green dots are indicative of genes that only pass the P value cutoff. Fifty random genes are labelled for both the up-regulated and down-regulated genes by default.
+The **Volcano plot** is a useful way to display the fold change and significance of each gene in the comparison. The **x-axis** is the Log2 Fold change, which shows the increase and decrease of genes within the current comparison. The values that are deviated from zero mean larger expression changes. The **y-axis** is the -Log10(Padj.Value), and the higher value corresponds to a smaller adjusted P-value, i.e., higher significace.
 
-```{r, echo=FALSE}
-data("mtcars")
-plot(mtcars$mpg, mtcars$disp)
+This volcano plot reveals the differentially expressed genes after running the DE analysis by EArun. By default, the Fold change Cutoff is set to 1.2, and the adjusted P-value Cutoff is set to 0.01.
+
+The **`r colorize("Red dots", "red")`** are indicative of all genes that pass the Fold Change and adjusted P-value cutoff, while the **`r colorize("Green dots", "green")`** are indicative of genes that only pass the adjusted P-value cutoff. The **`r colorize("Grey dots", "grey")`** are usually in the middle, and they are not significant genes. By default, fifty random genes are labeled for both the up-regulated and down-regulated genes.
+
+Moreover, this chapter will display volcano plots of all comparison groups.
+
+```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9, results = "asis"}
+#Retrieve information from the previously saved bookdown.info.txt file
+PWD <- system("pwd", intern = TRUE)
+Info <- paste0(PWD, "/bookdown.info.txt")
+Data <- read.table(Info)
+Source_code <- Data$V2[1]
+Working_dir <- Data$V2[2]
+Config_file <- Data$V2[3]
+
+#load Plot_Functions.R
+setwd(Source_code)   #This is critical!
+PlotFunctions <- paste0(Source_code, "Plot_Functions.R")
+suppressWarnings(source("Plot_Functions.R"))
+
+#Extract information from the Config_file
+config <- sapply(yaml::read_yaml(Config_file),unlist)
+sysConfig <- yaml::read_yaml(paste0(Source_code,"sys.yml"))
+ProjectName <- config$prj_name
+
+#Parsing the data
+load(paste0(Working_dir,"../",ProjectName,".RData"))
+ComparisonGroups <- as.character(unique(results_long$test))
+cat("There is/are total ", length(ComparisonGroups), " comparison(s) in this project.\n")
+
+#Loop through all comparisons
+for (i in 1:length(ComparisonGroups)){
+   cat('\n')  
+   cat("## Comparison: ", ComparisonGroups[i], "\n") 
+   p <- Volcano_Plot(results_long, ProteinGeneName, comparison = ComparisonGroups[i])
+   print(p)
+   cat('\n') 
+}
 ```

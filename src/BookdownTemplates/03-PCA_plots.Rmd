@@ -1,14 +1,30 @@
-# PCA plots
+# PCA plot
 
-The principle component analysis (PCA) plot displays, by default, the first 2 PC’s in the dataset and colors study groups.
+In this chapter, we present **Principal Component Analysis (PCA)** results of all samples in the current dataset. Principle component analysis is a powerful method in exploratory data analysis, by visualizing complex datasets in lower dimensions. Thus it is also a useful method for dimension reduction, preserving critical information on the similarities and differences between all samples. For more information, please check the [Wiki page](https://en.wikipedia.org/wiki/Principal_component_analysis).
 
-```{r, echo=TRUE}
-library(ggplot2)
-df <- iris[1:4]
-pca_res <- prcomp(df, scale. = TRUE)
+The percentage of PC1 or PC2 indicates how much proportion of variance in the dataset can be explained by each PC. Usually, PC1 can explain most of the variance, but for complex data with more noises, we also rely upon PC2 for better separation.
 
-pca_final <- as.data.frame(pca_res$x)
-pca_final$Species <- iris$Species
+The PCA plot displays, by default, the first 2 PCs in the dataset, labels the data names, and colors study groups. From this plot, we are able to examine the consistency of samples within the same group, and identify potential outliers. The separation of groups on the PCA plot also indicates the differences between them, and this trend should be consistent with the differential expression analysis, i.e., two groups with higher divergence should have more significantly changed genes.
 
-ggplot(data = pca_final, aes(x=PC1,y=PC2)) + geom_point(aes(color=Species),size=1.5)
+```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9}
+# Retrieve information from the previously saved bookdown.info.txt file
+PWD <- system("pwd", intern = TRUE)
+Info <- paste0(PWD, "/bookdown.info.txt")
+Data <- read.table(Info)
+Source_code <- Data$V2[1]
+Working_dir <- Data$V2[2]
+Config_file <- Data$V2[3]
+
+# Load Plot_Functions.R
+setwd(Source_code)
+suppressWarnings(source("Plot_Functions.R"))
+
+# Extract information from the Config_file
+config <- sapply(yaml::read_yaml(Config_file),unlist)
+sysConfig <- yaml::read_yaml(paste0(Source_code,"sys.yml"))
+ProjectName <- config$prj_name
+
+load(paste0(Working_dir,"../",ProjectName,".RData"))
+par(mar = c(0.1, 0.1, 0.1, 0.1))
+PCA_Plot(data_wide, MetaData)
 ```
