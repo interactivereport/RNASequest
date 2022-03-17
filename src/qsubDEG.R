@@ -59,12 +59,12 @@ qsubRM <- function(jID,allJOB=F){
     }
     return(sum(nJob))
 }
-qsubCheckStatus <- function(jID,strOut,qsubDEGsh,sID){
+qsubCheckStatus <- function(jID,strOut,qsubDEGsh,sID,qsubTime){
     message("----- Monitoring all submitted DEG jobs ...")
     ## check if any job not in good stat
     qsubRM(jID)
     reN <- 0
-    maxN <- 60 # maximun 1hr
+    maxN <- qsubTime # maximun 1hr
     while(reN<maxN){
         if(qsubRM(jID)==0)
             break
@@ -101,7 +101,7 @@ qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL,qsu
         if(is.null(badNodes)){system(paste("qsub",strQsub))}
         else{system(paste0("qsub -l h='!(",paste(badNodes,collapse="|"),")' ",strQsub))}
     }
-    ix <- qsubCheckStatus(jID,strOut,qsubDEGsh,sID)
+    ix <- qsubCheckStatus(jID,strOut,qsubDEGsh,sID,qsubTime)
     if(sum(ix)>0 && reN<5)
         badNodes <- qsubSID(sID[ix],jID,strOut,core,qsubDEGsh,strSrc,reN+1,
                             unique(c(badNodes,getBadNodes(sID[ix],strOut))),
