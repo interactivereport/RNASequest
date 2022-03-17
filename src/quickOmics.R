@@ -118,7 +118,7 @@ saveRDS(estCount,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
 ## EApub else: comparison -----------
 message("====== Starting DEG analyses ...")
 if(!is.null(config$qsub) && config$qsub){
-    DEGs <- qsubDEG(estCount,meta,comp_info,config$output,args[1],core=config$core)
+    DEGs <- qsubDEG(estCount,meta,comp_info,config$output,args[1],core=config$core,qsubTime=config$qsubTime)
 }else{
     DEGs <- Batch_DEG(estCount, meta, comp_info,core=config$core)
 }

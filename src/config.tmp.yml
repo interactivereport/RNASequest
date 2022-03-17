@@ -31,6 +31,7 @@ output: initOutput
 DA_file_outpath: initOutput/DA_Import_Files
 core: 2
 qsub: false
+qsubTime: 180 # kill job if takes longer than this (minutes)
 min_median_effective_length: 0
 
 # ====== The QC parameters ========
