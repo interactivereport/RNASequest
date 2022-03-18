@@ -217,7 +217,7 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
   	d2=calcNormFactors(d2)
   	y = voom(d2, design)
   	fit = lmFit(y, design)
-	Limmaboj[[modelkey]] <<- fit
+	Limmaobj[[modelkey]] <<- fit
   } else
   {
     fit = Limmaobj[[modelkey]]
