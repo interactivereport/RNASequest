@@ -202,23 +202,36 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
       assign(names(Cov_levels_vec)[n], relevel(eval(as.name(names(Cov_levels_vec)[n])), ref = Cov_levels_vec[n]))
     }
   }
+
+  modelkey = gsub(' ','',model)
+  if (!(modelkey %in% names(Limmaobj)))
+  {
+  # Create group_var variable in env that has ctrl group as reference
+	assign(group_var,relevel(eval(as.name(group_var)),ref=ctrl_group)) 
+	# Put explicit 0 in the design so can pull out all contrasts after (one level isn't "hidden" in intercept)
+  	design = model.matrix(as.formula(str_c('~ 0 + ', model)))
+  	rownames(design) = rownames(S_meta)
+  	colnames(design) = str_replace(colnames(design), group_var, "")
   
-  design = model.matrix(as.formula(str_c('~', model)))
-  rownames(design) = rownames(S_meta)
-  colnames(design) = str_replace(colnames(design), group_var, "")
-  column = which(colnames(design) == trt_group)
-  
-  d2=DGEList(counts = Counts_table)
-  d2=calcNormFactors(d2)
-  y = voom(d2, design)
-  fit = lmFit(y, design)
-  
+  	d2=DGEList(counts = Counts_table)
+  	d2=calcNormFactors(d2)
+  	y = voom(d2, design)
+  	fit = lmFit(y, design)
+	Limmaboj[[modelkey]] <<- fit
+  } else
+  {
+    fit = Limmaobj[[modelkey]]
+  }
+  m = makeContrasts(as.formula(str_c(trt_group,'-',ctrl_group)),levels=fit$design)
+  fit2 = contrasts.fit(fit,m)
+
   if (LFC_cutoff == 0) {
-    fit2=eBayes(fit)
-    tt=topTable(fit2, coef=column, adjust="BH", n=nrow(fit2))
+    fit2=eBayes(fit2)
+	# coef = 1 because only made one contrast above
+    tt=topTable(fit2, coef=1, adjust="BH", n=nrow(fit2))
   } else if (LFC_cutoff > 0) {
-    fit2<- treat(fit, lfc=LFC_cutoff, trend=TRUE, robust=TRUE)
-    tt <- topTreat(fit2, coef=column, adjust.method="BH", n=nrow(fit2))
+    fit2<- treat(fit2, lfc=LFC_cutoff, trend=TRUE, robust=TRUE)
+    tt <- topTreat(fit2, coef=1, adjust.method="BH", n=nrow(fit2))
   }
   if (create_beta_coef_matrix) {
     beta_coef_matrix = data.frame()
@@ -231,7 +244,7 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
   #}
   
   ###########################    
-  comp_result = tt[, c(1,4,5)]
+  comp_result = tt[, c('logFC','P.Value','adj.P.Val')]
   colnames(comp_result) =  paste0(comp_name,"_limma.",c("logFC","P.value","Adj.P.value"))
   #rownames(comp_result) = str_split(rownames(comp_result), '\\.', simplify = T)[,1]
   # write.csv(comp_result, str_c(comp_name, "_DEG.csv"))
