@@ -125,7 +125,6 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   #  assign(var_list[n], S_meta[, var_list[n]])
   #}
   # Design
-  print(names(DESeqobj))
   modelkey = gsub(' ','',model)
   if (!(modelkey %in% names(DESeqobj)))
   {
@@ -135,7 +134,6 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
 	dds <- DESeq(dds,parallel=T)
 	# Global assignment operator <<-
 	DESeqobj[[modelkey]] <<- dds
-  	print(names(DESeqobj))
   } else
   {
 	dds = DESeqobj[[modelkey]]
