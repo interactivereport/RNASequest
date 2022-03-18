@@ -125,14 +125,17 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   #  assign(var_list[n], S_meta[, var_list[n]])
   #}
   # Design
-  modelkey = gsub(' ',model)
+  print(names(DESeqobj))
+  modelkey = gsub(' ','',model)
   if (!(modelkey %in% names(DESeqobj)))
   {
 	dds <- DESeqDataSetFromMatrix(countData = round(Counts_table),
                            colData = S_meta,#[,unique(trimws(unlist(strsplit(model,"\\+|\\*|\\:"))))]
                            design= as.formula(paste0('~', model)))
 	dds <- DESeq(dds,parallel=T)
-	DESeqobj[[modelkey]] = dds
+	# Global assignment operator <<-
+	DESeqobj[[modelkey]] <<- dds
+  	print(names(DESeqobj))
   } else
   {
 	dds = DESeqobj[[modelkey]]
