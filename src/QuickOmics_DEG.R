@@ -51,7 +51,7 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
   
   # get covariate factors and adjust basal levels for all the covariates in the model
   if (analysis_method == "DESeq2") {
-    result_list = DESeq2_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)
+    print(system.time({result_list = DESeq2_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)}))
   } else if (analysis_method == "limma") {
     result_list = limma_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)
   }

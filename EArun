@@ -5,8 +5,9 @@ if [[ -n "$1" ]]; then
     src="$(dirname $0)/src"
     condaEnv=$(head -n 1 $src/sys.yml)
     condaEnv=${condaEnv:1}
+    config=$1
     
-    env -i PATH="$PATH" $(eval "$condaEnv";Rscript $src/DEanalysis.R $src/ $@)
+    env -i OPENBLAS_NUM_THREADS=1 condaEnv="$condaEnv" src="$src" config="$config" bash -c 'eval $condaEnv;Rscript $src/DEanalysis.R $src/ $config'
     
 else
     echo "=============== EArun path/to/config/file"
