@@ -7,6 +7,11 @@ suppressMessages(require(limma))
 suppressMessages(require(stringr))
 suppressMessages(require(BiocParallel))
 
+# Creating "global" model hash table here - this script is *only* for local mode
+# so this should be alright (even in qsub mode it shouldn't cause a problem)
+DESeqobj = list()
+Limmaobj = list()
+
 read_file <- function(file, rowname) {
   if (rowname) {
     if (str_detect(file, ".csv$")) {
@@ -120,19 +125,34 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   #  assign(var_list[n], S_meta[, var_list[n]])
   #}
   # Design
-  dds <- DESeqDataSetFromMatrix(countData = round(Counts_table),
-                                colData = S_meta,#[,unique(trimws(unlist(strsplit(model,"\\+|\\*|\\:"))))]
-                                design= as.formula(paste0('~', model)))
-  dds <- DESeq(dds,parallel=T)
-  if (LFC_cutoff == 0) {
-    res <- results(dds, name = str_c(group_var, "_", trt_group, "_vs_", ctrl_group))
-  } else if (LFC_cutoff > 0) {
-    res <- results(dds, name = str_c(group_var, "_", trt_group, "_vs_", ctrl_group), lfcThreshold=LFC_cutoff, altHypothesis="greaterAbs")
+  modelkey = gsub(' ',model)
+  if (!(modelkey %in% names(DESeqobj)))
+  {
+	dds <- DESeqDataSetFromMatrix(countData = round(Counts_table),
+                           colData = S_meta,#[,unique(trimws(unlist(strsplit(model,"\\+|\\*|\\:"))))]
+                           design= as.formula(paste0('~', model)))
+	dds <- DESeq(dds,parallel=T)
+	DESeqobj[[modelkey]] = dds
+  } else
+  {
+	dds = DESeqobj[[modelkey]]
   }
-  # to shrink log fold changes association with condition:
-  if (toupper(shrink_logFC) == "YES") {
-    res <- lfcShrink(dds, coef=str_c(group_var, "_", trt_group, "_vs_", ctrl_group), type="apeglm", parallel=T)
+  # Check if we need to do a "relevel" for the reference (ctrl) level
+  coefstr = str_c(group_var, "_", trt_group, "_vs_", ctrl_group)
+  if (!(coefstr %in% resultsNames(dds))) # reference level not in dds object
+  {
+	  dds[[group_var]] = relevel(dds[[group_var]],ctrl_group)
+	  dds = nbinomWaldTest(dds)
   }
+  if (toupper(shrink_logFC) == "YES")
+  {
+	# Note lfcShrink will call "results" inside if they are not provided
+    res <- lfcShrink(dds, coef=coefstr, type="apeglm", parallel=T,lfcThreshold=LFC_cutoff)
+  } else
+  {
+    res <- results(dds, name = coefstr, lfcThreshold=LFC_cutoff)
+  }
+
   if (create_beta_coef_matrix) {
     beta_coef_matrix = data.frame()
     beta_coef_matrix = beta.coef(assay(vst(dds)), model.matrix(design(dds)), coef(dds), digits = 5)
