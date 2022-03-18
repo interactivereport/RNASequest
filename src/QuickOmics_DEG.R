@@ -222,7 +222,8 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
   {
     fit = Limmaobj[[modelkey]]
   }
-  m = makeContrasts(as.formula(str_c(trt_group,'-',ctrl_group)),levels=fit$design)
+  constr = str_c(trt_group, '-', ctrl_group)
+  m = makeContrasts(contrasts=constr, levels=fit$design)
   fit2 = contrasts.fit(fit,m)
 
   if (LFC_cutoff == 0) {
