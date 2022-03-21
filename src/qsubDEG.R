@@ -19,7 +19,7 @@ qsubDEG <- function(estCount,meta,comp_info,strWK,strSrc,core=8,qsubTime=180){
 cat $PE_HOSTFILE
 echo 'end of HOST'
 
-",substring(readLines(paste0(strSrc,"sys.yml"),n=1),2),"\n")
+",substring(readLines(paste0(strSrc,"sys.yml"),n=1),2),"\nexport OPENBLAS_NUM_THREADS=1\n")
     
     strOut <- paste0(strWK,"/qsubOut/")
     system(paste0("rm -f -R ",strOut,";mkdir -p ",strOut))
