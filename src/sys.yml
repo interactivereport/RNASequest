@@ -20,11 +20,11 @@ DNAnexus:
   species: FASTR_REFERENCE_SPECIES
   ref: FASTR_REFERENCE_VERSION
   uName: FASTR_USER_FULLNAME
-  count: genes.estcount_table
+  count: [genes.estcount_table,genes.expected_count]
   effL: genes.effective_length
-  tpm: genes.tpm_table
+  tpm: [genes.tpm_table,genes.tpm]
   indFlag: genes.results.gz
-  seqQC: merged_metrics
+  seqQC: [merged_metrics,merged.metrics]
 FileName:
   projectFile: project.yml
   prj_counts: counts

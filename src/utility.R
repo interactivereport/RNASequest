@@ -41,11 +41,11 @@ initInternal <- function(strInput,sysConfig){
         if('properties' %in% names(analysisP)){
             analysisP <- analysisP$properties
         }
-        pInfo[["prjID"]] <- pInfo[["prjTitle"]] <- analysisP[[sysConfig$DNAnexus$prjID]]
-        pInfo[["uName"]] <- analysisP[[sysConfig$DNAnexus$uName]]
-        pInfo[["species"]] <- analysisP[[sysConfig$DNAnexus$species]]
-        pInfo[["gAnnotion"]] <- extractAnnotation(analysisP[[sysConfig$DNAnexus$species]],
-                                                  analysisP[[sysConfig$DNAnexus$ref]],
+        pInfo[["prjID"]] <- pInfo[["prjTitle"]] <- getAnalysisInfo(analysisP,sysConfig$DNAnexus$prjID) #analysisP[[sysConfig$DNAnexus$prjID]]
+        pInfo[["uName"]] <- getAnalysisInfo(analysisP,sysConfig$DNAnexus$uName) #analysisP[[sysConfig$DNAnexus$uName]]
+        pInfo[["species"]] <- getAnalysisInfo(analysisP,sysConfig$DNAnexus$species) #analysisP[[sysConfig$DNAnexus$species]]
+        pInfo[["gAnnotion"]] <- extractAnnotation(getAnalysisInfo(analysisP,sysConfig$DNAnexus$species), #analysisP[[sysConfig$DNAnexus$species]],
+        										  getAnalysisInfo(analysisP,sysConfig$DNAnexus$ref),#analysisP[[sysConfig$DNAnexus$ref]],
                                                   sysConfig$genome_path)
         
         strPrj <- gsub("tsv$","json",strSample)
@@ -57,18 +57,26 @@ initInternal <- function(strInput,sysConfig){
         res <- list.files(strInput,"estcount",recursive=T,full.names=T)
         
         
-        pInfo[["strCount"]] <- getCountFile(strInput,sysConfig$DNAnexus$count)
+        pInfo[["strCount"]] <- getDNAnexusFile(strInput,sysConfig$DNAnexus$count,"count")
         pInfo[["strEffLength"]] <- getEffectLengthFile(strInput,
                                                        sysConfig$DNAnexus$effL,
                                                        sysConfig$DNAnexus$indFlag)
         if(is.null(pInfo[["strEffLength"]])){
-            pInfo[["strTPM"]] <- getCountFile(strInput,sysConfig$DNAnexus$tpm)
+            pInfo[["strTPM"]] <- getDNAnexusFile(strInput,sysConfig$DNAnexus$tpm,"TPM")
         }
-        pInfo[["strSeqQC"]] <- getQCfile(strInput,sysConfig$DNAnexus$seqQC)
+        pInfo[["strSeqQC"]] <- getDNAnexusFile(strInput,sysConfig$DNAnexus$seqQC,"seqQC")
         pInfo <- getCovariates(pInfo,sysConfig$notCovariates)
         pInfo$datatype <- "DNAnexus"
     }
     return(pInfo)
+}
+getAnalysisInfo <- function(analysisInfo,keys){
+	aInfo <- NULL
+	for(one in keys){
+		aInfo <- analysisInfo[[one]]
+		if(!is.null(aInfo)) return(aInfo)
+	}
+	stop(paste("None of the pattern can be found in analysis information:",paste(one,collapse=";")))
 }
 extractAnnotation <- function(species,sVersion,genome_path=NULL){
     message("Create gene annotation ...")
@@ -100,25 +108,34 @@ extractAnnotation <- function(species,sVersion,genome_path=NULL){
     }
     return(gInfo)
 }
-getCountFile <- function(strInput,pattern){
-    message("\tgetting ",pattern)
-    res <- list.files(strInput,pattern,full.names=T)
-    if(length(res)==0){
-        res <- list.files(paste0(strInput,"/combine_rsem_outputs"),
-                          pattern,full.names=T)
-    }
-    return(normalizePath(res[order(nchar(res))][1]))
+getDNAnexusFile <- function(strInput,pattern,key){
+    message("getting ",key," file by ",paste(pattern,collapse=" or "))
+	res <- NULL
+	for(one in pattern){
+		res <- list.files(strInput,one,full.names=T,recursive =T)
+		if(length(res)>0){
+			message("\t",res[1])
+			return(normalizePath(res[1]))
+		}
+	}
+	stop("No ",key," matrix found")
+    #res <- list.files(strInput,pattern,full.names=T)
+    #if(length(res)==0){
+    #    res <- list.files(paste0(strInput,"/combine_rsem_outputs"),
+    #                      pattern,full.names=T)
+    #}
+    
+    #return(normalizePath(res[order(nchar(res))][1]))
 }
 getEffectLengthFile <-function(strInput,pattern,indFlag){
-    message("Extracting effective length ...")
-    res <- list.files(strInput,pattern,full.names=T)
-    if(length(res)==0){
-        res <- list.files(paste0(strInput,"/combine_rsem_outputs"),
-                          pattern,full.names=T)
-    }
-    if(length(res)>0){
-        return(normalizePath(res[order(nchar(res))][1]))
-    }
+    message("Extracting effective length by ",paste(pattern,collapse=" or "))
+	for(one in pattern){
+		res <- list.files(strInput,pattern,full.names=T,recursive =T)
+		if(length(res)>0){
+			message("\t",res[1])
+			return(normalizePath(res[1]))
+		}
+	}
     ## extract from each individual files
     strFs <- list.files(strInput,indFlag,full.names=T)
     if(length(strFs)==0){
@@ -143,6 +160,13 @@ getEffectLengthFile <-function(strInput,pattern,indFlag){
 }
 getQCfile <- function(strInput,pattern){
     message("\tgetting ",pattern)
+	for(one in pattern){
+		res <- list.files(strInput,pattern,full.names=T,recursive =T)
+		if(length(res)>0){
+			message("\t\t",res[1])
+			return(normalizePath(res[1]))
+		}
+	}
     res <- list.files(strInput,pattern,full.names=T)
     if(length(res)==0){
         res <- list.files(paste0(strInput,"/combine_rnaseqc"),
@@ -238,6 +262,11 @@ cleanTST <- function(strSrc,strDest=NULL,sep="\t"){
                                  "_"),
                         function(x)return(paste(grep("^TST",x,invert=T,value=T),collapse="_")))
         D <- D[!duplicated(D[,1])&nchar(D[,1])>0,]
+    }else{
+    	#fastr 3
+    	res <- do.call(rbind.data.frame,strsplit(colnames(D),"\\|"))
+    	sel <- apply(res,2,function(x)return(length(unique(x[-1]))))>1
+    	if(sum(!sel)>0) colnames(D) <- apply(res[,sel,drop=F],1,paste,collapse="|")
     }
     if(!is.null(strDest)) write.table(D,strDest,row.names=F,sep=sep)
     else return(D)
