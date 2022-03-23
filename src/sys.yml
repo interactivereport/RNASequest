@@ -24,7 +24,7 @@ DNAnexus:
   effL: genes.effective_length
   tpm: genes.tpm_table
   indFlag: genes.results.gz
-  seqQC: combined.metrics
+  seqQC: merged_metrics
 FileName:
   projectFile: project.yml
   prj_counts: counts
