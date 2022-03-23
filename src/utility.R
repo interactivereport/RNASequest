@@ -1,5 +1,5 @@
 #source("utility.R",chdir=T)
-.libPaths(c(grep("home",.libPaths(),invert=T,value=T),grep("home",.libPaths(),value=T)))
+#.libPaths(c(grep("home",.libPaths(),invert=T,value=T),grep("home",.libPaths(),value=T)))
 
 ## save session ------
 saveSessionInfo <- function(strF,strSRC){
@@ -78,6 +78,7 @@ extractAnnotation <- function(species,sVersion,genome_path=NULL){
     if(is.na(gtfPath)) stop(paste("missing reference GTF for",species,sVersion))
     strF <- gsub("gtf.gz$","gene_info.csv",gtfPath)
     if(!file.exists(strF)){
+    	message("\t",gtfPath)
         gtf.gz_to_gene_info(gtfPath)
     }
 
@@ -1090,7 +1091,6 @@ finishSplit <- function(){
 
 ## EArun functions ----
 require(dplyr)
-require(Hmisc)
 source("QuickOmics_DEG.R")
 saveCountsAlias <- function(config,estC){
     saveRDS(estC,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
@@ -1139,13 +1139,16 @@ Hmisc.rcorr <- function (x, y, type = "pearson"){
 }
 saveNetwork <- function(X,config){
     message("Obtaining networks ...")
+	suppressMessages(suppressWarnings({
+		require(Hmisc)
+		require(tibble)
+		}))
     cor_cutoff <- config$gene_network_cor_cutoff
     p_cutoff <- config$gene_network_p_cutoff
     variableN <- config$gene_network_high_variable_N
     edge_max <- as.numeric(config$gene_network_max_edge)
     edge_min <- as.numeric(config$gene_network_min_edge)
 
-    suppressMessages(require(tibble))
     if(nrow(X)>variableN){
         X <- X[order(apply(X,1,sd),decreasing=T)[1:variableN],]
     }
