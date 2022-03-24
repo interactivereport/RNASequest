@@ -76,11 +76,12 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
   if (analysis_method == "DESeq2") {
     print(system.time({result_list = DESeq2_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)}))
   } else if (analysis_method == "limma") {
-  	result_list <- sapply(setNames(split(comp_info,seq(nrow(comp_info))),rownames(comp_info)),
-  						  function(x)return(limma_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)))
-  	#result_list <- bplapply(setNames(split(comp_info,seq(nrow(comp_info))),rownames(comp_info)),
-  	#						function(x)return(limma_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)))
+  	#result_list <- sapply(setNames(split(comp_info,seq(nrow(comp_info))),rownames(comp_info)),
+  	#					  function(one)return(limma_DEG(S_meta_sub, Counts_table_sub, one, create_beta_coef_matrix)))
+  	result_list <- bplapply(setNames(split(comp_info,seq(nrow(comp_info))),rownames(comp_info)),
+  							function(one)return(limma_DEG(S_meta_sub, Counts_table_sub, one, create_beta_coef_matrix)))
     #result_list = limma_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)
+  	result_list <- unlist(result_list,recursive=F)
   }
   return(list(result_list))
 }
@@ -220,6 +221,7 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
 
 limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) {
   comp_name = comp_info$CompareName
+  message("\t--- ",comp_name)
   model = comp_info$Model
   group_var = comp_info$Group_name
   Subset_group = comp_info$Subsetting_group
