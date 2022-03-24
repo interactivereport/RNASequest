@@ -7,7 +7,7 @@ if [[ -n "$1" ]]; then
     condaEnv=${condaEnv:1}
     config=$1
     
-    env -i OPENBLAS_NUM_THREADS=1 condaEnv="$condaEnv" src="$src" config="$config" bash -c 'eval $condaEnv;Rscript $src/DEanalysis.R $src/ $config'
+    env -i OPENBLAS_NUM_THREADS=1 condaEnv="$condaEnv" src="$src" config="$config" PATH="$PATH" SGE_EXECD_PORT=6449 SGE_QMASTER_PORT=6448 SGE_ROOT=/camhpc/admin/sge/8.6.6 bash -c 'eval $condaEnv;Rscript $src/DEanalysis.R $src/ $config'
     
 else
     echo "=============== EArun path/to/config/file"

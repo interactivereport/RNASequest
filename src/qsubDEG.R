@@ -20,16 +20,16 @@ cat $PE_HOSTFILE
 echo 'end of HOST'
 
 ",substring(readLines(paste0(strSrc,"sys.yml"),n=1),2),"\nexport OPENBLAS_NUM_THREADS=1\n")
-    
     strOut <- paste0(strWK,"/qsubOut/")
     system(paste0("rm -f -R ",strOut,";mkdir -p ",strOut))
     save(estCount,meta,comp_info,core,file=paste0(strOut,qsubDEGsrcFile))
     ## submit each comparison job
-    badNODEs <- qsubSID(rownames(comp_info),jID,strOut,core,qsubDEGsh,strSrc,qsubTime=qsubTime)
+    compList <- getCompList(comp_info)
+    badNODEs <- qsubSID(compList,jID,strOut,core,qsubDEGsh,strSrc,qsubTime=qsubTime)
     cat(paste(badNODEs,collapse="\n"),file=paste0(strOut,"badNODEs.txt"))
     DEGs <- list()
-    for(i in rownames(comp_info)){
-        message("===== ",i," =====")
+    for(i in names(compList)){
+        message("===== ",i,": ",paste(compList[i],collapse="; ")," =====")
         strRDS <- paste0(strOut,i,".rds")
         
         tryIO({system(paste("cat",gsub("rds$","log",strRDS)))})
@@ -42,6 +42,12 @@ echo 'end of HOST'
         DEGs <- c(DEGs,one)
     }
     return(DEGs)
+}
+getCompList <- function(comp_info){
+	compList <- sapply(group_DEG(comp_info), # function defined in "QuickOmics_DEG.R"
+					   function(x)return(list(rownames(x))))
+	names(compList) <- paste0("comparisonModel_",1:length(compList))
+	return(compList)
 }
 qsubRM <- function(jID,allJOB=F){
     qStat <- trySys("qstat",intern=T)
@@ -89,11 +95,11 @@ qsubCheckStatus <- function(jID,strOut,qsubDEGsh,sID,qsubTime){
         #system(paste0('qsub -sync y -hold_jid "',jID,'_*" ',strQsub))
     }
 
-    ix <- sapply(sID,function(x)return(!file.exists(paste0(strOut,x,".rds"))))
+    ix <- sapply(names(sID),function(x)return(!file.exists(paste0(strOut,x,".rds"))))
     return(ix)
 }
-qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL,qsubTime=180){
-    for(i in sID){
+qsubSID <- function(sIDs,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL,qsubTime=180){
+    for(i in names(sIDs)){
         Sys.sleep(1)
         strQsub <- paste0(strOut,i,".sh")
         tryIO({
@@ -102,7 +108,7 @@ qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL,qsu
                                 gsub("cName",i,
                                      gsub("wkPath",strOut,
                                           gsub("qsubCore",core,qsubDEGsh)))),
-                           "Rscript ",strSrc,"qsubDEG.R ",strSrc," ",qsubDEGsrcFile," ",i,"\n"),
+                           "Rscript ",strSrc,"qsubDEG.R ",strSrc," ",qsubDEGsrcFile,' "',paste(sIDs[[i]],collapse=","),'" ',i,'\n'),
                     file=strQsub)
             }
         })
@@ -119,16 +125,16 @@ qsubSID <- function(sID,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL,qsu
                 })
         }
     }
-    ix <- qsubCheckStatus(jID,strOut,qsubDEGsh,sID,qsubTime)
+    ix <- qsubCheckStatus(jID,strOut,qsubDEGsh,sIDs,qsubTime)
     if(sum(ix)>0 && reN<5)
-        badNodes <- qsubSID(sID[ix],jID,strOut,core,qsubDEGsh,strSrc,reN+1,
-                            unique(c(badNodes,getBadNodes(sID[ix],strOut))),
+        badNodes <- qsubSID(sIDs[ix],jID,strOut,core,qsubDEGsh,strSrc,reN+1,
+                            unique(c(badNodes,getBadNodes(sIDs[ix],strOut))),
                             qsubTime=qsubTime)
     return(badNodes)
 }
 getBadNodes <- function(sID,strOut){
     badNODEs <- c()
-    for(i in sID){
+    for(i in names(sID)){
         strLog <- paste0(strOut,i,".log")
         tryN <- 0
         tmp <- NULL
@@ -164,9 +170,10 @@ if(length(args)>2 && !grepl("yml$",args[2])){
     .libPaths(grep("home",.libPaths(),invert=T,value=T))
     suppressMessages(suppressWarnings(source(paste0(args[1],"QuickOmics_DEG.R"))))
     load(args[2])
-    DEGs <- Batch_DEG(estCount, meta, comp_info[args[3],],core=core)
+    comNames <- unlist(strsplit(args[3],","))
+    DEGs <- Batch_DEG(estCount, meta, comp_info[comNames,],core=core)
     reN <- 0
-    tryIO(saveRDS(DEGs,file=paste0(args[3],".rds")))
+    tryIO(saveRDS(DEGs,file=paste0(args[4],".rds")))
     #while(reN<5 && tryCatch({
     #    saveRDS(DEGs,file=paste0(args[3],".rds"))
     #    F
