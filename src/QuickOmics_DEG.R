@@ -25,24 +25,47 @@ read_file <- function(file, rowname) {
   return(table)
 }
 
+group_DEG <- function(comp_info){
+	# group the compare information by model, subset, Covariate_levels and Analysis_method
+	selCol <- c("Model","Subsetting_group","Covariate_levels","Analysis_method")
+	grpCom <- comp_info[,selCol]
+	grpCom <- grpCom[!duplicated(grpCom),]
+	rownames(grpCom) <- paste0("comparisonModel",1:nrow(grpCom))
+	grpCom <- apply(grpCom,1,function(x){
+		sel <- rep(T,nrow(comp_info))
+		for(one in names(x)){
+			if(is.na(x[one])) sel <- sel & is.na(unlist(comp_info[,one]))
+			else sel <- sel & unlist(comp_info[,one]==x[one])
+		}
+		return(comp_info[sel,,drop=F])
+	})
+	names(grpCom) <- rep("",length(grpCom))
+	return(grpCom)
+}
+
 Batch_DEG = function(Counts_table, S_meta, comp_info, create_beta_coef_matrix=F,core=2) {
   register(MulticoreParam(core))
-  comp_info.list <- setNames(split(cbind(CompareName=rownames(comp_info),comp_info),
-                                   seq(nrow(comp_info))),
-                             rownames(comp_info))
+  #comp_info.list <- setNames(split(cbind(CompareName=rownames(comp_info),comp_info),
+  #                                 seq(nrow(comp_info))),
+  #                           rownames(comp_info))
+  comp_info.list <- group_DEG(cbind(CompareName=rownames(comp_info),comp_info))
   DEG_result_list <- sapply(comp_info.list, DEG_analysis, Counts_table, S_meta, create_beta_coef_matrix)
+  DEG_result_list <- unlist(DEG_result_list,recursive=F)
   return(DEG_result_list)
 }
 
 
 DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) {
   comp_name = comp_info$CompareName
-  Subset_group = comp_info$Subsetting_group
-  analysis_method = comp_info$Analysis_method
+  Subset_group = unique(comp_info$Subsetting_group)
+  analysis_method = unique(comp_info$Analysis_method)
+  
+  if(length(Subset_group)>1 || length(analysis_method)>1)
+  	stop("Error in DEG_analysis comparison group, more than one subset!")
   
   S_meta_sub = S_meta
   Counts_table_sub = Counts_table
-  message(paste0("Comparison ",comp_name))
+  message(paste0("Comparison for ",paste(comp_name,collapse="; ")))
   if (!is.na(Subset_group) && !Subset_group == "") {
     Subset = subset_data(Subset_group, S_meta_sub, Counts_table_sub)
     S_meta_sub = Subset$S_meta
@@ -53,9 +76,13 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
   if (analysis_method == "DESeq2") {
     print(system.time({result_list = DESeq2_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)}))
   } else if (analysis_method == "limma") {
-    result_list = limma_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)
+  	result_list <- sapply(setNames(split(comp_info,seq(nrow(comp_info))),rownames(comp_info)),
+  						  function(x)return(limma_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)))
+  	#result_list <- bplapply(setNames(split(comp_info,seq(nrow(comp_info))),rownames(comp_info)),
+  	#						function(x)return(limma_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)))
+    #result_list = limma_DEG(S_meta_sub, Counts_table_sub, comp_info, create_beta_coef_matrix)
   }
-  return(result_list)
+  return(list(result_list))
 }
 
 
@@ -90,22 +117,26 @@ beta.coef <- function(response_table, design_table, coef_table, digits = 5) { # 
 }
 
 DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) {
+  comp_info <- comp_info[order(comp_info$Group_ctrl),]
   comp_name = comp_info$CompareName
-  model = comp_info$Model
-  group_var = comp_info$Group_name
-  Subset_group = comp_info$Subsetting_group
-  Covariate_levels = comp_info$Covariate_levels
+  model = unique(comp_info$Model)
+  group_var = unique(comp_info$Group_name)
+  Subset_group = unique(comp_info$Subsetting_group)
+  Covariate_levels = unique(comp_info$Covariate_levels)
   trt_group = comp_info$Group_test
   ctrl_group = comp_info$Group_ctrl
-  analysis_method = comp_info$Analysis_method
+  analysis_method = unique(comp_info$Analysis_method)
   shrink_logFC = comp_info$Shrink_logFC
   LFC_cutoff = comp_info$LFC_cutoff
   
-  for (n in 1: ncol(S_meta)) {
-    if(is.numeric(S_meta[,n])) next # O'Young: possible numeric (co-)variates
+  if(length(model)>1 || length(group_var)>1 || length(Subset_group)>1 || length(Covariate_levels)>1 || length(analysis_method)>1)
+  	stop("Error in DESeq2_DEG, more than one comparison subset!")
+  
+  for (n in colnames(S_meta)) {
+    if(n!=group_var && is.numeric(S_meta[,n])) next # O'Young: possible numeric (co-)variates
     S_meta[,n]= factor(S_meta[,n])
   }
-  S_meta[,group_var] = relevel(S_meta[,group_var], ref = ctrl_group)
+  #S_meta[,group_var] = relevel(S_meta[,group_var], ref = ctrl_group)
   
   if (str_detect(model, "\\*|\\:") && !Covariate_levels =="") {
     Cov_levels = trimws(strsplit(Covariate_levels, ";")[[1]])
@@ -124,32 +155,67 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
                                 colData = S_meta,#[,unique(trimws(unlist(strsplit(model,"\\+|\\*|\\:"))))]
                                 design= as.formula(paste0('~', model)))
   dds <- DESeq(dds,parallel=T)
-  if (LFC_cutoff == 0) {
-    res <- results(dds, name = str_c(group_var, "_", trt_group, "_vs_", ctrl_group))
-  } else if (LFC_cutoff > 0) {
-    res <- results(dds, name = str_c(group_var, "_", trt_group, "_vs_", ctrl_group), lfcThreshold=LFC_cutoff, altHypothesis="greaterAbs")
-  }
-  # to shrink log fold changes association with condition:
-  if (toupper(shrink_logFC) == "YES") {
-    res <- lfcShrink(dds, coef=str_c(group_var, "_", trt_group, "_vs_", ctrl_group), type="apeglm", parallel=T)
-  }
-  if (create_beta_coef_matrix) {
-    beta_coef_matrix = data.frame()
-    beta_coef_matrix = beta.coef(assay(vst(dds)), model.matrix(design(dds)), coef(dds), digits = 5)
-    # write.csv(beta_coef_matrix, str_c(comp_name, "_beta_coef.csv"))
-  }
+  result_list <- list()
   
-  comp_result = as.data.frame(res[, c(2,4,5)])
-  colnames(comp_result) =  paste0(comp_name,"_DESeq.",c("logFC","P.value","Adj.P.value"))
-  #rownames(comp_result) = str_split(rownames(comp_result), '\\.', simplify = T)[,1]
-  # write.csv(comp_result, str_c(comp_name, "_DEG.csv"))
-  
-  if (exists("beta_coef_matrix") && nrow(beta_coef_matrix) > 0) {
-    result_list <- list("DEG" = comp_result, "beta_coef_matrix" = beta_coef_matrix)
-  } else {
-    result_list <- list(DEG = comp_result,name=comp_name)
+  for(i in 1:nrow(comp_info)){
+  	message("\t--- ",comp_name[i])
+  	if (toupper(shrink_logFC[i]) == "YES") {
+  		strContrast <- str_c(group_var, "_", trt_group[i], "_vs_", ctrl_group[i])
+  		if(!strContrast%in%resultsNames(dds)){
+  			#https://www.biostars.org/p/448959/
+  			dds[[group_var]] <- relevel(dds[[group_var]], ctrl_group[i])
+  			dds <- nbinomWaldTest(dds)
+  			message("\t\trelevel")
+  		}
+  		res <- lfcShrink(dds,coef=strContrast, type="apeglm", parallel=T)
+  	}else{
+  		res <- results(dds,contrast=c(group_var,trt_group[i],ctrl_group[i]),
+  					   lfcThreshold=LFC_cutoff[i], altHypothesis="greaterAbs",
+  					   parallel=T)
+  	}
+  	if (create_beta_coef_matrix) {
+  		beta_coef_matrix = data.frame()
+  		beta_coef_matrix = beta.coef(assay(vst(dds)), model.matrix(design(dds)), coef(dds), digits = 5)
+  		# write.csv(beta_coef_matrix, str_c(comp_name, "_beta_coef.csv"))
+  	}
+  	
+  	comp_result = as.data.frame(res[, c(2,4,5)])
+  	if (exists("beta_coef_matrix") && nrow(beta_coef_matrix) > 0) {
+  		result_list[[length(result_list)+1]] <- list("DEG" = comp_result, "beta_coef_matrix" = beta_coef_matrix)
+  	} else {
+  		result_list[[length(result_list)+1]] <- list(DEG = comp_result,name=comp_name[i])
+  	}
   }
-  return(list(result_list))
+  names(result_list) <- rownames(comp_info)
+  return(result_list)
+  
+  # if (LFC_cutoff == 0) {
+  #   res <- results(dds, name = str_c(group_var, "_", trt_group, "_vs_", ctrl_group))
+  # } else if (LFC_cutoff > 0) {
+  #   res <- results(dds, name = str_c(group_var, "_", trt_group, "_vs_", ctrl_group), lfcThreshold=LFC_cutoff, altHypothesis="greaterAbs")
+  # }
+  # 
+  # # to shrink log fold changes association with condition:
+  # if (toupper(shrink_logFC) == "YES") {
+  #   res <- lfcShrink(dds, coef=str_c(group_var, "_", trt_group, "_vs_", ctrl_group), type="apeglm", parallel=T)
+  # }
+  # if (create_beta_coef_matrix) {
+  #   beta_coef_matrix = data.frame()
+  #   beta_coef_matrix = beta.coef(assay(vst(dds)), model.matrix(design(dds)), coef(dds), digits = 5)
+  #   # write.csv(beta_coef_matrix, str_c(comp_name, "_beta_coef.csv"))
+  # }
+  # 
+  # comp_result = as.data.frame(res[, c(2,4,5)])
+  # colnames(comp_result) =  paste0(comp_name,"_DESeq.",c("logFC","P.value","Adj.P.value"))
+  # #rownames(comp_result) = str_split(rownames(comp_result), '\\.', simplify = T)[,1]
+  # # write.csv(comp_result, str_c(comp_name, "_DEG.csv"))
+  # 
+  # if (exists("beta_coef_matrix") && nrow(beta_coef_matrix) > 0) {
+  #   result_list <- list("DEG" = comp_result, "beta_coef_matrix" = beta_coef_matrix)
+  # } else {
+  #   result_list <- list(DEG = comp_result,name=comp_name)
+  # }
+  # return(list(result_list))
 } 
 
 limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) {
