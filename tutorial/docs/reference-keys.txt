@@ -1,10 +1,14 @@
 preface
 introduction
-getting-started
 installation
+data-preparation
+retrieving-data-from-ncbi-geo
 file-hierarchy
 running-ea-pipeline
 eainit
 eaqc
 earun
+eareport
 visualization
+quickomics-visualization
+other-visualizations

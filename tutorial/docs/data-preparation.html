@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Introduction | Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics</title>
-  <meta name="description" content="Chapter 2 Introduction | Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics" />
+  <title>Chapter 4 Data preparation | Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics</title>
+  <meta name="description" content="Chapter 4 Data preparation | Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Introduction | Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics" />
+  <meta property="og:title" content="Chapter 4 Data preparation | Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Introduction | Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics" />
+  <meta name="twitter:title" content="Chapter 4 Data preparation | Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics" />
   
   
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="installation.html"/>
+<link rel="prev" href="installation.html"/>
+<link rel="next" href="running-ea-pipeline.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -175,24 +175,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="introduction" class="section level1" number="2">
-<h1><span class="header-section-number">Chapter 2</span> Introduction</h1>
-<p>ExpressionAnalysis (EA) is a Converter from DNAnexus output to QuickOmics (<a href="http://quickomics.bxgenomics.com" class="uri">http://quickomics.bxgenomics.com</a>) for interactive visualization.</p>
-<p>This pipeline contains three main tools:</p>
-<ul>
-<li>EAinit: Generate a set of project analysis files based on a DNAnexus result folder;</li>
-<li>EAqc: Analyze the covariates against the expression to determine if the expression is needed to be adjusted;</li>
-<li>EArun: Produce QuickOmics object for webserver loading.</li>
-</ul>
+<div id="data-preparation" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Data preparation</h1>
+<div id="retrieving-data-from-ncbi-geo" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Retrieving data from NCBI GEO</h2>
+<p>ExpressionAnalysis requires several input files, which should be organized in specific formats. Here, we present an example of the data processing steps using a public NCBI GEO dataset: SRP199678. The R code <a href="https://github.com/interactivereport/RNASequest/blob/main/example/recount3.example.R" target="_blank">recount3.example.R</a> can be run in the terminal under the conda environment created before.</p>
+<pre><code>conda activate ExpressionAnalysis
+cd RNASequest/example
 
+Rscript recount3.example.R</code></pre>
+</div>
+<div id="file-hierarchy" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> File hierarchy</h2>
+<p>After running recount3.example.R, we will have all input files for ExpressionAnalysis with the following hierarchy:</p>
+<pre><code>SRP199678/
+    ├── comparison.csv
+    ├── counts.tsv
+    ├── geneAnnotation.csv
+    ├── geneLength.tsv
+    ├── meta.csv
+    └── project.yml</code></pre>
+
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="installation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="installation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="running-ea-pipeline.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -223,7 +235,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/interactivereport/ExpressionAnalysis/edit/gh-pages/02-Introduction.Rmd",
+"link": "https://github.com/interactivereport/ExpressionAnalysis/edit/gh-pages/04-DataPreparation.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -231,7 +243,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/interactivereport/ExpressionAnalysis/blob/gh-pages/02-Introduction.Rmd",
+"link": "https://github.com/interactivereport/ExpressionAnalysis/blob/gh-pages/04-DataPreparation.Rmd",
 "text": null
 },
 "download": null,

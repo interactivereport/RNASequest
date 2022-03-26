@@ -1,0 +1,19 @@
+# Installation
+
+Download ExpressionAnalysis from GitHub and add it to the environment:
+
+```{bash, eval=FALSE}
+git clone https://github.com/interactivereport/RNASequest.git
+cd RNASequest
+
+#Install RNASequest conda environment
+bash install
+
+#Activate the conda environment
+conda activate ExpressionAnalysis
+
+#Check the path of current directory and add it to $PATH:
+CurrentDir=`pwd`
+PATH="$CurrentDir:$PATH"
+export $PATH
+```

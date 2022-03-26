@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-01-06" />
+<meta name="date" content="2022-03-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -138,18 +138,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
-<li class="chapter" data-level="3" data-path="getting-started.html"><a href="getting-started.html"><i class="fa fa-check"></i><b>3</b> Getting started</a>
+<li class="chapter" data-level="3" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>3</b> Installation</a></li>
+<li class="chapter" data-level="4" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>4</b> Data preparation</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="getting-started.html"><a href="getting-started.html#installation"><i class="fa fa-check"></i><b>3.1</b> Installation</a></li>
-<li class="chapter" data-level="3.2" data-path="getting-started.html"><a href="getting-started.html#file-hierarchy"><i class="fa fa-check"></i><b>3.2</b> File hierarchy</a></li>
+<li class="chapter" data-level="4.1" data-path="data-preparation.html"><a href="data-preparation.html#retrieving-data-from-ncbi-geo"><i class="fa fa-check"></i><b>4.1</b> Retrieving data from NCBI GEO</a></li>
+<li class="chapter" data-level="4.2" data-path="data-preparation.html"><a href="data-preparation.html#file-hierarchy"><i class="fa fa-check"></i><b>4.2</b> File hierarchy</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html"><i class="fa fa-check"></i><b>4</b> Running EA pipeline</a>
+<li class="chapter" data-level="5" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html"><i class="fa fa-check"></i><b>5</b> Running EA pipeline</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eainit"><i class="fa fa-check"></i><b>4.1</b> EAinit</a></li>
-<li class="chapter" data-level="4.2" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eaqc"><i class="fa fa-check"></i><b>4.2</b> EAqc</a></li>
-<li class="chapter" data-level="4.3" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#earun"><i class="fa fa-check"></i><b>4.3</b> EArun</a></li>
+<li class="chapter" data-level="5.1" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eainit"><i class="fa fa-check"></i><b>5.1</b> EAinit</a></li>
+<li class="chapter" data-level="5.2" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eaqc"><i class="fa fa-check"></i><b>5.2</b> EAqc</a></li>
+<li class="chapter" data-level="5.3" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#earun"><i class="fa fa-check"></i><b>5.3</b> EArun</a></li>
+<li class="chapter" data-level="5.4" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eareport"><i class="fa fa-check"></i><b>5.4</b> EAreport</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="visualization.html"><a href="visualization.html"><i class="fa fa-check"></i><b>5</b> Visualization</a></li>
+<li class="chapter" data-level="6" data-path="visualization.html"><a href="visualization.html"><i class="fa fa-check"></i><b>6</b> Visualization</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="visualization.html"><a href="visualization.html#quickomics-visualization"><i class="fa fa-check"></i><b>6.1</b> QuickOmics visualization</a></li>
+<li class="chapter" data-level="6.2" data-path="visualization.html"><a href="visualization.html#other-visualizations"><i class="fa fa-check"></i><b>6.2</b> Other visualizations</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -171,7 +177,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics</h1>
-<p class="author multi-author"><em>This name list has not been finalized!!!</em></p>
 <p class="author multi-author"><em>Jing Zhu</em></p>
 <address class="author_afil">
 Biogen<br>
@@ -181,6 +186,11 @@ Biogen<br>
 <address class="author_afil">
 Biogen<br>
 <a class="author_email" href="mailto:#"><a href="mailto:fergal.casey@biogen.com" class="email">fergal.casey@biogen.com</a></a>
+</address>
+<p class="author multi-author"><em>Zhengyu Ouyang</em></p>
+<address class="author_afil">
+BioInfoRx<br>
+<a class="author_email" href="mailto:#"><a href="mailto:oyoung@bioinforx.com" class="email">oyoung@bioinforx.com</a></a>
 </address>
 <p class="author multi-author"><em>Yu (Henry) Sun</em></p>
 <address class="author_afil">
@@ -192,15 +202,30 @@ Biogen<br>
 Biogen<br>
 <a class="author_email" href="mailto:#"><a href="mailto:kejie.li@biogen.com" class="email">kejie.li@biogen.com</a></a>
 </address>
+<p class="author multi-author"><em>Soumya Negi</em></p>
+<address class="author_afil">
+Biogen<br>
+<a class="author_email" href="mailto:#"><a href="mailto:soumya.negi@biogen.com" class="email">soumya.negi@biogen.com</a></a>
+</address>
+<p class="author multi-author"><em>Sarbottam Piya</em></p>
+<address class="author_afil">
+Biogen<br>
+<a class="author_email" href="mailto:#"><a href="mailto:sarbottam.piya@biogen.com" class="email">sarbottam.piya@biogen.com</a></a>
+</address>
+<p class="author multi-author"><em>Wenxing Hu</em></p>
+<address class="author_afil">
+Biogen<br>
+<a class="author_email" href="mailto:#"><a href="mailto:wenxing.hu@biogen.com" class="email">wenxing.hu@biogen.com</a></a>
+</address>
 <p class="author multi-author"><em>Maria Zavodszky</em></p>
 <address class="author_afil">
 Biogen<br>
 <a class="author_email" href="mailto:#"><a href="mailto:maria.zavodszky@biogen.com" class="email">maria.zavodszky@biogen.com</a></a>
 </address>
-<p class="author multi-author"><em>Zhengyu Ouyang</em></p>
+<p class="author multi-author"><em>Hima Yalamanchili</em></p>
 <address class="author_afil">
-BioInfoRx<br>
-<a class="author_email" href="mailto:#"><a href="mailto:oyoung@bioinforx.com" class="email">oyoung@bioinforx.com</a></a>
+Biogen<br>
+<a class="author_email" href="mailto:#"><a href="mailto:hima.yalamanchili@biogen.com" class="email">hima.yalamanchili@biogen.com</a></a>
 </address>
 <p class="author multi-author"><em>Xinmin Zhang</em></p>
 <address class="author_afil">
@@ -212,7 +237,8 @@ BioInfoRx<br>
 Biogen<br>
 <a class="author_email" href="mailto:#"><a href="mailto:baohong.zhang@biogen.com" class="email">baohong.zhang@biogen.com</a></a>
 </address>
-<p class="date"><em>2022-01-06</em></p>
+<p class="author multi-author"><em>These authors contribute equally Jing Zhu, Fergal Casey, Zhengyu Ouyang</em></p>
+<p class="date"><em>2022-03-25</em></p>
 </div>
 <div id="preface" class="section level1" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Preface</h1>
