@@ -12,7 +12,7 @@ conda activate ExpressionAnalysis
 EAinit Path/to/a/DNAnexus/result/folder
 ```
 
-The execution of above command will create a sub-folder (QuickOmics_[timestamp]) in the specified DNAnexus result folder.
+The execution of above command will create a sub-folder (EA[timestamp]) in the specified RNAseq result folder.
 There will be five files in the result folder:
 
 - compareInfo.csv: an empty comparison definition file (with header). Please fill in this file before ```EArun``` call.

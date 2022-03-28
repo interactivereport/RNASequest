@@ -41,7 +41,7 @@ SRP199678/
       ├── notAdjusted_Significant_Numeric_Covariates.pdf
       ├── sequenceQC.pdf
       ├── sequenceQC.unionTop.TPM.csv
-      ├── session.EAinit
+      ├── session.EAinit            #R sessionInfo() outputs for each step
       ├── session.EAqc
       ├── session.EAreport
       ├── session.EArun

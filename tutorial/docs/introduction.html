@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-03-25" />
+<meta name="date" content="2022-03-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -177,12 +177,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="introduction" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Introduction</h1>
-<p>ExpressionAnalysis (EA) is a Converter from DNAnexus output to QuickOmics (<a href="http://quickomics.bxgenomics.com" class="uri">http://quickomics.bxgenomics.com</a>) for interactive visualization.</p>
-<p>This pipeline contains three main tools:</p>
+<p>ExpressionAnalysis (EA) is a Converter from a set of RNAseq analysis output to QuickOmics (<a href="http://quickomics.bxgenomics.com" class="uri">http://quickomics.bxgenomics.com</a>) for interactive visualization.</p>
+<p>This pipeline contains four main scripts:</p>
 <ul>
-<li>EAinit: Generate a set of project analysis files based on a DNAnexus result folder;</li>
-<li>EAqc: Analyze the covariates against the expression to determine if the expression is needed to be adjusted;</li>
-<li>EArun: Produce QuickOmics object for webserver loading.</li>
+<li><p><strong>EAinit</strong></p>
+<p>This is the first step of the pipeline. First, it creates a directory storing files necessary for the future steps.</p>
+<p>By default, the directory will be named based on the date when running the pipeline. For example, EA20220328_0 will be created since today is 2022-03-28. If the user runs EA again for the same dataset, the last digit will add up to avoid duplications: EA20220328_1</p></li>
+<li><p><strong>EAqc</strong></p>
+<p>This is the second step of the pipeline.</p>
+<p>It analyzes the covariates against the expression to determine if the expression is needed to be adjusted.</p></li>
+<li><p><strong>EArun</strong></p>
+<p>After running EAqc, this following EArun step will perform differential expression analysis based on defined groups.</p>
+<p>It also produces QuickOmics objects for webserver loading.</p></li>
+<li><p><strong>EAreport</strong></p>
+<p>The last step, EAreport, will generate a user-friendly bookdown report to visualize the EA pipeline results.</p></li>
 </ul>
 
 </div>

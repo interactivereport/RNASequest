@@ -1,9 +1,30 @@
 # Introduction
 
-ExpressionAnalysis (EA) is a Converter from DNAnexus output to QuickOmics (http://quickomics.bxgenomics.com) for interactive visualization.
+ExpressionAnalysis (EA) is a Converter from a set of RNAseq analysis output to QuickOmics (http://quickomics.bxgenomics.com) for interactive visualization.
 
-This pipeline contains three main tools:
+This pipeline contains four main scripts:
 
-  - EAinit: Generate a set of project analysis files based on a DNAnexus result folder;
-  - EAqc: Analyze the covariates against the expression to determine if the expression is needed to be adjusted;
-  - EArun: Produce QuickOmics object for webserver loading.
+  - **EAinit**
+  
+    This is the first step of the pipeline. First, it creates a directory storing files necessary for the future steps.
+    
+    By default, the directory will be named based on the date when running the pipeline. For example, EA20220328_0 will be created since today is 2022-03-28. If the user runs EA again for the same dataset, the last digit will add up to avoid duplications: EA20220328_1
+    
+    
+  - **EAqc**
+  
+    This is the second step of the pipeline. 
+    
+    It analyzes the covariates against the expression to determine if the expression is needed to be adjusted.
+  
+  
+  - **EArun**
+  
+    After running EAqc, this following EArun step will perform differential expression analysis based on defined groups.
+    
+    It also produces QuickOmics objects for webserver loading.
+
+
+  - **EAreport**
+  
+    The last step, EAreport, will generate a user-friendly bookdown report to visualize the EA pipeline results.
