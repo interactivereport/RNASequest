@@ -435,6 +435,7 @@ finishInit <- function(strMsg){
 require(data.table)
 checkConfig <- function(config){
     if(is.null(config$sample_name)) stop("sample_name is required in the config. Default is Sample_Name")
+    correctNaive(config)
     if(config$prj_name!="initPrjName"){
         if(is.null(config$prj_counts) || !file.exists(config$prj_counts))
             stop(paste("The count file is required, ",config$prj_counts,", does NOT exist!"))
@@ -792,6 +793,18 @@ metaFactor_saveYaml <- function(ymlist,strF){
                      sapply(ymlist,paste,collapse="','"),"']"),
               collapse="\n"),
         "\n",sep="",file=strF)
+}
+## meta 'naive' ----
+correctNaive <- function(config){
+  for(one in c("sample_meta","sample_factor","comparison_file")){
+    if(!file.exists(config[[one]])) next()
+    a <- readLines(config[[one]])
+    if(sum(grepl("ï",a,fixed=T))>0){
+      message("'Naïve' detected in ",one,", replacing it")
+      file.copy(config[[one]],paste0(config[[one]],".bak"))
+      writeLines(gsub("ï","i",a,fixed=T),config[[one]])
+    }
+  }
 }
 ## EAqc functions ------
 source("PC_Covariates.R")
