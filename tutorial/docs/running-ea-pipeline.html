@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-03-28" />
+<meta name="date" content="2022-03-29" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -181,7 +181,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>conda activate ExpressionAnalysis</code></pre>
 <div id="eainit" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> EAinit</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="running-ea-pipeline.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> Path/to/a/DNAnexus/result/folder</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="running-ea-pipeline.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> Path/to/a/DNAnexus/result/folder</span>
+<span id="cb5-2"><a href="running-ea-pipeline.html#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="running-ea-pipeline.html#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Example:</span></span>
+<span id="cb5-4"><a href="running-ea-pipeline.html#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> ~/RNASequest/example/SRP199678</span></code></pre></div>
 <p>The execution of above command will create a sub-folder (EA[timestamp]) in the specified RNAseq result folder.
 There will be five files in the result folder:</p>
 <ul>
@@ -195,22 +198,31 @@ There will be five files in the result folder:</p>
 </div>
 <div id="eaqc" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> EAqc</h2>
-<pre><code>EAqc Path/to/a/config/file</code></pre>
+<pre><code>EAqc Path/to/a/config/file
+
+#Example:
+EAqc ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
 <p>The execution of the command with the above default config file, expression PC analysis will be done against covariates specified in <strong>covariates_check</strong> in <em>config.yml</em> file. An excel file will list p-value for all numeric and categorical covariates, and with significant ones will be in plot pdf files. The analysis before covariate adjusting will have prefix <em>covariatePCanalysis_noAdjust</em>.
 Based on the above results, you can add covariates into <strong>covariates_adjust</strong> in <em>config.yml</em> file, and run <code>EAqc</code> again. This time additional expression PC analysis will be applied to covariate adjusted expression with files started with <em>covariatePCanalysis_Adjusted</em>.</p>
 <p><strong><em>Please pay attention on the std out messages.</em></strong></p>
 </div>
 <div id="earun" class="section level2" number="5.3">
 <h2><span class="header-section-number">5.3</span> EArun</h2>
-<pre><code>EArun Path/to/a/config/file</code></pre>
+<pre><code>EArun Path/to/a/config/file
+
+#Example:
+EArun ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
 <p><strong><em>Please fill the compareInfo.csv before executing the above command</em></strong></p>
-<p>The execution of above command will produce R object for QuickOmics webserver to load. The process will generate the covariate adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation.</p>
-<p>The results (three files) currently will need to be copied to a folder on ngs, in order to have web accession.</p>
+<p>The execution of above command will produce R objects for QuickOmics webserver to load. The process will generate the covariate adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation.</p>
+<p>The results (four files) can be uploaded to the QuickOmics webserver.</p>
 <p><strong><em>Please pay attention on the std out messages.</em></strong></p>
 </div>
 <div id="eareport" class="section level2" number="5.4">
 <h2><span class="header-section-number">5.4</span> EAreport</h2>
-<pre><code>EAreport Path/to/a/config/file</code></pre>
+<pre><code>EAreport Path/to/a/config/file
+
+#Example:
+EAreport ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
 <p>By running the command above, the pipeline will generate a <strong>BookdownReport</strong> folder in the same directory as the config file. This folder contains the raw Rmd files, as well as the final bookdown report, which is the BookdownReport/docs/index.html file. If you move the directory, please move everything inside the docs directory, since other files are part of the bookdown report, and the index.html can automatically link everything together.</p>
 
 </div>

@@ -10,6 +10,9 @@ conda activate ExpressionAnalysis
 
 ```{bash, eval=FALSE}
 EAinit Path/to/a/DNAnexus/result/folder
+
+#Example:
+EAinit ~/RNASequest/example/SRP199678
 ```
 
 The execution of above command will create a sub-folder (EA[timestamp]) in the specified RNAseq result folder.
@@ -27,6 +30,9 @@ There will be five files in the result folder:
 
 ```
 EAqc Path/to/a/config/file
+
+#Example:
+EAqc ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
 ```
 The execution of the command with the above default config file, expression PC analysis will be done against covariates specified in **covariates_check** in *config.yml* file. An excel file will list p-value for all numeric and categorical covariates, and with significant ones will be in plot pdf files. The analysis before covariate adjusting will have prefix *covariatePCanalysis_noAdjust*. 
 Based on the above results, you can add covariates into **covariates_adjust** in *config.yml* file, and run ```EAqc``` again. This time additional expression PC analysis will be applied to covariate adjusted expression with files started with *covariatePCanalysis_Adjusted*. 
@@ -37,12 +43,15 @@ Based on the above results, you can add covariates into **covariates_adjust** in
 
 ```
 EArun Path/to/a/config/file
+
+#Example:
+EArun ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
 ```
 **_Please fill the compareInfo.csv before executing the above command_**
 
-The execution of above command will produce R object for QuickOmics webserver to load. The process will generate the covariate adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation. 
+The execution of above command will produce R objects for QuickOmics webserver to load. The process will generate the covariate adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation. 
 
-The results (three files) currently will need to be copied to a folder on ngs, in order to have web accession.
+The results (four files) can be uploaded to the QuickOmics webserver.
 
 **_Please pay attention on the std out messages._**
 
@@ -50,6 +59,9 @@ The results (three files) currently will need to be copied to a folder on ngs, i
 
 ```
 EAreport Path/to/a/config/file
+
+#Example:
+EAreport ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
 ```
 
 By running the command above, the pipeline will generate a **BookdownReport** folder in the same directory as the config file. This folder contains the raw Rmd files, as well as the final bookdown report, which is the BookdownReport/docs/index.html file. If you move the directory, please move everything inside the docs directory, since other files are part of the bookdown report, and the index.html can automatically link everything together.

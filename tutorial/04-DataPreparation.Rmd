@@ -2,7 +2,7 @@
 
 ## Retrieving data from NCBI GEO
 
-ExpressionAnalysis requires several input files, which should be organized in specific formats. Here, we present an example of the data processing steps using a public NCBI GEO dataset: SRP199678. The R code [recount3.example.R](https://github.com/interactivereport/RNASequest/blob/main/example/recount3.example.R){target="_blank"} can be run in the terminal under the conda environment created before.
+ExpressionAnalysis requires several input files, which should be organized in specific formats. Here, we present an example of the data processing steps using a public NCBI GEO dataset: [SRP199678](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131869){target="_blank"}. The R code [recount3.example.R](https://github.com/interactivereport/RNASequest/blob/main/example/recount3.example.R){target="_blank"} can be run in the terminal under the conda environment created before.
 
 ```
 conda activate ExpressionAnalysis
@@ -13,7 +13,7 @@ Rscript recount3.example.R
 
 ## File hierarchy
 
-After running recount3.example.R, we will have all input files for ExpressionAnalysis with the following hierarchy:
+After running [recount3.example.R](https://github.com/interactivereport/RNASequest/blob/main/example/recount3.example.R){target="_blank"}, we will have all input files for ExpressionAnalysis with the following hierarchy:
 
 ```
 SRP199678/

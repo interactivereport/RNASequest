@@ -1,6 +1,6 @@
 # Introduction
 
-ExpressionAnalysis (EA) is a Converter from a set of RNAseq analysis output to QuickOmics (http://quickomics.bxgenomics.com) for interactive visualization.
+ExpressionAnalysis (EA) is a Converter from a set of RNAseq analysis output to QuickOmics ([http://quickomics.bxgenomics.com](http://quickomics.bxgenomics.com){target="_blank"}) for interactive visualization.
 
 This pipeline contains four main scripts:
 
