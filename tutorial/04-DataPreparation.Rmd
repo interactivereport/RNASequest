@@ -73,7 +73,7 @@ Please use the same file hierarchy as 4.2 after creating them.
 
 - **geneLength.tsv**
 
-  This file has the gene length information. It must match the dimension of the count.tsv file
+  This file has the gene length information. It must match the dimension of the count.tsv file.
 
   ```
   $ head -4 geneLength.tsv
@@ -99,7 +99,7 @@ Please use the same file hierarchy as 4.2 after creating them.
 
 - **project.yml**
 
-  The project.yml file contains a high-level summary of 
+  The project.yml file contains a high-level summary of the project, including project name, species, etc.
 
   ```
   $ cat project.yml
