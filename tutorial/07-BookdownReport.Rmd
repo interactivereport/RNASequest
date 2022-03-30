@@ -6,3 +6,4 @@ To enable better visualization and immediate delivery of the results, we employe
 
 Here is a screenshot of a bookdown report generated after running the EA pipeline. It contains 5 sections showing multiple exploratory analysis figures: QC, Covariates, PCA, Volcano plot and Heatmaps.
 
+[![](https://interactivereport.github.io/RNASequest/tutorial/images/Bookdown_example.png)](https://interactivereport.github.io/RNASequest/tutorial/images/Bookdown_example.png)
