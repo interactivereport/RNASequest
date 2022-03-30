@@ -1,0 +1,7 @@
+# Online slide deck
+
+Online slide deck. Powered by reveal.js, a R markdown template is utilized by RNASequest to generate an interactive slide deck with emphasis on graphical representation of QC and basic analysis plots, which makes the primary analysis presentation-ready to engage biologists to discuss the initial results immediately. Again, it is also GitHub friendly in terms of hosting.
+
+Please visite the online slide deck using the following link:
+
+[https://interactivereport.github.io/RNASequest/reveal.html](https://interactivereport.github.io/RNASequest/reveal.html){target="_blank"}

@@ -1,5 +1,5 @@
 --- 
-title: "Supplementary Materials - ExpressionAnalysis (EA): A Converter to QuickOmics"
+title: "RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework"
 author:
   - name: Jing Zhu
     email: jing.zhu@biogen.com
@@ -48,4 +48,4 @@ site: bookdown::bookdown_site
 ---
 
 # Preface
-This is a *supplementary materials* written using Bookdown, which provides a detailed guide for ExpressionAnalysis (EA) .
+This is a *user manual* written using Bookdown, which provides a detailed guide for RNASequest.

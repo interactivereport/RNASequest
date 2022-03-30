@@ -1,0 +1,8 @@
+# ShinyOne
+
+We also developed ShinyOne which is a R Shiny App displaying a web-based searchable table that lists all projects processed by RNASequest and loaded into Quickomics, with Quickomics launching link for each project. 
+
+In the backend of Quickomics, we added the capability to load projects directly from URLs after the data files have been saved at user-specified server locations. Together, ShinyOne and URL loading enable many projects to be powered by one Quickomics instance.
+
+Please use the following link to access ShinyOne:
+

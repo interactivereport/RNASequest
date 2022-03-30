@@ -1,6 +1,6 @@
 # Installation
 
-Download ExpressionAnalysis from GitHub and add it to the environment:
+Download RNASequest from GitHub and add it to the environment:
 
 ```{bash, eval=FALSE}
 git clone https://github.com/interactivereport/RNASequest.git

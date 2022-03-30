@@ -4,11 +4,15 @@ installation
 data-preparation
 retrieving-data-from-ncbi-geo
 file-hierarchy
+self-prepared-files
 running-ea-pipeline
 eainit
 eaqc
 earun
 eareport
-visualization
+output
 quickomics-visualization
-other-visualizations
+other-output-files
+bookdown-report
+online-slide-deck
+shinyone
