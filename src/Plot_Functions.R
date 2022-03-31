@@ -107,11 +107,9 @@ PCA_Plot <- function(data_wide, MetaData, input_samples=NULL, pcnum=c(1, 2), lab
 }
 
 
-
-
 #Compute Covariates
 source("PC_Covariates.R")
-PC_covariates_out <-  function(data_wide, MetaData, input_samples=NULL,select_covariates=NULL,  PC_cutoff=5, FDR_cutoff=0.1){
+PC_covariates_out <-  function(data_wide, MetaData, input_samples=NULL,select_covariates=NULL,  PC_cutoff=5, FDR_cutoff=0.1, N_col=2){
   sub_data=sub_samples(data_wide, MetaData, input_samples)
   MetaData=sub_data[["MetaData"]]
   tmp_sampleid = MetaData$sampleid
@@ -122,9 +120,54 @@ PC_covariates_out <-  function(data_wide, MetaData, input_samples=NULL,select_co
   }
   rownames(meta)=MetaData$sampleid
   #browser() #debug
-  res<-Covariate_PC_Analysis(tmp_data_wide, meta, out_prefix=NULL, PC_cutoff=PC_cutoff, FDR_cutoff=FDR_cutoff)
+  res<-Covariate_PC_Analysis(tmp_data_wide, meta, out_prefix=NULL, PC_cutoff=PC_cutoff, FDR_cutoff=FDR_cutoff, N_col=N_col)
   return(res)
 }
+
+
+PCA_sig_covariates<-function(res) {
+  data.all=res$data.all
+  selVar_All=res$selVar_All
+  PC_info<-res$PC_info
+  selVar_All<-selVar_All%>%arrange(FDR) #sort by FDR
+  PCA_plots=vector(mode="list", length=nrow(selVar_All))
+  for (i in 1:nrow(selVar_All)) {
+        x0=selVar_All$PC[i]
+        if (x0=="PC1") {y0="PC2"} else {y0=x0; x0="PC1"}
+        x=sym(x0); y=sym(y0); color_by=sym(selVar_All$Covariate[i])
+        p<-ggplot(data.all, aes(x=!!x, y=!!y, col=!!color_by))+geom_point()+
+          labs(x=PC_info$PC_new[PC_info$PC==x0], y=PC_info$PC_new[PC_info$PC==y0])+ theme_half_open()
+        #additional text to add  
+        p<-add_sub(p, selVar_All$Significance[i], x=0.2, hjust=0)
+        PCA_plots[[i]]=p
+        names(PCA_plots)[i]=str_c(selVar_All$PC[i], " vs. ", selVar_All$Covariate[i])
+  }
+  return(PCA_plots)
+}
+
+#plot one covariate vs. one PC. Will choose scatter plot or boxplot based on the covariate type
+covariate_vs_PC_plot<-function(res, pc, var, add_text=TRUE) {
+  data.all=res$data.all
+  selVar=res$selVar_All
+  if (!(var %in% names(data.all))) {cat("Covariate ", var, " not in MetaData. Please check the spelling of covariate.\n", sep=""); return(NULL)}
+  if (!(pc %in% names(data.all))) {cat(pc, " not in principle component scores. Please check the spelling.\n", sep=""); return(NULL)}
+  Num_names=names(select_if(data.all, is.numeric))
+  if (var %in% Num_names) { #numeric covariate
+    p<-ggplot(data.all, aes(x=!!sym(var), y=!!sym(pc)) )+geom_point()+
+      stat_summary(fun.data= mean_cl_normal) + geom_smooth(method='lm')+theme_half_open()
+  } else {
+    p<-ggplot(data.all,  aes(x=!!sym(var), y=!!sym(pc)) )+geom_boxplot()+geom_jitter(alpha=0.7, width=0.1)+theme_half_open() +
+      theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5))
+  }
+  if (add_text) {
+    info<-selVar%>%dplyr::filter(PC==pc, Covariate==var)
+    if ( nrow(info)>0) {text_info=info$Significance[1]} else {text_info=str_c(var, " vs. ", pc, " not significant.")}
+    p<-add_sub(p, text_info, x=0.2, hjust=0)
+  }
+  return(p)
+}
+
+
 
 Volcano_Plot <- function(results_long, ProteinGeneName, comparison, volcano_FCcut=1.2, volcano_pvalcut=0.05, volcano_psel = "Padj", 
                          volcano_genelabel="Gene.Name", label_DEG=TRUE, Max_Pvalue=0, Max_logFC=0, Ngenes=50, rasterize="Yes",

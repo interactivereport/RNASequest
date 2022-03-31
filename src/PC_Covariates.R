@@ -60,7 +60,7 @@ Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0
       pdf(str_c(out_prefix, "_PCA_Plots.pdf"), width=8, height=9)
       
       if (PCA_plots=="ranked") { #plot PCA plots in order of FDR
-          
+        
         for (i in 1:nrow(selVar_All)) {
           x0=as.character(selVar_All$PC[i])
           if (x0=="PC1") {y0="PC2"} else {y0=x0; x0="PC1"}
@@ -97,7 +97,7 @@ Covariate_PC_Analysis<-function(exp, meta, out_prefix, PC_cutoff=5, FDR_cutoff=0
   if (!is.null(selVar_All)) {
     names(selVar_All)[c(2, 4, 5, 6)]=c("Covariate", "Significance", "P-value", "FDR")
   }
-  res=list(data.all=data.all, selVar_All=selVar_All, sel_dataN=sel_dataN, sel_dataC=sel_dataC, ncol=N_col)
+  res=list(data.all=data.all, selVar_All=selVar_All, sel_dataN=sel_dataN, sel_dataC=sel_dataC, ncol=N_col, PC_info=PC_info)
   
   if (!is.null(out_prefix) ) {
     saveRDS(res, str_c(out_prefix, "_Covariate_PC_Results.rds"))
@@ -126,7 +126,7 @@ plot_covariate_PC<-function(res_file, pc, var, out_file, width=10, height=8, add
   }
   if (add_text) {
     info<-selVar%>%dplyr::filter(PC==pc, Covariate==var)
-    if ( nrow(info)>0) {text_info=info$NewText[1]} else {text_info=str_c(var, " vs. ", pc, " not significant.")}
+    if ( nrow(info)>0) {text_info=info$Significance[1]} else {text_info=str_c(var, " vs. ", pc, " not significant.")}
     p<-add_sub(p, text_info, x=0.2, hjust=0)
   }
   pdf(out_file, width=width, height=height)
@@ -136,7 +136,7 @@ plot_covariate_PC<-function(res_file, pc, var, out_file, width=10, height=8, add
 }
 
 
-#compute covaviate vs PC significance. For numerical covariates, use correlation, for categorical covariates, use ANOVA.
+#compute covariate vs PC significance. For numerical covariates, use correlation, for categorical covariates, use ANOVA.
 #exp is expression matrix (logTPM, logCPM, etc), meta is meta data. Column names (samples) of exp must match row names of meta. 
 #PC_cutoff: select which principle components to be used in analysis. Default 5 will select components that explain more than 5% of variance in the data.
 Compute_Corr_Anova<-function(exp, meta, PC_cutoff=5) {
@@ -157,10 +157,10 @@ Compute_Corr_Anova<-function(exp, meta, PC_cutoff=5) {
   meta_num=dplyr::select_if(meta, is.numeric)
   if (ncol(meta_num)>0) {
     cov_cor <- psych::corr.test(scores[, 1:Npc, drop=F],
-                         data.matrix(meta_num),
-                         use = 'pairwise.complete.obs',
-                         method = "kendall",
-                         adjust = "none")
+                                data.matrix(meta_num),
+                                use = 'pairwise.complete.obs',
+                                method = "kendall",
+                                adjust = "none")
     all_cor_vals <- cov_cor[["r"]]
     all_cor_p <- cov_cor[["p"]]
     cor_mat <- reshape2::melt(all_cor_p, varnames = c("PC", "covar"))
@@ -266,7 +266,3 @@ get_PC_meta_plot<-function(res, var_type, FDR_cutoff=0.1, N_col=3) {
   }
   return(list(plot=p, data.df=data.df%>%dplyr::select(-wrap), selVar=selVar%>%dplyr::select(-wrap)))
 }
-
-
-
-
