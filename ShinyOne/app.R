@@ -10,12 +10,12 @@ createLink <- function(val) {
   sprintf('<a href="%s" target="_blank" class="btn btn-primary">View Project</a>',val)
 }
 
-ui <- fluidPage(  
+ui <- fluidPage(
   titlePanel(
     fluidRow(
       column(4, img(height =75 , src = "ShinyOne_logo.png")), 
       column(8,  h2("Repository of RNASequest Results", align = 'left'))
-    )),
+    ),  windowTitle = "ShinyOne" ),
     tags$hr(style="border-color: RoyalBlue;"),
     dataTableOutput('table1')
 ) 
