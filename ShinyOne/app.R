@@ -11,11 +11,14 @@ createLink <- function(val) {
 }
 
 ui <- fluidPage(  
-  titlePanel("Datasets Loaded into Quickomics"),
-  tags$hr(style="border-color: RoyalBlue;"),
-      dataTableOutput('table1')
-
-)
+  titlePanel(
+    fluidRow(
+      column(4, img(height =75 , src = "ShinyOne_logo.png")), 
+      column(8,  h2("Repository of RNASequest Results", align = 'left'))
+    )),
+    tags$hr(style="border-color: RoyalBlue;"),
+    dataTableOutput('table1')
+) 
 
 server <- function(input, output) {
   
