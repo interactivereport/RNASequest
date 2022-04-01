@@ -19,7 +19,7 @@ The **`r colorize("Red dots", "red")`** are indicative of all genes that pass th
 
 Moreover, this chapter will display volcano plots of all comparison groups.
 
-```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9, results = "asis"}
+```{r, echo=FALSE, fig.width = 10, fig.asp = 0.9, results = "asis"}
 #Retrieve information from the previously saved bookdown.info.txt file
 suppressMessages(library(knitr))
 suppressMessages(library(kableExtra))

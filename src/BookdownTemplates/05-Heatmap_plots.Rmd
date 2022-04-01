@@ -8,7 +8,7 @@ Then we present heatmap(s) of all comparison groups by subsetting the samples. F
 
 The heatmaps were drawn using the log2(TPM+1) expression values with Z-score transformation. By default, hierarchical clusterings were performed on both row (genes) and column (samples), indicating the similarities between genes and samples. Thus, similar genes and samples will be clustered closely. The heatmaps also display the grouping information provided before running the pipeline. It provides additional information for the users to compare the biological grouping information and the unsupervised hierarchical clustering results. All heatmaps in this chapter were plotted using the same design, and they only differ in the genes and samples selected during the plotting step.
 
-```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9}
+```{r, echo=FALSE, fig.width = 10, fig.asp = 0.9}
 #Retrieve information from the previously saved bookdown.info.txt file
 PWD <- system("pwd", intern = TRUE)
 Info <- paste0(PWD, "/bookdown.info.txt")
@@ -35,7 +35,7 @@ load(paste0(Working_dir,"../",ProjectName,".RData"))
 
 This heatmap plots the top 1000 most variable genes across all samples. The x-axis displays the sample names, and colors indicate the expression Z-scores, shown as the color bar at the lower right corner.
 
-```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9}
+```{r, echo=FALSE, fig.width = 10, fig.asp = 0.9}
 p <- Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName, heatmap_subset = "variable", maxgenes = 1000)
 draw(p, merge_legend = TRUE, auto_adjust = FALSE)
 ```
@@ -44,7 +44,7 @@ draw(p, merge_legend = TRUE, auto_adjust = FALSE)
 
 The heatmaps in this section select the most significant genes to plot, with a maximum of 1000 genes if there are more than 1000 significantly expressed genes. These genes have been pre-computed and selected before running the EAreport step, and they were based on the differential expression analysis results when running EArun.
 
-```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9, results = "asis"}
+```{r, echo=FALSE, fig.width = 10, fig.asp = 0.9, results = "asis"}
 suppressMessages(library(knitr))
 suppressMessages(library(kableExtra))
 

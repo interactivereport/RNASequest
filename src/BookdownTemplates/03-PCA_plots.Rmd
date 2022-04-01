@@ -6,7 +6,7 @@ The percentage of PC1 or PC2 indicates how much proportion of variance in the da
 
 The PCA plot displays, by default, the first 2 PCs in the dataset, labels the data names, and colors study groups. From this plot, we are able to examine the consistency of samples within the same group, and identify potential outliers. The separation of groups on the PCA plot also indicates the differences between them, and this trend should be consistent with the differential expression analysis, i.e., two groups with higher divergence should have more significantly changed genes.
 
-```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9}
+```{r, echo=FALSE, fig.width = 10, fig.asp = 0.9}
 # Retrieve information from the previously saved bookdown.info.txt file
 PWD <- system("pwd", intern = TRUE)
 Info <- paste0(PWD, "/bookdown.info.txt")

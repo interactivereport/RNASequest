@@ -2,7 +2,27 @@
 
 **Quality control (QC)** is critical to examine the basic QC metrics of the data. In this section, we present several QC plots to visualize the quality of each dataset within the project.
 
-```{r, echo=FALSE, fig.width = 12, fig.asp = 0.9}
+The first set of QC plots show the **Top Gene Ratios**. There are always top genes in the samples, and we are usually interested in knowing what are they, and how do they drive the overall expression profiles. Thus, these three top gene ratio plots are useful to determine what the percentage of the Top 1, 10 and 30 genes in the overall TPM. Since the sum of TPM values will always be 1 million, the percentage of TPM value indicates how these genes influence the RNA content detected in the samples.
+
+To better narrow down the top genes, the second set of QC plots shows the list of **Top Genes** and their expression ranges, for TPM and counts (if the counts information is available). Since there may be multiple samples across the whole project, here, we present the union of top 10 genes, to make sure at least 10 genes will be plotted. The user can easily pinpoint what are those highly expressed genes, and learn how they express across all samples. It would be beneficial to notice that certain tissues should have a signature of highly expressed genes, and these plots may serve as a quality checking step of the current dataset.
+
+## Top gene ratio
+
+The following three plots present the Top N (1, 10, 30) gene ratios using the percentage (%) of TPM.
+
+```{r, echo=FALSE}
+#A copy of the useAlias function, without printing out the D
+useAliasCopy <- function(config,D){
+    if(!is.null(config$sample_alias)){
+        message("Applying alias")
+        colnames(D$counts) <- rownames(D$meta) <- D$meta[,config$sample_alias]
+        if(!is.null(D$effLength)) colnames(D$effLength) <- rownames(D$meta)
+        if(!is.null(D$logTPM)) colnames(D$logTPM) <- rownames(D$meta)
+        if(!is.null(D$seqQC)) rownames(D$seqQC) <- rownames(D$meta)
+    }
+    return(D)
+}
+
 # Retrieve information from the previously saved bookdown.info.txt file
 PWD <- system("pwd", intern = TRUE)
 Info <- paste0(PWD, "/bookdown.info.txt")
@@ -21,23 +41,65 @@ config <- sapply(yaml::read_yaml(Config_file),unlist)
 sysConfig <- yaml::read_yaml(paste0(Source_code,"sys.yml"))
 ProjectName <- config$prj_name
 
-checkConfig(config)
-D <- getEAData(config)
-D <- useAlias(config,D)
-
-## plotting sequencing QC ----
-tmp <- plotAlignQC(2^D$logTPM-config$count_prior,
-            paste0(config$output,"/sequenceQC.pdf"),
-            estC=D$counts,
-            qc=D$seqQC,
-            prioQC=sysConfig$qc2meta,
-            gInfo=D$gInfo,
-            replot=config$seqQC_replot)
-print(tmp)
-
-## plotting gene length against expression-----
-plotGeneLength(config,D$counts,effL=D$effLength,logTPM=D$logTPM,gInfo=D$gInfo)
-
+suppressMessages(checkConfig(config))
+D <- suppressMessages(getEAData(config))
+D <- useAliasCopy(config,D)
 ```
 
-R plotting function path: `r PlotFunctions`
+```{r, echo=FALSE, fig.width = 10, results = "asis"}
+## Setting plotting parameters ----
+estT <- 2^D$logTPM-config$count_prior
+estC=D$counts
+qc=D$seqQC
+prioQC=sysConfig$qc2meta
+gInfo=D$gInfo
+replot=config$seqQC_replot
+topN=c(1,10,30)
+
+# Generating ratio plots
+if(!is.null(gInfo) & sum(rownames(gInfo)!=gInfo$Gene.Name,na.rm=T)>0){
+  rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
+  if(!is.null(estC)) rownames(estC) <- paste(rownames(estC),gInfo[rownames(estC),"Gene.Name"],sep="|")
+}
+pdfW <- max(ncol(estT)/10+2,6)
+topN <- setNames(topN,paste0("Top",topN))
+D <- t(apply(estT,2,function(x){
+  x <- sort(x,decreasing=T)
+  return(sapply(topN,function(i)return(sum(x[1:i])/sum(x)*100)))
+}))
+D <- cbind(sID=factor(rownames(D),levels=rownames(D)),data.frame(D))
+for(i in colnames(D)){
+  if(i=="sID") next
+  cat('\n')
+  cat("### ", i, "% of Total TPM \n") 
+  print(ggplot(D,aes_string(x="sID",y=i))+
+          geom_bar(stat="identity")+
+          xlab("")+ylab("% of Total TPM")+
+          ggtitle(paste(i,"genes"))+
+          theme_minimal()+
+          theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                legend.position = "none"))
+  cat('\n')
+}
+```
+
+## Top expressed genes
+
+The following plots present the union of top 10 expressed genes across samples in the project. We used 10 genes by default because if the project contains a couple of samples, the union of top genes may result in a long list. Here, we ensure at least 10 genes to plot, but won't be too many even if this project is large.
+
+```{r, echo=FALSE, fig.width = 10, results = "asis"}
+topUnion <- 10
+cat("### Top genes by TPM \n") 
+p <- plotTopGeneRatio(estT, 10)
+print(p)
+cat('\n')
+# same genes for counts
+if(!is.null(estC)){
+  cat('\n')
+  cat("### Top genes by counts \n") 
+  pC <- plotTopGeneRatio(estC,10,selG=levels(p$data[,2]))+
+    xlab("% of total counts")+ggtitle(p$labels$title)
+  print(pC)
+  cat('\n')
+}
+```
