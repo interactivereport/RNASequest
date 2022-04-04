@@ -87,7 +87,7 @@ The EA pipeline also produced several files under the working directory:
 
 - **sequenceQC.unionTop.TPM.csv**
 
-For more flexible and interactive visualization, please upload the following Rdata files to [Quickomics](http://quickomics.bxgenomics.com/).
+For more flexible and interactive visualization, please upload the following Rdata files to [Quickomics](http://quickomics.bxgenomics.com/){target="_blank"}.
 
 - **`r ProjectName`_estCount.rds**
 
