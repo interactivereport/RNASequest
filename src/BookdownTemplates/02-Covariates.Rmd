@@ -12,6 +12,8 @@ The **Significance** column lists the ANOVA FDR information between each covaria
 
 The last two columns, **P-value** and **FDR**, indicate the results of statistical tests (P-value) and adjusted P-values.
 
+## List of covariates
+
 ```{r, echo=FALSE}
 suppressMessages(library(knitr))
 suppressMessages(library(kableExtra))
@@ -35,10 +37,46 @@ sysConfig <- yaml::read_yaml(paste0(Source_code,"sys.yml"))
 ProjectName <- config$prj_name
 
 load(paste0(Working_dir,"../",ProjectName,".RData"))
-res <- PC_covariates_out(data_wide, MetaData)
+res <- suppressWarnings(suppressMessages(PC_covariates_out(data_wide, MetaData, N_col = 3)))
 sig_covariates=res$selVar_All
 kable(sig_covariates, caption = "Significant covariates", align = "c", booktabs = TRUE) %>% 
   kable_styling() %>%
   column_spec(2, width_min = "2in") %>% 
-  kableExtra::scroll_box(width = "100%", height = "1000px")
+  kableExtra::scroll_box(width = "100%", height = "500px")
+
+```
+
+## Plots of significant covariates
+
+Loop through the significant covariates and product all plots.
+
+```{r, echo=FALSE}
+for (i in 1:nrow(sig_covariates)) {
+  pc <- sig_covariates$PC[i]
+  var <- sig_covariates$Covariate[i]
+  add_text=TRUE
+  
+  data.all=res$data.all
+  selVar=res$selVar_All
+  
+  if (!(var %in% names(data.all))) {cat("Covariate ", var, " not in MetaData. Please check the spelling of covariate.\n", sep=""); p <- NULL}
+  if (!(pc %in% names(data.all))) {cat(pc, " not in principle component scores. Please check the spelling.\n", sep=""); p <- NULL}
+  Num_names=names(select_if(data.all, is.numeric))
+  
+  if (var %in% Num_names) {
+    p<-suppressWarnings(ggplot(data.all, aes(x=!!sym(var), y=!!sym(pc)) )+geom_point()+
+      stat_summary(fun.data= mean_cl_normal) + geom_smooth(formula = y ~ x, method='lm')+theme_half_open())
+  } else {
+    p<-suppressWarnings(ggplot(data.all,  aes(x=!!sym(var), y=!!sym(pc)) )+geom_boxplot()+geom_jitter(alpha=0.7, width=0.1)+theme_half_open() +
+      theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5)))
+  }
+  # if (add_text) {
+  #   info<-selVar%>%dplyr::filter(PC==pc, Covariate==var)
+  #   if ( nrow(info)>0) {text_info=info$Significance[1]} else {text_info=str_c(var, " vs. ", pc, " not significant.")}
+  #   p<-add_sub(p, text_info, x=0.2, hjust=0)
+  # }
+
+  #draw picture in markdown, etc
+  suppressWarnings(print(ggdraw(p)))
+}
 ```

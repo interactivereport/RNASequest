@@ -55,18 +55,32 @@ if (length(ComparisonGroups) == 1){
   cat("There are total ", length(ComparisonGroups), " comparisons in this project.\n\n")
 }
 
-kable(comp_info, caption = "Comparisons", align = "c", booktabs = TRUE) %>% 
+kable(comp_info, align = "c", booktabs = TRUE) %>% 
+  kable_styling() %>%
+  kableExtra::scroll_box(width = "100%")
+
+#A summary of the DEG results
+cat('\n\n\n')
+cat("The following significantly changed genes were used to generate the heatmaps. \n\n")
+#Use the results_long from RData to get DEG counts
+FCcut=log2(1.2) #Fold change cutoff, 1.2 fold as default
+pvalcut=0.05 #FDR cutoff  
+tmpdat = results_long %>% dplyr::filter( Adj.P.Value < pvalcut & abs(logFC) > FCcut)
+deg_stat<-tmpdat%>%group_by(test)%>%dplyr::summarize(DEG=n(), Up=sum(logFC>0), Down=sum(logFC<0))%>%ungroup
+names(deg_stat)[1]="Comparison"
+kable(deg_stat, align = "c", booktabs = TRUE) %>% 
   kable_styling() %>%
   kableExtra::scroll_box(width = "100%")
 
 #Loop through all comparisons
+#This step may generate error if not enough genes to plot. Use 'try' to avoid
 for (i in 1:length(ComparisonGroups)){
    cat('\n')  
-   cat("### Comparison: ", ComparisonGroups[i], "\n") 
-   p <- Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName, heatmap_subset = "subset", 
+   cat("### Comparison: ", ComparisonGroups[i], "\n")
+   try(p <- Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName, heatmap_subset = "subset", 
                      comparison = ComparisonGroups[i],
-                     maxgenes = 1000)
-   draw(p, merge_legend = TRUE, auto_adjust = FALSE)
+                     maxgenes = 1000))
+   try(draw(p, merge_legend = TRUE, auto_adjust = FALSE))
    cat('\n') 
 }
 ```

@@ -13,7 +13,7 @@ colorize <- function(x, color) {
 
 The **Volcano plot** is a useful way to display the fold change and significance of each gene in the comparison. The **x-axis** is the Log2 Fold change, which shows the increase and decrease of genes within the current comparison. The values that are deviated from zero mean larger expression changes. The **y-axis** is the -Log10(Padj.Value), and the higher value corresponds to a smaller adjusted P-value, i.e., higher significace.
 
-This volcano plot reveals the differentially expressed genes after running the DE analysis by EArun. By default, the Fold change Cutoff is set to 1.2, and the adjusted P-value Cutoff is set to 0.01.
+This volcano plot reveals the differentially expressed genes after running the DE analysis by EArun. By default, the Fold change Cutoff is set to 1.2, and the adjusted P-value Cutoff is set to 0.05.
 
 The **`r colorize("Red dots", "red")`** are indicative of all genes that pass the Fold Change and adjusted P-value cutoff, while the **`r colorize("Green dots", "green")`** are indicative of genes that only pass the adjusted P-value cutoff. The **`r colorize("Grey dots", "grey")`** are usually in the middle, and they are not significant genes. By default, fifty random genes are labeled for both the up-regulated and down-regulated genes.
 
@@ -50,7 +50,20 @@ if (length(ComparisonGroups) == 1){
   cat("There are total ", length(ComparisonGroups), " comparisons in this project.\n\n")
 }
 
-kable(comp_info, caption = "Comparisons", align = "c", booktabs = TRUE) %>% 
+kable(comp_info, align = "c", booktabs = TRUE) %>% 
+  kable_styling() %>%
+  kableExtra::scroll_box(width = "100%")
+
+#A summary of the DEG results
+cat('\n\n\n')
+cat("A summary of significantly changed genes in each comparison. \n\n")
+#Use the results_long from RData to get DEG counts
+FCcut=log2(1.2) #Fold change cutoff, 1.2 fold as default
+pvalcut=0.05 #FDR cutoff  
+tmpdat = results_long %>% dplyr::filter( Adj.P.Value < pvalcut & abs(logFC) > FCcut)
+deg_stat<-tmpdat%>%group_by(test)%>%dplyr::summarize(DEG=n(), Up=sum(logFC>0), Down=sum(logFC<0))%>%ungroup
+names(deg_stat)[1]="Comparison"
+kable(deg_stat, align = "c", booktabs = TRUE) %>% 
   kable_styling() %>%
   kableExtra::scroll_box(width = "100%")
 

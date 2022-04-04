@@ -1,10 +1,14 @@
-# PCA plot
+# PCA plots
 
-In this chapter, we present **Principal Component Analysis (PCA)** results of all samples in the current dataset. Principle component analysis is a powerful method in exploratory data analysis, by visualizing complex datasets in lower dimensions. Thus it is also a useful method for dimension reduction, preserving critical information on the similarities and differences between all samples. For more information, please check the [Wiki page](https://en.wikipedia.org/wiki/Principal_component_analysis).
+In this chapter, we present **Principal Component Analysis (PCA)** results of all samples in the current dataset. Principle component analysis is a powerful method in exploratory data analysis, by visualizing complex datasets in lower dimensions. Thus it is also a useful method for dimension reduction, preserving critical information on the similarities and differences between all samples. For more information, please check the [Wiki page](https://en.wikipedia.org/wiki/Principal_component_analysis){target="_blank"}.
 
 The percentage of PC1 or PC2 indicates how much proportion of variance in the dataset can be explained by each PC. Usually, PC1 can explain most of the variance, but for complex data with more noises, we also rely upon PC2 for better separation.
 
 The PCA plot displays, by default, the first 2 PCs in the dataset, labels the data names, and colors study groups. From this plot, we are able to examine the consistency of samples within the same group, and identify potential outliers. The separation of groups on the PCA plot also indicates the differences between them, and this trend should be consistent with the differential expression analysis, i.e., two groups with higher divergence should have more significantly changed genes.
+
+## General PCA plot
+
+In this section, we plot a single PCA figure to visualize the default covariate, usually by the group information.
 
 ```{r, echo=FALSE, fig.width = 10, fig.asp = 0.9}
 # Retrieve information from the previously saved bookdown.info.txt file
@@ -27,4 +31,22 @@ ProjectName <- config$prj_name
 load(paste0(Working_dir,"../",ProjectName,".RData"))
 par(mar = c(0.1, 0.1, 0.1, 0.1))
 PCA_Plot(data_wide, MetaData)
+```
+
+## PCA plots by covariates
+
+In this section, we display PCA plots colored by different covariates.
+
+The PC1 and PC2 values are same across all plots, but the color panels are different.
+
+```{r, echo=FALSE, fig.width = 10, fig.asp = 0.9}
+
+res <- suppressWarnings(suppressMessages(PC_covariates_out(data_wide, MetaData, N_col=1)))
+PCA_plots<-PCA_sig_covariates(res)
+
+for (i in 1:length(PCA_plots)) {
+  plot_name <- names(PCA_plots[i])
+  plot <- suppressWarnings(PCA_plots[[i]])
+  suppressWarnings(print(ggdraw(plot)))
+}
 ```
