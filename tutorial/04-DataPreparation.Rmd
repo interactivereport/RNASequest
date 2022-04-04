@@ -89,7 +89,7 @@ Please use the same file hierarchy as 4.2 after creating them.
   This **meta.csv** file can contain many annotation columns for the dataset. For example, this is a meta file containing group information:
   
   ```
-  $ head -3 meta.tsv
+  $ head -4 meta.tsv
   
   "","group"
   "SRR9139048","grp1"
