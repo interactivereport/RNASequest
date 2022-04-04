@@ -2,7 +2,7 @@
 
 ## QuickOmics visualization
 
-The output results will be piped to QuickOmics ([http://quickomics.bxgenomics.com](http://quickomics.bxgenomics.com){target="_blank"}) for visualization. Here are the four necessary files required by QuickOmics:
+The output results can be piped to QuickOmics ([http://quickomics.bxgenomics.com](http://quickomics.bxgenomics.com){target="_blank"}) for visualization. Here are the four necessary files required by QuickOmics:
 
 **SRP199678_estCount.rds**
 
@@ -14,7 +14,7 @@ The output results will be piped to QuickOmics ([http://quickomics.bxgenomics.co
 
 This example has been uploaded to the QuickOmics site: 
 
-[http://ngs.biogen.com:3838/Quickomics/?testfile=SRP199678](http://ngs.biogen.com:3838/Quickomics/?testfile=SRP199678){target="_blank"}
+[http://ngs.biogen.com:3838/Quickomics/?testfile=SRP199678](https://quickomics.bxgenomics.com/?serverfile=SRP199678){target="_blank"}
 
 ## Other output files
 
