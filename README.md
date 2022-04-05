@@ -6,4 +6,4 @@ https://interactivereport.github.io/RNASequest/tutorial/docs/index.html
 
 Please find the online slidedeck for EA here:
 
-https://interactivereport.github.io/RNASequest/reveal.html
+https://interactivereport.github.io/RNASequest/slide_deck/slidedeck.html
