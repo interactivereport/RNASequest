@@ -4,4 +4,4 @@ Online slide deck. Powered by reveal.js, a R markdown template is utilized by RN
 
 Please visite the online slide deck using the following link:
 
-[https://interactivereport.github.io/RNASequest/reveal.html](https://interactivereport.github.io/RNASequest/reveal.html){target="_blank"}
+[https://interactivereport.github.io/RNASequest/slide_deck/slidedeck.html](https://interactivereport.github.io/RNASequest/slide_deck/slidedeck.html){target="_blank"}
