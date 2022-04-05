@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Heatmap plots | Bookdown report of SRP199678</title>
+  <meta name="description" content="Chapter 5 Heatmap plots | Bookdown report of SRP199678" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Heatmap plots | Bookdown report of SRP199678" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Heatmap plots | Bookdown report of SRP199678" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="volcano-plots.html"/>
+
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Expression Analysis Report</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Introduction</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-overview"><i class="fa fa-check"></i>Project overview</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-files"><i class="fa fa-check"></i>Project files</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="qc-plots.html"><a href="qc-plots.html"><i class="fa fa-check"></i><b>1</b> QC plots</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="qc-plots.html"><a href="qc-plots.html#top-gene-ratio"><i class="fa fa-check"></i><b>1.1</b> Top gene ratio</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="qc-plots.html"><a href="qc-plots.html#top1-of-total-tpm"><i class="fa fa-check"></i><b>1.1.1</b> Top1 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.2" data-path="qc-plots.html"><a href="qc-plots.html#top10-of-total-tpm"><i class="fa fa-check"></i><b>1.1.2</b> Top10 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.3" data-path="qc-plots.html"><a href="qc-plots.html#top30-of-total-tpm"><i class="fa fa-check"></i><b>1.1.3</b> Top30 % of Total TPM</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="qc-plots.html"><a href="qc-plots.html#top-expressed-genes"><i class="fa fa-check"></i><b>1.2</b> Top expressed genes</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-tpm"><i class="fa fa-check"></i><b>1.2.1</b> Top genes by TPM</a></li>
+<li class="chapter" data-level="1.2.2" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-counts"><i class="fa fa-check"></i><b>1.2.2</b> Top genes by counts</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="covariates.html"><a href="covariates.html"><i class="fa fa-check"></i><b>2</b> Covariates</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="covariates.html"><a href="covariates.html#list-of-covariates"><i class="fa fa-check"></i><b>2.1</b> List of covariates</a></li>
+<li class="chapter" data-level="2.2" data-path="covariates.html"><a href="covariates.html#plots-of-significant-covariates"><i class="fa fa-check"></i><b>2.2</b> Plots of significant covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="pca-plots.html"><a href="pca-plots.html"><i class="fa fa-check"></i><b>3</b> PCA plots</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="pca-plots.html"><a href="pca-plots.html#general-pca-plot"><i class="fa fa-check"></i><b>3.1</b> General PCA plot</a></li>
+<li class="chapter" data-level="3.2" data-path="pca-plots.html"><a href="pca-plots.html#pca-plots-by-covariates"><i class="fa fa-check"></i><b>3.2</b> PCA plots by covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="volcano-plots.html"><a href="volcano-plots.html"><i class="fa fa-check"></i><b>4</b> Volcano plots</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp2.vs.grp1"><i class="fa fa-check"></i><b>4.1</b> Comparison: group_grp2.vs.grp1</a></li>
+<li class="chapter" data-level="4.2" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp3.vs.grp2"><i class="fa fa-check"></i><b>4.2</b> Comparison: group_grp3.vs.grp2</a></li>
+<li class="chapter" data-level="4.3" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp4.vs.grp2"><i class="fa fa-check"></i><b>4.3</b> Comparison: group_grp4.vs.grp2</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="heatmap-plots.html"><a href="heatmap-plots.html"><i class="fa fa-check"></i><b>5</b> Heatmap plots</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-1000-most-variable-genes"><i class="fa fa-check"></i><b>5.1</b> Heatmap of 1000 most variable genes</a></li>
+<li class="chapter" data-level="5.2" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-all-comparisons"><i class="fa fa-check"></i><b>5.2</b> Heatmap of all comparisons</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp2.vs.grp1-1"><i class="fa fa-check"></i><b>5.2.1</b> Comparison: group_grp2.vs.grp1</a></li>
+<li class="chapter" data-level="5.2.2" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp3.vs.grp2-1"><i class="fa fa-check"></i><b>5.2.2</b> Comparison: group_grp3.vs.grp2</a></li>
+<li class="chapter" data-level="5.2.3" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp4.vs.grp2-1"><i class="fa fa-check"></i><b>5.2.3</b> Comparison: group_grp4.vs.grp2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bookdown report of SRP199678</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="heatmap-plots" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Heatmap plots</h1>
+<p><strong>Heatmaps</strong> are useful to visualize the differentially expressed genes across multiple conditions at the same time. In this chapter, we present two different types of heatmap: 1) A heatmap plotted using the top 1000 most variable genes and 2) Heatmaps for significantly changed genes of all comparison groups.</p>
+<p>In the first heatmap, the variance was calculated for each gene, and then ranked in decreasing order. To reduce the size and plotting time of the heatmap, only the top 1000 most variable genes were chosen. Although genes with large variances may not refect differentially expressed genes among specific comparison groups, they remain meaningful when referring to the global changes within the current dataset.</p>
+<p>Then we present heatmap(s) of all comparison groups by subsetting the samples. For each comparison, only samples involved in the comparison will be plotted on the heatmap. The number of heatmaps will also be adjusted based on the number of comparisons analyzed by the pipeline. Only the top 1000 significantly changed genes will be plotted if too many different genes are differentially expressed. If no more than 1000 significantly changed genes for the comparison, all significantly changed genes will be plotted.</p>
+<p>The heatmaps were drawn using the log2(TPM+1) expression values with Z-score transformation. By default, hierarchical clusterings were performed on both row (genes) and column (samples), indicating the similarities between genes and samples. Thus, similar genes and samples will be clustered closely. The heatmaps also display the grouping information provided before running the pipeline. It provides additional information for the users to compare the biological grouping information and the unsupervised hierarchical clustering results. All heatmaps in this chapter were plotted using the same design, and they only differ in the genes and samples selected during the plotting step.</p>
+<div id="heatmap-of-1000-most-variable-genes" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Heatmap of 1000 most variable genes</h2>
+<p>This heatmap plots the top 1000 most variable genes across all samples. The x-axis displays the sample names, and colors indicate the expression Z-scores, shown as the color bar at the lower right corner.</p>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-13-1.png" width="960" /></p>
+</div>
+<div id="heatmap-of-all-comparisons" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Heatmap of all comparisons</h2>
+<p>The heatmaps in this section select the most significant genes to plot, with a maximum of 1000 genes if there are more than 1000 significantly expressed genes. These genes have been pre-computed and selected before running the EAreport step, and they were based on the differential expression analysis results when running EArun.</p>
+<p>There are total 3 comparisons in this project.</p>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Subsetting_group
+</th>
+<th style="text-align:center;">
+Model
+</th>
+<th style="text-align:center;">
+Covariate_levels
+</th>
+<th style="text-align:center;">
+Group_name
+</th>
+<th style="text-align:center;">
+Group_test
+</th>
+<th style="text-align:center;">
+Group_ctrl
+</th>
+<th style="text-align:center;">
+Analysis_method
+</th>
+<th style="text-align:center;">
+Shrink_logFC
+</th>
+<th style="text-align:center;">
+LFC_cutoff
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+group_grp2.vs.grp1
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+group
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+group
+</td>
+<td style="text-align:center;">
+grp2
+</td>
+<td style="text-align:center;">
+grp1
+</td>
+<td style="text-align:center;">
+DESeq2
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+group_grp3.vs.grp2
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+group
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+group
+</td>
+<td style="text-align:center;">
+grp3
+</td>
+<td style="text-align:center;">
+grp2
+</td>
+<td style="text-align:center;">
+DESeq2
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+group_grp4.vs.grp2
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+group
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+group
+</td>
+<td style="text-align:center;">
+grp4
+</td>
+<td style="text-align:center;">
+grp2
+</td>
+<td style="text-align:center;">
+DESeq2
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following significantly changed genes were used to generate the heatmaps.</p>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+Comparison
+</th>
+<th style="text-align:center;">
+DEG
+</th>
+<th style="text-align:center;">
+Up
+</th>
+<th style="text-align:center;">
+Down
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+group_grp2.vs.grp1
+</td>
+<td style="text-align:center;">
+406
+</td>
+<td style="text-align:center;">
+202
+</td>
+<td style="text-align:center;">
+204
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+group_grp3.vs.grp2
+</td>
+<td style="text-align:center;">
+20
+</td>
+<td style="text-align:center;">
+18
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+group_grp4.vs.grp2
+</td>
+<td style="text-align:center;">
+464
+</td>
+<td style="text-align:center;">
+278
+</td>
+<td style="text-align:center;">
+186
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="comparison-group_grp2.vs.grp1-1" class="section level3" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Comparison: group_grp2.vs.grp1</h3>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-14-1.png" width="960" /></p>
+</div>
+<div id="comparison-group_grp3.vs.grp2-1" class="section level3" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> Comparison: group_grp3.vs.grp2</h3>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-14-2.png" width="960" /></p>
+</div>
+<div id="comparison-group_grp4.vs.grp2-1" class="section level3" number="5.2.3">
+<h3><span class="header-section-number">5.2.3</span> Comparison: group_grp4.vs.grp2</h3>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-14-3.png" width="960" /></p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="volcano-plots.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

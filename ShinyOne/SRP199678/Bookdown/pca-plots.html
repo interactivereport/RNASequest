@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 PCA plots | Bookdown report of SRP199678</title>
+  <meta name="description" content="Chapter 3 PCA plots | Bookdown report of SRP199678" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 PCA plots | Bookdown report of SRP199678" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 PCA plots | Bookdown report of SRP199678" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="covariates.html"/>
+<link rel="next" href="volcano-plots.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Expression Analysis Report</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Introduction</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-overview"><i class="fa fa-check"></i>Project overview</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-files"><i class="fa fa-check"></i>Project files</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="qc-plots.html"><a href="qc-plots.html"><i class="fa fa-check"></i><b>1</b> QC plots</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="qc-plots.html"><a href="qc-plots.html#top-gene-ratio"><i class="fa fa-check"></i><b>1.1</b> Top gene ratio</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="qc-plots.html"><a href="qc-plots.html#top1-of-total-tpm"><i class="fa fa-check"></i><b>1.1.1</b> Top1 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.2" data-path="qc-plots.html"><a href="qc-plots.html#top10-of-total-tpm"><i class="fa fa-check"></i><b>1.1.2</b> Top10 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.3" data-path="qc-plots.html"><a href="qc-plots.html#top30-of-total-tpm"><i class="fa fa-check"></i><b>1.1.3</b> Top30 % of Total TPM</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="qc-plots.html"><a href="qc-plots.html#top-expressed-genes"><i class="fa fa-check"></i><b>1.2</b> Top expressed genes</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-tpm"><i class="fa fa-check"></i><b>1.2.1</b> Top genes by TPM</a></li>
+<li class="chapter" data-level="1.2.2" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-counts"><i class="fa fa-check"></i><b>1.2.2</b> Top genes by counts</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="covariates.html"><a href="covariates.html"><i class="fa fa-check"></i><b>2</b> Covariates</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="covariates.html"><a href="covariates.html#list-of-covariates"><i class="fa fa-check"></i><b>2.1</b> List of covariates</a></li>
+<li class="chapter" data-level="2.2" data-path="covariates.html"><a href="covariates.html#plots-of-significant-covariates"><i class="fa fa-check"></i><b>2.2</b> Plots of significant covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="pca-plots.html"><a href="pca-plots.html"><i class="fa fa-check"></i><b>3</b> PCA plots</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="pca-plots.html"><a href="pca-plots.html#general-pca-plot"><i class="fa fa-check"></i><b>3.1</b> General PCA plot</a></li>
+<li class="chapter" data-level="3.2" data-path="pca-plots.html"><a href="pca-plots.html#pca-plots-by-covariates"><i class="fa fa-check"></i><b>3.2</b> PCA plots by covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="volcano-plots.html"><a href="volcano-plots.html"><i class="fa fa-check"></i><b>4</b> Volcano plots</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp2.vs.grp1"><i class="fa fa-check"></i><b>4.1</b> Comparison: group_grp2.vs.grp1</a></li>
+<li class="chapter" data-level="4.2" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp3.vs.grp2"><i class="fa fa-check"></i><b>4.2</b> Comparison: group_grp3.vs.grp2</a></li>
+<li class="chapter" data-level="4.3" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp4.vs.grp2"><i class="fa fa-check"></i><b>4.3</b> Comparison: group_grp4.vs.grp2</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="heatmap-plots.html"><a href="heatmap-plots.html"><i class="fa fa-check"></i><b>5</b> Heatmap plots</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-1000-most-variable-genes"><i class="fa fa-check"></i><b>5.1</b> Heatmap of 1000 most variable genes</a></li>
+<li class="chapter" data-level="5.2" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-all-comparisons"><i class="fa fa-check"></i><b>5.2</b> Heatmap of all comparisons</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp2.vs.grp1-1"><i class="fa fa-check"></i><b>5.2.1</b> Comparison: group_grp2.vs.grp1</a></li>
+<li class="chapter" data-level="5.2.2" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp3.vs.grp2-1"><i class="fa fa-check"></i><b>5.2.2</b> Comparison: group_grp3.vs.grp2</a></li>
+<li class="chapter" data-level="5.2.3" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp4.vs.grp2-1"><i class="fa fa-check"></i><b>5.2.3</b> Comparison: group_grp4.vs.grp2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bookdown report of SRP199678</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="pca-plots" class="section level1" number="3">
+<h1><span class="header-section-number">Chapter 3</span> PCA plots</h1>
+<p>In this chapter, we present <strong>Principal Component Analysis (PCA)</strong> results of all samples in the current dataset. Principle component analysis is a powerful method in exploratory data analysis, by visualizing complex datasets in lower dimensions. Thus it is also a useful method for dimension reduction, preserving critical information on the similarities and differences between all samples. For more information, please check the <a href="https://en.wikipedia.org/wiki/Principal_component_analysis" target="_blank">Wiki page</a>.</p>
+<p>The percentage of PC1 or PC2 indicates how much proportion of variance in the dataset can be explained by each PC. Usually, PC1 can explain most of the variance, but for complex data with more noises, we also rely upon PC2 for better separation.</p>
+<p>The PCA plot displays, by default, the first 2 PCs in the dataset, labels the data names, and colors study groups. From this plot, we are able to examine the consistency of samples within the same group, and identify potential outliers. The separation of groups on the PCA plot also indicates the differences between them, and this trend should be consistent with the differential expression analysis, i.e., two groups with higher divergence should have more significantly changed genes.</p>
+<div id="general-pca-plot" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> General PCA plot</h2>
+<p>In this section, we plot a single PCA figure to visualize the default covariate, usually by the group information.</p>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-8-1.png" width="960" /></p>
+</div>
+<div id="pca-plots-by-covariates" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> PCA plots by covariates</h2>
+<p>In this section, we display PCA plots colored by different covariates.</p>
+<p>The PC1 and PC2 values are same across all plots, but the color panels are different.</p>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-9-1.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-2.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-3.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-4.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-5.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-6.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-7.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-8.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-9.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-10.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-11.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-12.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-13.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-14.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-15.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-16.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-17.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-18.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-19.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-20.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-21.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-22.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-23.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-24.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-25.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-26.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-27.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-28.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-29.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-30.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-31.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-32.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-33.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-34.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-35.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-36.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-37.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-38.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-39.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-40.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-41.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-42.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-43.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-44.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-45.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-46.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-47.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-48.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-49.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-50.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-51.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-52.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-53.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-54.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-55.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-56.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-57.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-58.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-59.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-60.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-61.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-62.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-63.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-64.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-65.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-66.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-67.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-68.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-69.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-70.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-71.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-72.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-73.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-74.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-75.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-76.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-77.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-78.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-79.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-80.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-81.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-82.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-83.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-84.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-85.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-86.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-87.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-88.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-89.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-90.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-91.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-92.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-93.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-94.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-95.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-96.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-97.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-98.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-99.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-100.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-101.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-102.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-103.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-104.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-105.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-106.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-107.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-108.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-109.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-110.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-111.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-112.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-113.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-114.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-115.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-116.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-117.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-118.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-119.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-120.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-121.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-122.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-123.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-124.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-125.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-126.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-127.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-128.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-129.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-130.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-131.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-132.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-133.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-134.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-135.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-136.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-137.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-138.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-139.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-140.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-141.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-142.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-143.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-144.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-145.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-146.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-147.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-148.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-149.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-150.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-151.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-152.png" width="960" /><img src="bookdownproj_files/figure-html/unnamed-chunk-9-153.png" width="960" /></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="covariates.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="volcano-plots.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
