@@ -279,10 +279,6 @@ appendMeta <- function(pInfo,sample_name,selQC){
         qc <- qc[,selQC,drop=F]
         colnames(qc) <- gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc))))))
         ## only the sequenced samples will be included (remove not sequenced samples from sample sheet)
-        message(sample_name)
-        message("pInfo: ",paste(pInfo$sInfo[,sample_name],collapse="; "))
-        message("qc: ",paste(rownames(qc),collapse="; "))
-        
         pInfo$sInfo <- pInfo$sInfo[pInfo$sInfo[,sample_name]%in%rownames(qc),]
         
         rownames(pInfo$sInfo) <- pInfo$sInfo[,sample_name]
