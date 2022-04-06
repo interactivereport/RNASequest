@@ -14,13 +14,15 @@ The output results can be piped to QuickOmics ([http://quickomics.bxgenomics.com
 
 This example has been uploaded to the QuickOmics site: 
 
-[http://ngs.biogen.com:3838/Quickomics/?testfile=SRP199678](https://quickomics.bxgenomics.com/?serverfile=SRP199678){target="_blank"}
+[https://quickomics.bxgenomics.com/?serverfile=SRP199678](https://quickomics.bxgenomics.com/?serverfile=SRP199678){target="_blank"}
 
 ## Other output files
 
-Also, the EA pipeline generates the files under the working directory, in this example, EA20220316_0:
+Also, the EA pipeline generates a couple of files under the working directory.
 
 The pdf files and index.html can be directly visualized by the user.
+
+Here is an example of the output directory hierarchy:
 
 ```
 SRP199678/
