@@ -257,7 +257,7 @@ cleanTST <- function(strSrc,strDest=NULL,sep="\t"){
         colnames(D) <- sapply(strsplit(sapply(strsplit(colnames(D),"\\|"),head,1),
                                        "_"),
                               function(x)return(paste(grep("^TST",x,invert=T,value=T),collapse="_")))
-    }else if(sum(grepl("^TST",D[,1]))>0){
+    }else if(sum(grepl("^TST.*.genome.sorted$",D[,1]))>0){
         D[,1] <- sapply(strsplit(gsub(".genome.sorted","",D[,1]),
                                  "_"),
                         function(x)return(paste(grep("^TST",x,invert=T,value=T),collapse="_")))
@@ -279,6 +279,10 @@ appendMeta <- function(pInfo,sample_name,selQC){
         qc <- qc[,selQC,drop=F]
         colnames(qc) <- gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc))))))
         ## only the sequenced samples will be included (remove not sequenced samples from sample sheet)
+        message(sample_name)
+        message("pInfo: ",paste(pInfo$sInfo[,sample_name],collapse="; "))
+        message("qc: ",paste(rownames(qc),collapse="; "))
+        
         pInfo$sInfo <- pInfo$sInfo[pInfo$sInfo[,sample_name]%in%rownames(qc),]
         
         rownames(pInfo$sInfo) <- pInfo$sInfo[,sample_name]
