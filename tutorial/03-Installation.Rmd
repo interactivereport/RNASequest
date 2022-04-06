@@ -15,6 +15,13 @@ conda activate ExpressionAnalysis
 
 #Check the path of current directory and add it to $PATH:
 CurrentDir=`pwd`
-PATH="$CurrentDir:$PATH"
-export $PATH
+export PATH="$CurrentDir:$PATH"
+
+#However, the above command only adds the RNASequest directory to $PATH temporarily
+#To add it to the environment permanently, edit ~/.bash_profile or ~/.bashrc:
+vim ~/.bash_profile
+#Add the full path of the RNASequest directory to $PATH, for exammple, $HOME/RNASequest
+PATH=$PATH:$HOME/RNASequest
+#Source the file
+source ~/.bash_profile
 ```
