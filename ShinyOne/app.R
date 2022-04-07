@@ -5,9 +5,10 @@
 library(shiny)
 library(DT)
 library(dplyr)
+library(stringr)
 
-createLink <- function(val) {
-  sprintf('<a href="%s" target="_blank" class="btn btn-primary">View Project</a>',val)
+createLink <- function(val, name="View Project") {
+  sprintf('<a href="%s" target="_blank" class="btn btn-primary">%s</a>',val, name)
 }
 
 ui <- fluidPage(
@@ -24,7 +25,9 @@ server <- function(input, output) {
   
   output$table1 <- renderDataTable({
     my_table=read.csv("projects.csv", check.names=F)
-    my_table<-my_table%>%dplyr::mutate(Link=createLink(URL) )%>%dplyr::select(-URL)
+    my_table<-my_table%>%dplyr::mutate(URL=createLink(URL) )%>%
+      dplyr::mutate(Bookdown=ifelse(str_detect(Bookdown, "http"), createLink(Bookdown, name="Bookdown"), Bookdown ), 
+                    Slidedeck=ifelse(str_detect(Slidedeck, "http"), createLink(Slidedeck, name="Slidedeck"), Slidedeck ) )             
     #browser() #debug
     return(my_table) }
    , escape = FALSE)

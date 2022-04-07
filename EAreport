@@ -40,12 +40,20 @@ if [[ -n "$1" ]]; then
     echo -e "Source_code\t"$(dirname $0)/src/ > $workingdir/BookdownReport/bookdown.info.txt
     echo -e "Working_dir\t"$workingdir/BookdownReport/ >> $workingdir/BookdownReport/bookdown.info.txt
     echo -e "Config_file\t"$configdir >> $workingdir/BookdownReport/bookdown.info.txt
+    ProjName=`awk '{if ($1=="prj_name:") print $2}' $configdir`
 
     echo "Running the following command:"
     echo -e "Rscript $(dirname $0)/src/BookdownReport.R \ \n    $(dirname $0)/src/ \ \n    $workingdir/BookdownReport/ \ \n    $configdir"
     Rscript $(dirname $0)/src/BookdownReport.R $(dirname $0)/src/ $workingdir/BookdownReport/ $configdir && \
         echo -e "Done building report ..." && \
-        echo -e "Please find the report in: \n    "$workingdir/BookdownReport/docs/index.html
+	    echo -e "Please find the report in: \n    "$workingdir/BookdownReport/docs/index.html && \
+        mkdir $workingdir/${ProjName}_BookdownReport && \
+        cp -r $workingdir/BookdownReport/docs/* $workingdir/${ProjName}_BookdownReport && \
+        cd $workingdir && \
+        tar -czf ${ProjName}_BookdownReport.tar.gz ${ProjName}_BookdownReport && \
+        rm -rf ${ProjName}_BookdownReport && \
+        echo -e "The tarball containing the full report is ready: \n    "$workingdir/${ProjName}_BookdownReport.tar.gz
+	
 else
     echo "=============== EAreport path/to/config/file"
     exePath=$(dirname $0)
