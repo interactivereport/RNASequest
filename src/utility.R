@@ -2,6 +2,16 @@
 #.libPaths(c(grep("home",.libPaths(),invert=T,value=T),grep("home",.libPaths(),value=T)))
 
 ## save session ------
+initialMsg <- function(strSRC="."){
+  strSRC <- normalizePath(strSRC)
+  cmdURL<-sprintf("cd %s;git config --get remote.origin.url",strSRC)
+  cmdDate=sprintf("cd %s;git show -s --format=%%ci",strSRC)
+  cmdHEAD=sprintf("cd %s;git rev-parse HEAD",strSRC)
+  message("###########\n## ExpressionAnalysis: ",system(cmdURL,intern=T))
+  message("## Pipeline Path: ",strSRC)
+  message("## Pipeline Date: ",system(cmdDate,intern=T))
+  message("## git HEAD: ",system(cmdHEAD,intern=T),"\n###########\n")
+}
 saveSessionInfo <- function(strF,strSRC){
     message("\nPowered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
     sink(strF)
@@ -54,7 +64,7 @@ initInternal <- function(strInput,sysConfig){
             pInfo[["prjID"]] <- prjInfo$TSTID
             pInfo[["prjTitle"]] <- prjInfo$Study_Title
         }
-        res <- list.files(strInput,"estcount",recursive=T,full.names=T)
+        #res <- list.files(strInput,"estcount",recursive=T,full.names=T)
         
         
         pInfo[["strCount"]] <- getDNAnexusFile(strInput,sysConfig$DNAnexus$count,"count")
