@@ -27,7 +27,7 @@ SRP199678/
 
 ## Self-prepared files
 
-For users that have their own dataset to run EA, several files can be prepared from scratch. Here are the detailed instruction of what files are required to run the pipeline.
+For users that have their own dataset to run EA, several files can be prepared from scratch. Here is the detailed instruction on what files are required to run the pipeline.
 
 Please use the same file hierarchy as 4.2 after creating them.
 

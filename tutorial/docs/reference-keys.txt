@@ -1,6 +1,11 @@
 preface
 introduction
 installation
+install-expressionanalysis
+install-quickomics
+install-r-packages
+clone-quickomics-github-repository
+launch-the-r-shiny-app
 data-preparation
 retrieving-data-from-ncbi-geo
 file-hierarchy

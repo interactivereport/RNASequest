@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-04-06" />
+<meta name="date" content="2022-04-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -52,6 +52,8 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -138,7 +140,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
-<li class="chapter" data-level="3" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>3</b> Installation</a></li>
+<li class="chapter" data-level="3" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>3</b> Installation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="installation.html"><a href="installation.html#install-expressionanalysis"><i class="fa fa-check"></i><b>3.1</b> Install ExpressionAnalysis</a></li>
+<li class="chapter" data-level="3.2" data-path="installation.html"><a href="installation.html#install-quickomics"><i class="fa fa-check"></i><b>3.2</b> Install Quickomics</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="installation.html"><a href="installation.html#install-r-packages"><i class="fa fa-check"></i><b>3.2.1</b> Install R packages</a></li>
+<li class="chapter" data-level="3.2.2" data-path="installation.html"><a href="installation.html#clone-quickomics-github-repository"><i class="fa fa-check"></i><b>3.2.2</b> Clone Quickomics GitHub repository</a></li>
+<li class="chapter" data-level="3.2.3" data-path="installation.html"><a href="installation.html#launch-the-r-shiny-app"><i class="fa fa-check"></i><b>3.2.3</b> Launch the R Shiny App</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>4</b> Data preparation</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="data-preparation.html"><a href="data-preparation.html#retrieving-data-from-ncbi-geo"><i class="fa fa-check"></i><b>4.1</b> Retrieving data from NCBI GEO</a></li>
@@ -185,20 +196,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>conda activate ExpressionAnalysis</code></pre>
 <div id="eainit" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> EAinit</h2>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="running-ea-pipeline.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> Path/to/a/DNAnexus/result/folder</span>
-<span id="cb11-2"><a href="running-ea-pipeline.html#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="running-ea-pipeline.html#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Example:</span></span>
-<span id="cb11-4"><a href="running-ea-pipeline.html#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> ~/RNASequest/example/SRP199678</span></code></pre></div>
-<p>The execution of above command will create a sub-folder (EA[timestamp]) in the specified RNAseq result folder.
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="running-ea-pipeline.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> Path/to/a/DNAnexus/result/folder</span>
+<span id="cb15-2"><a href="running-ea-pipeline.html#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="running-ea-pipeline.html#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Example:</span></span>
+<span id="cb15-4"><a href="running-ea-pipeline.html#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> ~/RNASequest/example/SRP199678</span></code></pre></div>
+<p>Execution of the above command will create a sub-folder (EA[timestamp]) in the specified RNAseq result folder.
 There will be five files in the result folder:</p>
 <ul>
-<li>compareInfo.csv: an empty comparison definition file (with header). Please fill in this file before <code>EArun</code> call.</li>
-<li>config.yml: a config fill specifies the parameters of the <code>EAqc</code> and <code>EArun</code>. Please update <strong>covariates_adjust</strong> after <code>EAqc</code>.</li>
+<li>compareInfo.csv: an empty comparison definition file (with header). Please fill in this file before the <code>EArun</code> call.</li>
+<li>config.yml: a config file specifies the parameters of the <code>EAqc</code> and <code>EArun</code>. Please update <strong>covariates_adjust</strong> after <code>EAqc</code>.</li>
 <li>geneAnnotation.csv: a gene annotation file including gene symbol.</li>
-<li>sampleMeta.csv: a sample meta information file, please feel free to add additional columns whose column names should be considered to be added into <strong>covariates_check</strong> in <em>config.yml</em>.</li>
+<li>sampleMeta.csv: a sample meta-information file, please feel free to add additional columns whose column names should be considered to be added into <strong>covariates_check</strong> in <em>config.yml</em>.</li>
 <li>alignQC.pdf: plots generated from alignment QC metrics.</li>
 </ul>
-<p><strong><em>Please pay attention on the std out messages.</em></strong></p>
+<p><strong><em>Please pay attention to the std out messages.</em></strong></p>
 </div>
 <div id="eaqc" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> EAqc</h2>
@@ -206,9 +217,9 @@ There will be five files in the result folder:</p>
 
 #Example:
 EAqc ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
-<p>The execution of the command with the above default config file, expression PC analysis will be done against covariates specified in <strong>covariates_check</strong> in <em>config.yml</em> file. An excel file will list p-value for all numeric and categorical covariates, and with significant ones will be in plot pdf files. The analysis before covariate adjusting will have prefix <em>covariatePCanalysis_noAdjust</em>.
-Based on the above results, you can add covariates into <strong>covariates_adjust</strong> in <em>config.yml</em> file, and run <code>EAqc</code> again. This time additional expression PC analysis will be applied to covariate adjusted expression with files started with <em>covariatePCanalysis_Adjusted</em>.</p>
-<p><strong><em>Please pay attention on the std out messages.</em></strong></p>
+<p>Through executing the command with the above default config file, expression PC analysis will be done against covariates specified in <strong>covariates_check</strong> in the <em>config.yml</em> file. An Excel file will list p-values for all numeric and categorical covariates, and significant ones will be in plot pdf files. The analysis before covariate adjusting will have the prefix <em>covariatePCanalysis_noAdjust</em>.
+Based on the above results, you can add covariates into <strong>covariates_adjust</strong> in the <em>config.yml</em> file, and rerun <code>EAqc</code>. This time additional expression PC analysis will be applied to covariate-adjusted expression with files started with <em>covariatePCanalysis_Adjusted</em>.</p>
+<p><strong><em>Please pay attention to the std out messages.</em></strong></p>
 </div>
 <div id="earun" class="section level2" number="5.3">
 <h2><span class="header-section-number">5.3</span> EArun</h2>
@@ -217,9 +228,9 @@ Based on the above results, you can add covariates into <strong>covariates_adjus
 #Example:
 EArun ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
 <p><strong><em>Please fill the compareInfo.csv before executing the above command</em></strong></p>
-<p>The execution of above command will produce R objects for QuickOmics webserver to load. The process will generate the covariate adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation.</p>
+<p>Execution of the above command will produce R objects for QuickOmics webserver to load. The process will generate the covariate-adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation.</p>
 <p>The results (four files) can be uploaded to the QuickOmics webserver.</p>
-<p><strong><em>Please pay attention on the std out messages.</em></strong></p>
+<p><strong><em>Please pay attention to the std out messages.</em></strong></p>
 </div>
 <div id="eareport" class="section level2" number="5.4">
 <h2><span class="header-section-number">5.4</span> EAreport</h2>
@@ -227,7 +238,7 @@ EArun ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
 
 #Example:
 EAreport ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
-<p>By running the command above, the pipeline will generate a <strong>BookdownReport</strong> folder in the same directory as the config file. This folder contains the raw Rmd files, as well as the final bookdown report, which is the <strong>BookdownReport/docs/index.html</strong> file. If you would like to send the full report to your collaborators, please download the tarball created under the EA working directory, named as <strong>ProjectName_BookdownReport.tar.gz</strong>. The index.html inside it is the bookdown report.</p>
+<p>By running the command above, the pipeline will generate a <strong>BookdownReport</strong> folder in the same directory as the config file. This folder contains the raw Rmd files, as well as the final bookdown report, which is the <strong>BookdownReport/docs/index.html</strong> file. If you would like to send the full report to your collaborators, please download the tarball created under the EA working directory, named as <strong>ProjectName_BookdownReport.tar.gz</strong> (ProjectName was extracted from the config.yml file). The index.html inside it is the bookdown report.</p>
 
 </div>
 </div>

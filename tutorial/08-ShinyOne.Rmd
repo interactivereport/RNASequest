@@ -1,9 +1,46 @@
 # ShinyOne
 
-We also developed ShinyOne, which is a R Shiny App displaying a web-based searchable table that lists all projects processed by RNASequest and loaded into Quickomics, with Quickomics launching link for each project. 
+We also developed ShinyOne, which is an R Shiny App displaying a web-based searchable table that lists all projects processed by RNASequest and loaded into Quickomics, with Quickomics launching link for each project. 
 
 In the backend of Quickomics, we added the capability to load projects directly from URLs after the data files have been saved at user-specified server locations. Together, ShinyOne and URL loading enable many projects to be powered by one Quickomics instance.
 
 Please use the following link to access ShinyOne:
 
 [http://shinyone.bxgenomics.com](http://shinyone.bxgenomics.com){target="_blank"}
+
+To add a new project to ShineOne, one can simply add one line to the project.csv file in the ShinyOne App folder. For example, after processing project SRP199678 using the EA pipeline, we have the following:
+
+- **QuickOmics Visualization Link:**
+
+  [https://quickomics.bxgenomics.com/?serverfile=SRP199678](https://quickomics.bxgenomics.com/?serverfile=SRP199678){target="_blank"}
+
+- **SlideDeck:**
+
+  [https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck](https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck){target="_blank"}
+  
+- **Bookdown report:**
+
+  [https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown](https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown){target="_blank"}
+
+Here is asn example of adding the following line to the project.csv file:
+
+```{r, echo=FALSE}
+suppressMessages(library(knitr))
+suppressMessages(library(kableExtra))
+
+SRP199678=c("SRP199678", "(RNASequest Demo) SRP199678 data from Recount3", "Mouse", "Henry Sun", "3/30/2022", "https://quickomics.bxgenomics.com/?serverfile=SRP199678", "https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown", "https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck")
+Table <- as.data.frame(t(SRP199678))
+colnames(Table) <- c("Project ID", "Description", "Species", "Contact Person", "Release Date", "URL", "Bookdown", "Slidedeck")
+rownames(Table) <- "SRP199678"
+
+kable(Table, align = "c", booktabs = TRUE) %>% 
+  kable_styling() %>%
+  column_spec(2, width_min = "2in") %>% 
+  kableExtra::scroll_box(width = "100%")
+```
+
+And it will show up in the ShinyOne Page:
+
+[https://shinyone.bxgenomics.com/](https://shinyone.bxgenomics.com/){target="_blank"}
+
+[![](https://interactivereport.github.io/RNASequest/tutorial/images/ShinyOne.png)](https://interactivereport.github.io/RNASequest/tutorial/images/ShinyOne.png)

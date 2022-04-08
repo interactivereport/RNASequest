@@ -1,6 +1,8 @@
 # Installation
 
-Download RNASequest from GitHub and add it to the environment:
+## Install ExpressionAnalysis
+
+First we install the ExpressionAnalysis by downloading the scripts from GitHub:
 
 ```{bash, eval=FALSE}
 git clone https://github.com/interactivereport/RNASequest.git
@@ -20,8 +22,99 @@ export PATH="$CurrentDir:$PATH"
 #However, the above command only adds the RNASequest directory to $PATH temporarily
 #To add it to the environment permanently, edit ~/.bash_profile or ~/.bashrc:
 vim ~/.bash_profile
-#Add the full path of the RNASequest directory to $PATH, for exammple, $HOME/RNASequest
+#Add the full path of the RNASequest directory to $PATH, for example, $HOME/RNASequest
 PATH=$PATH:$HOME/RNASequest
 #Source the file
 source ~/.bash_profile
 ```
+
+Set the default paths for ExpressionAnalysis:
+
+In [sys.yml](https://github.com/interactivereport/RNASequest/blob/main/src/sys.yml){target="_blank"} file is used to set the default configurations of the whole pipeline, including paths for Quickomics visualization. Please modify this file before running the pipeline, since the paths will be different from server to server.
+
+```
+## path to the reference genome is on HPC
+genome_path: /path/to/genome/references
+notCovariates: [Sapio_Submission_ID,Sapio_Sample_ID,Sapio_Request_Name,Sapio_Request_ID,Sapio_URL,Sapio_Plate_ID,Sapio_Profile,
+                TST_ID,Status_Time,Well,Organism,ID,Sample_Process,Plate_Name,Volume, #Well_Row,
+                Sample_Type,Sample_Name,Concentration, #Well_Column,
+                Annotated_By,Ethnicity,Race]
+
+#sample2meta: [Sapio_Plate_Name,RIN,Organ,Tissue,Cell_type,Cell_Line,Gender,Disease,Treatment,Timepoint,Genotype,Age]
+qc2meta: [Intragenic Rate,Exonic Rate,Mapping Rate,Genes Detected,Mean Per Base Cov.,Estimated Library Size,Mapped,Intergenic Rate,Total Purity Filtered Reads Sequenced,Intronic Rate,Fragment Length Mean,rRNA rate,No. Covered 5',Duplication Rate of Mapped]
+QuickOmics_test_folder: /path/to/QuickOmics_test_folder/
+QuickOmics_test_link:  http://ngs.biogen.com:3838/Quickomics/?testfile=
+QuickOmics_publish_folder: /path/to/QuickOmics_data/
+QuiclOmics_publish_link: http://ngs.biogen.com:3838/Quickomics/?serverfile=
+shinyApp: http://ngs.biogen.com/shinyone/app/core/
+DA_columns: [SampleID, ProjectName, PlatformName, CellType, Collection, DataSource, Description, DiseaseStage, DiseaseState,
+             Ethnicity, Gender, Infection, Organism, Response, SamplePathology, SampleSource, SampleType, 
+             SamplingTime, SubjectID, Symptom, Tissue, Title, Transfection, Treatment, Age]
+DNAnexus:
+  prjID: FASTR_NGS_PROJECT_ID
+  species: FASTR_REFERENCE_SPECIES
+  ref: FASTR_REFERENCE_VERSION
+  uName: FASTR_USER_FULLNAME
+  count: [genes.estcount_table,genes.expected_count]
+  effL: genes.effective_length
+  tpm: [genes.tpm_table,genes.tpm]
+  indFlag: genes.results.gz
+  seqQC: [combined.metrics,merged_metrics]
+FileName:
+  projectFile: project.yml
+  prj_counts: counts
+  prj_effLength: length
+  prj_seqQC: seqQC
+  prj_TPM: tpm
+  sample_meta: meta
+  gene_annotation: annotation
+  comparison_file: comparison
+  projectEntry:
+    prjID: project
+    prjTitle: project
+    species: species
+```
+
+## Install Quickomics
+
+### Install R packages
+
+Method 1. Create conda environment from yml file. This is the easiest way to install all packages. Please download the file [https://github.com/interactivereport/Quickomics/blob/master/conda_environment/QuickOmics.yml](https://github.com/interactivereport/Quickomics/blob/master/conda_environment/QuickOmics.yml){target="_blank"}, load your conda, then run:
+
+```
+conda env create -f QuickOmics.yml
+#The above command may take a while, then you will have a new conda environment called QuickOmics
+```
+
+Method 2. Install all packages in your current R environment. Depending on your system, you may need to install other required programs. We recommend using the conda environment method whenever possible.
+
+```
+cran_packages=c("shiny", "shinythemes", "shinyjs", "plotly", "reshape2", "tidyverse", "gplots", "ggpubr",
+"gridExtra", "ggrepel", "RcolorBrewer", "pheatmap", "rgl", "car", "colourpicker", "VennDiagram", "factoextra",
+"openxlsx", "visNetwork", "cowplot", "circlize", "svglite", "shinyjqui", "Hmisc", "ggrastr",
+"ggExtra", "networkD3", "vctrs", "ragg", "textshaping", "stringi", "plyr", "png", "psych", "broom")
+
+#Note: Hmisc is not required to run the Shiny app but is needed to prepare network data from expression matrix.
+install.packages(cran_packages, repos="http://cran.r-project.org/")  #choose repos based on your location if needed
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("Mfuzz", "biomaRt", "ComplexHeatmap", "pathview"))
+
+#Requirements: shiny >= v1.4.0.2 
+```
+
+### Clone Quickomics GitHub repository
+
+```
+git clone https://github.com/interactivereport/Quickomics.git
+```
+
+see more at [https://docs.github.com/en/free-pro-team@latest/github/creating-cloning-and-archiving-repositories/cloning-a-repository](https://docs.github.com/en/free-pro-team@latest/github/creating-cloning-and-archiving-repositories/cloning-a-repository){target="_blank"}
+
+### Launch the R Shiny App
+
+Check the following web links on various options to launch the app.
+
+[https://shiny.rstudio.com/articles/running.html](https://shiny.rstudio.com/articles/running.html){target="_blank"}
+
+[https://shiny.rstudio.com/deploy/](https://shiny.rstudio.com/deploy/){target="_blank"}

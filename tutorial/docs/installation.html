@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-04-06" />
+<meta name="date" content="2022-04-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -52,6 +52,8 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -138,7 +140,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
-<li class="chapter" data-level="3" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>3</b> Installation</a></li>
+<li class="chapter" data-level="3" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>3</b> Installation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="installation.html"><a href="installation.html#install-expressionanalysis"><i class="fa fa-check"></i><b>3.1</b> Install ExpressionAnalysis</a></li>
+<li class="chapter" data-level="3.2" data-path="installation.html"><a href="installation.html#install-quickomics"><i class="fa fa-check"></i><b>3.2</b> Install Quickomics</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="installation.html"><a href="installation.html#install-r-packages"><i class="fa fa-check"></i><b>3.2.1</b> Install R packages</a></li>
+<li class="chapter" data-level="3.2.2" data-path="installation.html"><a href="installation.html#clone-quickomics-github-repository"><i class="fa fa-check"></i><b>3.2.2</b> Clone Quickomics GitHub repository</a></li>
+<li class="chapter" data-level="3.2.3" data-path="installation.html"><a href="installation.html#launch-the-r-shiny-app"><i class="fa fa-check"></i><b>3.2.3</b> Launch the R Shiny App</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>4</b> Data preparation</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="data-preparation.html"><a href="data-preparation.html#retrieving-data-from-ncbi-geo"><i class="fa fa-check"></i><b>4.1</b> Retrieving data from NCBI GEO</a></li>
@@ -181,7 +192,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="installation" class="section level1" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Installation</h1>
-<p>Download RNASequest from GitHub and add it to the environment:</p>
+<div id="install-expressionanalysis" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Install ExpressionAnalysis</h2>
+<p>First we install the ExpressionAnalysis by downloading the scripts from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="installation.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/interactivereport/RNASequest.git</span>
 <span id="cb1-2"><a href="installation.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> RNASequest</span>
 <span id="cb1-3"><a href="installation.html#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -199,11 +212,87 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-15"><a href="installation.html#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#However, the above command only adds the RNASequest directory to $PATH temporarily</span></span>
 <span id="cb1-16"><a href="installation.html#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#To add it to the environment permanently, edit ~/.bash_profile or ~/.bashrc:</span></span>
 <span id="cb1-17"><a href="installation.html#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> ~/.bash_profile</span>
-<span id="cb1-18"><a href="installation.html#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#Add the full path of the RNASequest directory to $PATH, for exammple, $HOME/RNASequest</span></span>
+<span id="cb1-18"><a href="installation.html#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#Add the full path of the RNASequest directory to $PATH, for example, $HOME/RNASequest</span></span>
 <span id="cb1-19"><a href="installation.html#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:<span class="va">$HOME</span>/RNASequest</span>
 <span id="cb1-20"><a href="installation.html#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#Source the file</span></span>
 <span id="cb1-21"><a href="installation.html#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.bash_profile</span></code></pre></div>
+<p>Set the default paths for ExpressionAnalysis:</p>
+<p>In <a href="https://github.com/interactivereport/RNASequest/blob/main/src/sys.yml" target="_blank">sys.yml</a> file is used to set the default configurations of the whole pipeline, including paths for Quickomics visualization. Please modify this file before running the pipeline, since the paths will be different from server to server.</p>
+<pre><code>## path to the reference genome is on HPC
+genome_path: /path/to/genome/references
+notCovariates: [Sapio_Submission_ID,Sapio_Sample_ID,Sapio_Request_Name,Sapio_Request_ID,Sapio_URL,Sapio_Plate_ID,Sapio_Profile,
+                TST_ID,Status_Time,Well,Organism,ID,Sample_Process,Plate_Name,Volume, #Well_Row,
+                Sample_Type,Sample_Name,Concentration, #Well_Column,
+                Annotated_By,Ethnicity,Race]
 
+#sample2meta: [Sapio_Plate_Name,RIN,Organ,Tissue,Cell_type,Cell_Line,Gender,Disease,Treatment,Timepoint,Genotype,Age]
+qc2meta: [Intragenic Rate,Exonic Rate,Mapping Rate,Genes Detected,Mean Per Base Cov.,Estimated Library Size,Mapped,Intergenic Rate,Total Purity Filtered Reads Sequenced,Intronic Rate,Fragment Length Mean,rRNA rate,No. Covered 5&#39;,Duplication Rate of Mapped]
+QuickOmics_test_folder: /path/to/QuickOmics_test_folder/
+QuickOmics_test_link:  http://ngs.biogen.com:3838/Quickomics/?testfile=
+QuickOmics_publish_folder: /path/to/QuickOmics_data/
+QuiclOmics_publish_link: http://ngs.biogen.com:3838/Quickomics/?serverfile=
+shinyApp: http://ngs.biogen.com/shinyone/app/core/
+DA_columns: [SampleID, ProjectName, PlatformName, CellType, Collection, DataSource, Description, DiseaseStage, DiseaseState,
+             Ethnicity, Gender, Infection, Organism, Response, SamplePathology, SampleSource, SampleType, 
+             SamplingTime, SubjectID, Symptom, Tissue, Title, Transfection, Treatment, Age]
+DNAnexus:
+  prjID: FASTR_NGS_PROJECT_ID
+  species: FASTR_REFERENCE_SPECIES
+  ref: FASTR_REFERENCE_VERSION
+  uName: FASTR_USER_FULLNAME
+  count: [genes.estcount_table,genes.expected_count]
+  effL: genes.effective_length
+  tpm: [genes.tpm_table,genes.tpm]
+  indFlag: genes.results.gz
+  seqQC: [combined.metrics,merged_metrics]
+FileName:
+  projectFile: project.yml
+  prj_counts: counts
+  prj_effLength: length
+  prj_seqQC: seqQC
+  prj_TPM: tpm
+  sample_meta: meta
+  gene_annotation: annotation
+  comparison_file: comparison
+  projectEntry:
+    prjID: project
+    prjTitle: project
+    species: species</code></pre>
+</div>
+<div id="install-quickomics" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Install Quickomics</h2>
+<div id="install-r-packages" class="section level3" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Install R packages</h3>
+<p>Method 1. Create conda environment from yml file. This is the easiest way to install all packages. Please download the file <a href="https://github.com/interactivereport/Quickomics/blob/master/conda_environment/QuickOmics.yml" target="_blank">https://github.com/interactivereport/Quickomics/blob/master/conda_environment/QuickOmics.yml</a>, load your conda, then run:</p>
+<pre><code>conda env create -f QuickOmics.yml
+#The above command may take a while, then you will have a new conda environment called QuickOmics</code></pre>
+<p>Method 2. Install all packages in your current R environment. Depending on your system, you may need to install other required programs. We recommend using the conda environment method whenever possible.</p>
+<pre><code>cran_packages=c(&quot;shiny&quot;, &quot;shinythemes&quot;, &quot;shinyjs&quot;, &quot;plotly&quot;, &quot;reshape2&quot;, &quot;tidyverse&quot;, &quot;gplots&quot;, &quot;ggpubr&quot;,
+&quot;gridExtra&quot;, &quot;ggrepel&quot;, &quot;RcolorBrewer&quot;, &quot;pheatmap&quot;, &quot;rgl&quot;, &quot;car&quot;, &quot;colourpicker&quot;, &quot;VennDiagram&quot;, &quot;factoextra&quot;,
+&quot;openxlsx&quot;, &quot;visNetwork&quot;, &quot;cowplot&quot;, &quot;circlize&quot;, &quot;svglite&quot;, &quot;shinyjqui&quot;, &quot;Hmisc&quot;, &quot;ggrastr&quot;,
+&quot;ggExtra&quot;, &quot;networkD3&quot;, &quot;vctrs&quot;, &quot;ragg&quot;, &quot;textshaping&quot;, &quot;stringi&quot;, &quot;plyr&quot;, &quot;png&quot;, &quot;psych&quot;, &quot;broom&quot;)
+
+#Note: Hmisc is not required to run the Shiny app but is needed to prepare network data from expression matrix.
+install.packages(cran_packages, repos=&quot;http://cran.r-project.org/&quot;)  #choose repos based on your location if needed
+if (!requireNamespace(&quot;BiocManager&quot;, quietly = TRUE))
+    install.packages(&quot;BiocManager&quot;)
+BiocManager::install(c(&quot;Mfuzz&quot;, &quot;biomaRt&quot;, &quot;ComplexHeatmap&quot;, &quot;pathview&quot;))
+
+#Requirements: shiny &gt;= v1.4.0.2 </code></pre>
+</div>
+<div id="clone-quickomics-github-repository" class="section level3" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Clone Quickomics GitHub repository</h3>
+<pre><code>git clone https://github.com/interactivereport/Quickomics.git</code></pre>
+<p>see more at <a href="https://docs.github.com/en/free-pro-team@latest/github/creating-cloning-and-archiving-repositories/cloning-a-repository" target="_blank">https://docs.github.com/en/free-pro-team@latest/github/creating-cloning-and-archiving-repositories/cloning-a-repository</a></p>
+</div>
+<div id="launch-the-r-shiny-app" class="section level3" number="3.2.3">
+<h3><span class="header-section-number">3.2.3</span> Launch the R Shiny App</h3>
+<p>Check the following web links on various options to launch the app.</p>
+<p><a href="https://shiny.rstudio.com/articles/running.html" target="_blank">https://shiny.rstudio.com/articles/running.html</a></p>
+<p><a href="https://shiny.rstudio.com/deploy/" target="_blank">https://shiny.rstudio.com/deploy/</a></p>
+
+</div>
+</div>
 </div>
             </section>
 

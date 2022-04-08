@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-04-06" />
+<meta name="date" content="2022-04-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -52,6 +52,8 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -138,7 +140,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
 <li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
-<li class="chapter" data-level="3" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>3</b> Installation</a></li>
+<li class="chapter" data-level="3" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>3</b> Installation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="installation.html"><a href="installation.html#install-expressionanalysis"><i class="fa fa-check"></i><b>3.1</b> Install ExpressionAnalysis</a></li>
+<li class="chapter" data-level="3.2" data-path="installation.html"><a href="installation.html#install-quickomics"><i class="fa fa-check"></i><b>3.2</b> Install Quickomics</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="installation.html"><a href="installation.html#install-r-packages"><i class="fa fa-check"></i><b>3.2.1</b> Install R packages</a></li>
+<li class="chapter" data-level="3.2.2" data-path="installation.html"><a href="installation.html#clone-quickomics-github-repository"><i class="fa fa-check"></i><b>3.2.2</b> Clone Quickomics GitHub repository</a></li>
+<li class="chapter" data-level="3.2.3" data-path="installation.html"><a href="installation.html#launch-the-r-shiny-app"><i class="fa fa-check"></i><b>3.2.3</b> Launch the R Shiny App</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>4</b> Data preparation</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="data-preparation.html"><a href="data-preparation.html#retrieving-data-from-ncbi-geo"><i class="fa fa-check"></i><b>4.1</b> Retrieving data from NCBI GEO</a></li>
@@ -181,10 +192,88 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="shinyone" class="section level1" number="9">
 <h1><span class="header-section-number">Chapter 9</span> ShinyOne</h1>
-<p>We also developed ShinyOne, which is a R Shiny App displaying a web-based searchable table that lists all projects processed by RNASequest and loaded into Quickomics, with Quickomics launching link for each project.</p>
+<p>We also developed ShinyOne, which is an R Shiny App displaying a web-based searchable table that lists all projects processed by RNASequest and loaded into Quickomics, with Quickomics launching link for each project.</p>
 <p>In the backend of Quickomics, we added the capability to load projects directly from URLs after the data files have been saved at user-specified server locations. Together, ShinyOne and URL loading enable many projects to be powered by one Quickomics instance.</p>
 <p>Please use the following link to access ShinyOne:</p>
 <p><a href="http://shinyone.bxgenomics.com" target="_blank">http://shinyone.bxgenomics.com</a></p>
+<p>To add a new project to ShineOne, one can simply add one line to the project.csv file in the ShinyOne App folder. For example, after processing project SRP199678 using the EA pipeline, we have the following:</p>
+<ul>
+<li><p><strong>QuickOmics Visualization Link:</strong></p>
+<p><a href="https://quickomics.bxgenomics.com/?serverfile=SRP199678" target="_blank">https://quickomics.bxgenomics.com/?serverfile=SRP199678</a></p></li>
+<li><p><strong>SlideDeck:</strong></p>
+<p><a href="https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck" target="_blank">https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck</a></p></li>
+<li><p><strong>Bookdown report:</strong></p>
+<p><a href="https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown" target="_blank">https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown</a></p></li>
+</ul>
+<p>Here is asn example of adding the following line to the project.csv file:</p>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Project ID
+</th>
+<th style="text-align:center;">
+Description
+</th>
+<th style="text-align:center;">
+Species
+</th>
+<th style="text-align:center;">
+Contact Person
+</th>
+<th style="text-align:center;">
+Release Date
+</th>
+<th style="text-align:center;">
+URL
+</th>
+<th style="text-align:center;">
+Bookdown
+</th>
+<th style="text-align:center;">
+Slidedeck
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+SRP199678
+</td>
+<td style="text-align:center;min-width: 2in; ">
+SRP199678
+</td>
+<td style="text-align:center;">
+(RNASequest Demo) SRP199678 data from Recount3
+</td>
+<td style="text-align:center;">
+Mouse
+</td>
+<td style="text-align:center;">
+Henry Sun
+</td>
+<td style="text-align:center;">
+3/30/2022
+</td>
+<td style="text-align:center;">
+<a href="https://quickomics.bxgenomics.com/?serverfile=SRP199678" class="uri">https://quickomics.bxgenomics.com/?serverfile=SRP199678</a>
+</td>
+<td style="text-align:center;">
+<a href="https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown" class="uri">https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown</a>
+</td>
+<td style="text-align:center;">
+<a href="https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck" class="uri">https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>And it will show up in the ShinyOne Page:</p>
+<p><a href="https://shinyone.bxgenomics.com/" target="_blank">https://shinyone.bxgenomics.com/</a></p>
+<p><a href="https://interactivereport.github.io/RNASequest/tutorial/images/ShinyOne.png"><img src="https://interactivereport.github.io/RNASequest/tutorial/images/ShinyOne.png" /></a></p>
 
 </div>
             </section>
