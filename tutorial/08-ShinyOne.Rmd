@@ -22,7 +22,7 @@ To add a new project to ShineOne, one can simply add one line to the project.csv
 
   [https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown](https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown){target="_blank"}
 
-Here is asn example of adding the following line to the project.csv file:
+Here is an example of adding these information to the project.csv file:
 
 ```{r, echo=FALSE}
 suppressMessages(library(knitr))

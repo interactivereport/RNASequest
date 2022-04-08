@@ -218,6 +218,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-21"><a href="installation.html#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.bash_profile</span></code></pre></div>
 <p>Set the default paths for ExpressionAnalysis:</p>
 <p>In <a href="https://github.com/interactivereport/RNASequest/blob/main/src/sys.yml" target="_blank">sys.yml</a> file is used to set the default configurations of the whole pipeline, including paths for Quickomics visualization. Please modify this file before running the pipeline, since the paths will be different from server to server.</p>
+<p>The QuickOmics_test_folder and QuickOmics_publish_folder are defined by the config.csv file in the QuickOmics app folder (See 3.2).</p>
 <pre><code>## path to the reference genome is on HPC
 genome_path: /path/to/genome/references
 notCovariates: [Sapio_Submission_ID,Sapio_Sample_ID,Sapio_Request_Name,Sapio_Request_ID,Sapio_URL,Sapio_Plate_ID,Sapio_Profile,

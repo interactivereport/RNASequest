@@ -32,6 +32,8 @@ Set the default paths for ExpressionAnalysis:
 
 In [sys.yml](https://github.com/interactivereport/RNASequest/blob/main/src/sys.yml){target="_blank"} file is used to set the default configurations of the whole pipeline, including paths for Quickomics visualization. Please modify this file before running the pipeline, since the paths will be different from server to server.
 
+The QuickOmics_test_folder and QuickOmics_publish_folder are defined by the config.csv file in the QuickOmics app folder (See 3.2).
+
 ```
 ## path to the reference genome is on HPC
 genome_path: /path/to/genome/references
