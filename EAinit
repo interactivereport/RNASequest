@@ -11,6 +11,11 @@ else
     echo "e.g.: EAinit /camhpc/ngs/projects/TST11000/dnanexus/20210709173527_fergal.casey"
     echo "A folder ('EA[date]') with files for EArun will be created in the input folder"
     echo "Use 'EAinit path/to/a/DNAnexus/download/folder geneLength' to enable the gene length QC plots"
+    echo ""
+    echo "ExpressionAnalysis: $(cd $(dirname $0);git config --get remote.origin.url)"
+    echo "Pipeline Path:: $(dirname $0)"
+    echo "Pipeline Date:: $(cd $(dirname $0);git show -s --format=%ci)"
+    echo "ExpressionAnalysis: $(cd $(dirname $0);git rev-parse HEAD)"
     echo "==============="
     exit 0
 fi
