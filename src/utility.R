@@ -485,7 +485,7 @@ getEAData <- function(config,withCom=F){
 }
 getMeta <- function(config){
     message("reading sample meta")
-    meta <- read.csv(config$sample_meta,check.names=F,as.is=T)
+    meta <- as.data.frame(data.table::fread(config$sample_meta))
     checkMeta(meta,config)
     rownames(meta) <- meta[,config$sample_name]
     meta <- metaFactor(meta,config$sample_factor)
