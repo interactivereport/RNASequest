@@ -14,13 +14,12 @@ initialMsg <- function(strSRC="."){
 }
 saveSessionInfo <- function(strF,strSRC){
     message("\nPowered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
-    sink(strF)
-    cat("EA version: git-",
-        system(paste('git --git-dir',normalizePath(paste0(strSRC,"../.git")),'rev-parse HEAD'),
-               intern=T),sep="","\n\n")
-    print(sessionInfo())
-    sink()
-    
+    writeLines(capture.output(sessionInfo()), strF)
+    conn <- file(strF,"a")
+    sink(conn,type="message")
+    initialMsg(strSRC)
+    sink(type="message")
+    close(conn)
 }
 ## EAinit functions -----
 source("gtf.gz_to_gene_info.R")
