@@ -1,3 +1,7 @@
+# RNASequest: An end-to-end reproducible RNAseq data analysis and publishing frame-work
+
+
+
 # Expression analysis (EA)
 
 A pipeline to analysis RNAseq
