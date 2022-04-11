@@ -1,0 +1,293 @@
+---
+title: "EA Slide Deck"
+output: 
+  revealjs::revealjs_presentation:
+    self_contained: false
+    transition: none
+    reveal_plugins: ["search", "zoom", "notes", "chalkboard", "menu"]
+    reveal_options:
+      chalkboard: 
+        theme: chalkboard
+        toggleNotesButton: true
+      menu:
+        numbers: true
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=7, fig.height=5, dev='svg', echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{css css-settings, echo=FALSE}
+.reveal section img {
+  border: 0px;
+}
+
+```
+
+```{r, echo=FALSE}
+#Retrieve information from the previously saved bookdown.info.txt file
+info_txt <- "/home/whu1/EA_results/Ea_projects/RNASequest/example/SRP199678/EA20220408_0/BookdownReport/bookdown.info.txt"
+Data <- read.table(info_txt)
+Source_code <- Data$V2[1]
+Working_dir <- Data$V2[2]
+Config_file <- Data$V2[3]
+
+#A copy of the useAlias function, without printing out the D
+useAliasCopy <- function(config,D){
+    if(!is.null(config$sample_alias)){
+        message("Applying alias")
+        colnames(D$counts) <- rownames(D$meta) <- D$meta[,config$sample_alias]
+        if(!is.null(D$effLength)) colnames(D$effLength) <- rownames(D$meta)
+        if(!is.null(D$logTPM)) colnames(D$logTPM) <- rownames(D$meta)
+        if(!is.null(D$seqQC)) rownames(D$seqQC) <- rownames(D$meta)
+    }
+    return(D)
+}
+
+
+#Extract information from the Config_file
+config <- sapply(yaml::read_yaml(Config_file),unlist)
+sysConfig <- yaml::read_yaml(paste0(Source_code,"sys.yml"))
+ProjectName <- config$prj_name
+load(paste0(Working_dir,"../",ProjectName,".RData"))
+NumberOfSamples <- dim(data_wide)[2]
+NumberOfGroups <- length(unique(MetaData$group))
+NumberOfGenes <- dim(data_wide)[1]
+NumberOfComparisons <- dim(comp_info)[1]
+EAOutputDir <- substr(Working_dir, 1, nchar(Working_dir)-15)
+
+# load Plot_Functions.R
+setwd(Source_code)
+PlotFunctions <- paste0(Source_code, "Plot_Functions.R")
+source("utility.R")
+source("Plot_Functions.R")
+
+suppressMessages(checkConfig(config))
+D <- suppressMessages(getEAData(config))
+D <- useAliasCopy(config,D)
+```
+
+
+## Navigation buttons
+<ul>
+<li> Press "Esc" or "o" key to enter the the slide overview
+<li> Alt + mouse click to zoom in/out
+<li> Press "s" key to speaker view to see notes
+</ul>
+```{r echo=FALSE}
+htmltools::tags$aside('Here are some notes.',class = "notes")
+```
+
+
+## Quality control (QC) plots
+QC: gene ratios. Top 1% gene of TPM
+
+```{r, echo=FALSE}
+## Setting plotting parameters ----
+estT <- 2^D$logTPM-config$count_prior
+estC=D$counts
+qc=D$seqQC
+prioQC=sysConfig$qc2meta
+gInfo=D$gInfo
+replot=config$seqQC_replot
+topN=c(1,10,30)
+# Generating ratio plots
+if(!is.null(gInfo) & sum(rownames(gInfo)!=gInfo$Gene.Name,na.rm=T)>0){
+  rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
+  if(!is.null(estC)) rownames(estC) <- paste(rownames(estC),gInfo[rownames(estC),"Gene.Name"],sep="|")
+}
+pdfW <- max(ncol(estT)/10+2,6)
+topN <- setNames(topN,paste0("Top",topN))
+D <- t(apply(estT,2,function(x){
+  x <- sort(x,decreasing=T)
+  return(sapply(topN,function(i)return(sum(x[1:i])/sum(x)*100)))
+}))
+D <- cbind(sID=factor(rownames(D),levels=rownames(D)),data.frame(D))
+i <- colnames(D)[2]
+p1 <- ggplot(D,aes_string(x="sID",y=i))+
+          geom_bar(stat="identity")+
+          xlab("")+ylab("% of Total TPM")+
+          ggtitle(paste(i,"genes"))+
+          theme_minimal()+
+          theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                legend.position = "none")
+p1
+```
+
+## Quality control (QC) plots
+QC: gene ratios. Top 10% gene of TPM
+
+```{r, echo=FALSE}
+i <- colnames(D)[3]
+p2 <- ggplot(D,aes_string(x="sID",y=i))+
+          geom_bar(stat="identity")+
+          xlab("")+ylab("% of Total TPM")+
+          ggtitle(paste(i,"genes"))+
+          theme_minimal()+
+          theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                legend.position = "none")
+p2
+```
+
+## Quality control (QC) plots
+QC: gene ratios. Top 30% gene of TPM
+
+```{r, echo=FALSE}
+i <- colnames(D)[4]
+p3 <- ggplot(D,aes_string(x="sID",y=i))+
+          geom_bar(stat="identity")+
+          xlab("")+ylab("% of Total TPM")+
+          ggtitle(paste(i,"genes"))+
+          theme_minimal()+
+          theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                legend.position = "none")
+p3
+```
+
+## Quality control (QC) plots
+QC: top expressed genes. Top gene by TPM
+
+```{r, echo=FALSE}
+topUnion <- 10
+p4 <- plotTopGeneRatio(estT, 10)
+p4
+```
+
+## Quality control (QC) plots
+QC: top expressed genes. Top gene by counts
+
+```{r, unsmooth_rc}
+p5 <- plotTopGeneRatio(estC,10,selG=levels(p4$data[,2]))+
+    xlab("% of total counts")+ggtitle(p4$labels$title)
+p5
+```
+
+## Covariates plots
+
+```{r, echo=FALSE}
+suppressMessages(library(knitr))
+suppressMessages(library(kableExtra))
+options(width = 100)
+res <- suppressWarnings(suppressMessages(PC_covariates_out(data_wide, MetaData, N_col = 3)))
+sig_covariates=res$selVar_All
+
+i <- 1
+pc <- sig_covariates$PC[i]
+var <- sig_covariates$Covariate[i]
+add_text=TRUE
+
+data.all=res$data.all
+selVar=res$selVar_All
+  
+Num_names=names(select_if(data.all, is.numeric))
+  
+if (var %in% Num_names) {
+    p6<-suppressWarnings(ggplot(data.all, aes(x=!!sym(var), y=!!sym(pc)) )+geom_point()+
+      stat_summary(fun.data= mean_cl_normal) + geom_smooth(formula = y ~ x, method='lm')+theme_half_open())
+  } else {
+    p6<-suppressWarnings(ggplot(data.all,  aes(x=!!sym(var), y=!!sym(pc)) )+geom_boxplot()+geom_jitter(alpha=0.7, width=0.1)+theme_half_open() +
+      theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5)))
+  }
+p6
+```
+
+## Covariates plots
+
+```{r, echo=FALSE}
+i <- 2
+pc <- sig_covariates$PC[i]
+var <- sig_covariates$Covariate[i]
+add_text=TRUE
+data.all=res$data.all
+selVar=res$selVar_All
+  
+Num_names=names(select_if(data.all, is.numeric))
+  
+if (var %in% Num_names) {
+    p7<-suppressWarnings(ggplot(data.all, aes(x=!!sym(var), y=!!sym(pc)) )+geom_point()+
+      stat_summary(fun.data= mean_cl_normal) + geom_smooth(formula = y ~ x, method='lm')+theme_half_open())
+  } else {
+    p7<-suppressWarnings(ggplot(data.all,  aes(x=!!sym(var), y=!!sym(pc)) )+geom_boxplot()+geom_jitter(alpha=0.7, width=0.1)+theme_half_open() +
+      theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5)))
+  }
+p7
+```
+
+## PCA plots
+Regular PCA plot
+
+```{r, echo=FALSE}
+par(mar = c(0.1, 0.1, 0.1, 0.1))
+PCA_Plot(data_wide, MetaData)
+```
+
+
+## PCA plots
+PCA of covariates
+
+```{r, echo=FALSE}
+res <- suppressWarnings(suppressMessages(PC_covariates_out(data_wide, MetaData, N_col=1)))
+PCA_plots<-PCA_sig_covariates(res)
+i = 1
+plot_name <- names(PCA_plots[i])
+plot <- suppressWarnings(PCA_plots[[i]])
+suppressWarnings(print(ggdraw(plot)))
+
+```
+
+## PCA plots
+PCA of covariates
+
+```{r, echo=FALSE}
+i = 2
+plot_name <- names(PCA_plots[i])
+plot <- suppressWarnings(PCA_plots[[i]])
+suppressWarnings(print(ggdraw(plot)))
+```
+
+## Volcano plots
+To visulize the fold change and significance of DEGs in a comparison.
+
+```{r, echo=FALSE}
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+      x)
+  } else x
+}
+
+ComparisonGroups <- as.character(unique(results_long$test))
+
+#Use the results_long from RData to get DEG counts
+FCcut=log2(1.2) #Fold change cutoff, 1.2 fold as default
+pvalcut=0.05 #FDR cutoff  
+tmpdat = results_long %>% dplyr::filter( Adj.P.Value < pvalcut & abs(logFC) > FCcut)
+deg_stat<-tmpdat%>%group_by(test)%>%dplyr::summarize(DEG=n(), Up=sum(logFC>0), Down=sum(logFC<0))%>%ungroup
+names(deg_stat)[1]="Comparison"
+
+i <- 1
+p <- Volcano_Plot(results_long, ProteinGeneName, comparison = ComparisonGroups[i])
+print(p)
+
+```
+
+## Heatmap plots
+Heatmap of the top 1000 most variable genes
+```{r, echo=FALSE}
+p <- Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName, heatmap_subset = "variable", maxgenes = 1000)
+draw(p, merge_legend = TRUE, auto_adjust = FALSE)
+```
+
+## Heatmap plots
+Heatmap of group comparisons
+
+```{r, echo=FALSE}
+i <- 1
+try(p <- Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName, heatmap_subset = "subset", 
+                 comparison = ComparisonGroups[i],
+                 maxgenes = 1000))
+try(draw(p, merge_legend = TRUE, auto_adjust = FALSE))
+
+```
