@@ -6,6 +6,8 @@ install-quickomics
 install-r-packages
 clone-quickomics-github-repository
 launch-the-r-shiny-app
+configure-quickomics-to-load-projects-directly-from-urls
+prepare-project-data-to-be-loaded-from-url
 data-preparation
 retrieving-data-from-ncbi-geo
 file-hierarchy

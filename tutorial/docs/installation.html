@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-04-08" />
+<meta name="date" content="2022-04-11" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -148,6 +148,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2.1" data-path="installation.html"><a href="installation.html#install-r-packages"><i class="fa fa-check"></i><b>3.2.1</b> Install R packages</a></li>
 <li class="chapter" data-level="3.2.2" data-path="installation.html"><a href="installation.html#clone-quickomics-github-repository"><i class="fa fa-check"></i><b>3.2.2</b> Clone Quickomics GitHub repository</a></li>
 <li class="chapter" data-level="3.2.3" data-path="installation.html"><a href="installation.html#launch-the-r-shiny-app"><i class="fa fa-check"></i><b>3.2.3</b> Launch the R Shiny App</a></li>
+<li class="chapter" data-level="3.2.4" data-path="installation.html"><a href="installation.html#configure-quickomics-to-load-projects-directly-from-urls"><i class="fa fa-check"></i><b>3.2.4</b> Configure QuickOmics to load projects directly from URLs</a></li>
+<li class="chapter" data-level="3.2.5" data-path="installation.html"><a href="installation.html#prepare-project-data-to-be-loaded-from-url"><i class="fa fa-check"></i><b>3.2.5</b> Prepare project data to be loaded from URL</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>4</b> Data preparation</a>
@@ -291,6 +293,24 @@ BiocManager::install(c(&quot;Mfuzz&quot;, &quot;biomaRt&quot;, &quot;ComplexHeat
 <p>Check the following web links on various options to launch the app.</p>
 <p><a href="https://shiny.rstudio.com/articles/running.html" target="_blank">https://shiny.rstudio.com/articles/running.html</a></p>
 <p><a href="https://shiny.rstudio.com/deploy/" target="_blank">https://shiny.rstudio.com/deploy/</a></p>
+</div>
+<div id="configure-quickomics-to-load-projects-directly-from-urls" class="section level3" number="3.2.4">
+<h3><span class="header-section-number">3.2.4</span> Configure QuickOmics to load projects directly from URLs</h3>
+<p>QuickOmics has a feature to load a project directly from URL in the form of <a href="https://quickomics.bxgenomics.com/?serverfile=SRP199678" target="_blank">https://quickomics.bxgenomics.com/?serverfile=SRP199678</a>, which requires saving project data files to a user-specified directory on the sever hosting QuickOmics. To use this feature, create a file called config.csv in the QuickOmics App folder.</p>
+<pre><code>category,value
+server_dir,{Path/to/Server/File}
+test_dir,{Path/to/Test/Files}</code></pre>
+<p>Files stored in server_dir can be loaded by URLs like: <a href="https://quickomics.bxgenomics.com/?serverfile=project_ID" target="_blank">https://quickomics.bxgenomics.com/?serverfile=project_ID</a></p>
+<p>Files stored in test_dir can be loaded by URLs like: <a href="https://quickomics.bxgenomics.com/?testfile=project_ID" target="_blank">https://quickomics.bxgenomics.com/?testfile=project_ID</a></p>
+</div>
+<div id="prepare-project-data-to-be-loaded-from-url" class="section level3" number="3.2.5">
+<h3><span class="header-section-number">3.2.5</span> Prepare project data to be loaded from URL</h3>
+<p>To prepare project files to be loaded via URL, do the following.</p>
+<p>For each project, besides the two RData files (projectID.RData and ProjectID_netword.RData), prepare a ProjectID.csv file with six columns, e.g.</p>
+<pre><code>&quot;Name&quot;,&quot;ShortName&quot;,&quot;ProjectID&quot;,&quot;Species&quot;,&quot;ExpressionUnit&quot;,&quot;Path&quot;
+&quot;RNAseq analysis of sorted microglia&quot;,&quot;SRP199678&quot;,&quot;SRP199678&quot;,&quot;mouse&quot;,&quot;log2(TPM+0.25)&quot;,&quot;/camhpc/home/ysun4/RNASequest/example/SRP199678/EA20220329_0&quot;</code></pre>
+<p>The last two columns in the csv file are optional but recommended.</p>
+<p>Now copy the three files (projectID.RData, ProjectID_netword.RData and ProjectID.csv) inside the server_dir folder as specified by the config.csv file, and the project can be loaded as <a href="https://quickomics.bxgenomics.com/?serverfile=project_ID" target="_blank">https://quickomics.bxgenomics.com/?serverfile=project_ID</a> (replace quickomics.bxgenomics.com by the URL of your own QuickOmics instance).</p>
 
 </div>
 </div>

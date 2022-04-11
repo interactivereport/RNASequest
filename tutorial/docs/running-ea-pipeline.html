@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-04-08" />
+<meta name="date" content="2022-04-11" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -148,6 +148,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2.1" data-path="installation.html"><a href="installation.html#install-r-packages"><i class="fa fa-check"></i><b>3.2.1</b> Install R packages</a></li>
 <li class="chapter" data-level="3.2.2" data-path="installation.html"><a href="installation.html#clone-quickomics-github-repository"><i class="fa fa-check"></i><b>3.2.2</b> Clone Quickomics GitHub repository</a></li>
 <li class="chapter" data-level="3.2.3" data-path="installation.html"><a href="installation.html#launch-the-r-shiny-app"><i class="fa fa-check"></i><b>3.2.3</b> Launch the R Shiny App</a></li>
+<li class="chapter" data-level="3.2.4" data-path="installation.html"><a href="installation.html#configure-quickomics-to-load-projects-directly-from-urls"><i class="fa fa-check"></i><b>3.2.4</b> Configure QuickOmics to load projects directly from URLs</a></li>
+<li class="chapter" data-level="3.2.5" data-path="installation.html"><a href="installation.html#prepare-project-data-to-be-loaded-from-url"><i class="fa fa-check"></i><b>3.2.5</b> Prepare project data to be loaded from URL</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>4</b> Data preparation</a>
@@ -196,10 +198,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>conda activate ExpressionAnalysis</code></pre>
 <div id="eainit" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> EAinit</h2>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="running-ea-pipeline.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> Path/to/a/DNAnexus/result/folder</span>
-<span id="cb15-2"><a href="running-ea-pipeline.html#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="running-ea-pipeline.html#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Example:</span></span>
-<span id="cb15-4"><a href="running-ea-pipeline.html#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> ~/RNASequest/example/SRP199678</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="running-ea-pipeline.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> Path/to/a/DNAnexus/result/folder</span>
+<span id="cb17-2"><a href="running-ea-pipeline.html#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="running-ea-pipeline.html#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Example:</span></span>
+<span id="cb17-4"><a href="running-ea-pipeline.html#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> ~/RNASequest/example/SRP199678</span></code></pre></div>
 <p>Execution of the above command will create a sub-folder (EA[timestamp]) in the specified RNAseq result folder.
 There will be five files in the result folder:</p>
 <ul>
