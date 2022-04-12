@@ -4,7 +4,7 @@
 
 **Fig. 1.** Overview of the RNASequest workflow. (A) Analyst supplies gene expression matrix, sample information to the automated pipeline, ExpressionAnalysis, in abbreviation EA, to generate reports in Bookdown and interactive slide deck formats, and a data visualization app for Biologists with limited computational experience to investigate datasets by reviewing the reports and exploring the data interactively. (B) EA will check covariates and guide ana-lysts to build correct models for differential gene expression analysis. (C) R data objects outputted by EA will be uploaded to Quickomics R Shiny application for further exploration and visualization in PCA, Heatmap, Pathway, Volcano, Boxplot, and Venn Diagram. (D) EA publish module will automatically generate analysis report in both Bookdown and interactive online slides format.  (E) ShinyOne, a R Shiny app will manage the collection of datasets with Quickomics launching links and links to Bookdown documents and slide decks. It provides basic search and sorting functions for users to locate datasets of interest. 
 
-## Expression analysis (EA) Component
+## Expression analysis (EA) component
 
 A pipeline to analysis RNAseq
 
@@ -70,7 +70,7 @@ There are two config files in the pipeline folder:
     4. QuickOmics_path: the file path to store the files for QuickOmics web server display
     4. DA_columns: the column names available for the sample meta table in the DiseaseAtlas system
 
-## Quickomic Component
+## Quickomic component
 
 GitHub: https://github.com/interactivereport/Quickomics
 
