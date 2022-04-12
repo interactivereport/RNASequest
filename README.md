@@ -71,14 +71,22 @@ There are two config files in the pipeline folder:
     4. DA_columns: the column names available for the sample meta table in the DiseaseAtlas system
 
 ## Quickomic Component
+
 GitHub: https://github.com/interactivereport/Quickomics
+
 Tutorial: https://interactivereport.github.io/Quickomics/tutorial/docs/
 
 ## Bookdown component
 
+https://interactivereport.github.io/RNASequest/tutorial/docs/bookdown-report.html#bookdown-report
+
 ## Slide deck component
+
+https://interactivereport.github.io/RNASequest/tutorial/docs/online-slide-deck.html#online-slide-deck
+
 
 ## ShinyOne component
 
+https://interactivereport.github.io/RNASequest/tutorial/docs/shinyone.html#shinyone
 
 
