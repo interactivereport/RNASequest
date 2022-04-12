@@ -21,8 +21,8 @@ output
 quickomics-visualization
 other-output-files
 advanced-plotting-functions
-pca-plots
-check-covariates
+pca-plot
+covariate-checking
 volcano-plot
 heatmap
 bookdown-report

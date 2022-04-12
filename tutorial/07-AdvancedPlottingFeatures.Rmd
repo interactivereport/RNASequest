@@ -2,7 +2,7 @@
 
 For advanced users, EA offers versatile plotting functions to adjust your figures. Each plotting function within [Plot_Functions.R](https://github.com/interactivereport/RNASequest/blob/main/src/Plot_Functions.R){target="_blank"} has many options, mirroring the user interface from QuickOmics. Here are several examples:
 
-## PCA plots
+## PCA plot
 
 ```
 # Load RData created from EArun 
@@ -34,7 +34,7 @@ p<-PCA_Plot(data_wide, MetaData, input_samples)
 print(p)  
 ```
 
-## Check covariates
+## Covariate checking
 
 ```
 # Check covariates:

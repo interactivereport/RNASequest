@@ -172,8 +172,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="7" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html"><i class="fa fa-check"></i><b>7</b> Advanced plotting functions</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#pca-plots"><i class="fa fa-check"></i><b>7.1</b> PCA plots</a></li>
-<li class="chapter" data-level="7.2" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#check-covariates"><i class="fa fa-check"></i><b>7.2</b> Check covariates</a></li>
+<li class="chapter" data-level="7.1" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#pca-plot"><i class="fa fa-check"></i><b>7.1</b> PCA plot</a></li>
+<li class="chapter" data-level="7.2" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#covariate-checking"><i class="fa fa-check"></i><b>7.2</b> Covariate checking</a></li>
 <li class="chapter" data-level="7.3" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#volcano-plot"><i class="fa fa-check"></i><b>7.3</b> Volcano plot</a></li>
 <li class="chapter" data-level="7.4" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#heatmap"><i class="fa fa-check"></i><b>7.4</b> Heatmap</a></li>
 </ul></li>
@@ -202,8 +202,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="advanced-plotting-functions" class="section level1" number="7">
 <h1><span class="header-section-number">Chapter 7</span> Advanced plotting functions</h1>
 <p>For advanced users, EA offers versatile plotting functions to adjust your figures. Each plotting function within <a href="https://github.com/interactivereport/RNASequest/blob/main/src/Plot_Functions.R" target="_blank">Plot_Functions.R</a> has many options, mirroring the user interface from QuickOmics. Here are several examples:</p>
-<div id="pca-plots" class="section level2" number="7.1">
-<h2><span class="header-section-number">7.1</span> PCA plots</h2>
+<div id="pca-plot" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> PCA plot</h2>
 <pre><code># Load RData created from EArun 
 # Here is an example
 # https://github.com/interactivereport/Quickomics/blob/master/data/Mouse_microglia_RNA-Seq.RData 
@@ -228,8 +228,8 @@ input_samples=MetaData$sampleid[20:60]
 p&lt;-PCA_Plot(data_wide, MetaData, input_samples) 
 print(p)  </code></pre>
 </div>
-<div id="check-covariates" class="section level2" number="7.2">
-<h2><span class="header-section-number">7.2</span> Check covariates</h2>
+<div id="covariate-checking" class="section level2" number="7.2">
+<h2><span class="header-section-number">7.2</span> Covariate checking</h2>
 <pre><code># Check covariates:
 # This can be displayed as a table in R Markdown
 
