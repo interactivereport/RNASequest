@@ -12,53 +12,103 @@ A pipeline to analysis RNAseq
 
 Four main functions are provided:
 
-  - EAinit: Generate a set of project analysis files based on a DNAnexus result folder;
-  - EAqc: Analyze the covariates against the expression to determine if the expression is needed to be adjusted;
+  - EAinit: Generate a set of project analysis files based on a DNAnexus result folder.
+  - EAqc: Analyze the covariates against the expression to determine if the expression is needed to be adjusted.
   - EArun: Produce QuickOmics object for webserver loading.
-  - EA2DA: Produce required data files for DiseaseAtlas project import.
+  - EAreport: Generate a bookdown report for visualization.
+  - EA2DA: Produce required data files for [OmicsView](https://github.com/interactivereport/OmicsView) project import.
 
 ### Installation/Set up
-Add "/camhpc/ngs/tools/expressionAnalysis" into your **_PATH_** environment variable.
+
+First we install the ExpressionAnalysis by downloading the scripts from GitHub:
+
+```
+git clone https://github.com/interactivereport/RNASequest.git
+cd RNASequest
+
+# Install RNASequest conda environment
+# Please make sure you have conda installed before, and this step may take a while
+bash install
+
+# Activate the conda environment
+conda activate ExpressionAnalysis
+
+# Check the path of current directory and add it to $PATH:
+CurrentDir=`pwd`
+export PATH="$CurrentDir:$PATH"
+
+# However, the above command only adds the RNASequest directory to $PATH temporarily
+# To add it to the environment permanently, edit ~/.bash_profile or ~/.bashrc:
+vim ~/.bash_profile
+# Add the full path of the RNASequest directory to $PATH, for example, $HOME/RNASequest
+PATH=$PATH:$HOME/RNASequest
+# Source the file
+source ~/.bash_profile
+```
 
 ### EAinit
 ```
 EAinit A/path/to/a/DNAnexus/result/folder
-```
-The execution of above command will create a sub-folder (QuickOmics_[timestamp]) in the specified DNAnexus result folder.
-There will be five files in the folder:
 
-- compareInfo.csv: an empty comparison definition file (with header). Please fill in this file before ```EArun``` call.
-- config.yml: a config fill specifies the parameters of the ```EAqc``` and ```EArun```. Please update **covariates_adjust** after ```EAqc```.
+# Example:
+EAinit ~/RNASequest/example/SRP199678
+```
+
+Execution of the above command will create a sub-folder (EA[timestamp]) in the specified RNAseq result folder.
+There will be five files in the result folder:
+
+- compareInfo.csv: an empty comparison definition file (with header). Please fill in this file before the ```EArun``` call.
+- config.yml: a config file specifies the parameters of the ```EAqc``` and ```EArun```. Please update **covariates_adjust** after ```EAqc```.
 - geneAnnotation.csv: a gene annotation file including gene symbol.
-- sampleMeta.csv: a sample meta information file, please feel free to add additional columns whose column names should be considered to be added into **covariates_check** in *config.yml*.
+- sampleMeta.csv: a sample meta-information file, please feel free to add additional columns whose column names should be considered to be added into **covariates_check** in *config.yml*.
 - alignQC.pdf: plots generated from alignment QC metrics.
 
-**_Please pay attention on the std out messages._**
+**_Please pay attention to the std out messages._**
 
 ### EAqc
 ```
 EAqc A/path/to/a/config/file
-```
-The execution of the command with the above default config file, expression PC analysis will be done against covariates specified in **covariates_check** in *config.yml* file. An excel file will list p-value for all numeric and categorical covariates, and with significant ones will be in plot pdf files. The analysis before covariate adjusting will have prefix *covariatePCanalysis_noAdjust*. 
-Based on the above results, you can add covariates into **covariates_adjust** in *config.yml* file, and run ```EAqc``` again. This time additional expression PC analysis will be applied to covariate adjusted expression with files started with *covariatePCanalysis_Adjusted*. 
 
-**_Please pay attention on the std out messages._**
+#Example:
+EAqc ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
+```
+
+Through executing the command with the above default config file, expression PC analysis will be done against covariates specified in **covariates_check** in the *config.yml* file. An Excel file will list p-values for all numeric and categorical covariates, and significant ones will be in plot pdf files. The analysis before covariate adjusting will have the prefix *covariatePCanalysis_noAdjust*. 
+Based on the above results, you can add covariates into **covariates_adjust** in the *config.yml* file, and rerun ```EAqc```. This time additional expression PC analysis will be applied to covariate-adjusted expression with files started with *covariatePCanalysis_Adjusted*. 
+
+**_Please pay attention to the std out messages._**
 
 ### EArun
 ```
 EArun A/path/to/a/config/file
+
+# Example:
+EArun ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
 ```
 **_Please fill the compareInfo.csv before executing the above command_**
 
-The execution of above command will produce R object for QuickOmics webserver to load. The process will generate the covariate adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation. 
+Execution of the above command will produce R objects for QuickOmics webserver to load. The process will generate the covariate-adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation. 
 
-The results (three files) currently will need to be copied to a folder on ngs, in order to have web accession. **_Please pay attention on the std out messages._**
+The results (four files) can be uploaded to the QuickOmics webserver.
+
+**_Please pay attention to the std out messages._**
+
+### EAreport
+
+```
+EAreport Path/to/a/config/file
+
+# Example:
+EAreport ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
+```
+
+By running the command above, the pipeline will generate a **BookdownReport** folder in the same directory as the config file. This folder contains the raw Rmd files, as well as the final bookdown report, which is the **BookdownReport/docs/index.html** file. If you would like to send the full report to your collaborators, please download the tarball created under the EA working directory, named as **ProjectName_BookdownReport.tar.gz** (ProjectName was extracted from the config.yml file). The index.html inside it is the bookdown report.
 
 ### EA2DA
 ```
 EA2DA A/path/to/a/config/file
 ```
-The execution of above command will produce 6 data files which are required for the DiseaseAtlas project import.
+The execution of above command will produce 6 data files which are required for the OmicsView project import.
 
 **_Please fill the empty entries in the Project_Info.csv before import**
 
@@ -70,7 +120,7 @@ There are two config files in the pipeline folder:
     2. notCovariates: the column names from the sample meta information should not be considred as default covariates
     3. qc2meta: the column names from mapping QC file should be extracted and inserted into sample meta table
     4. QuickOmics_path: the file path to store the files for QuickOmics web server display
-    4. DA_columns: the column names available for the sample meta table in the DiseaseAtlas system
+    4. DA_columns: the column names available for the sample meta table in the OmicsView system
 
 ## Quickomic component
 
