@@ -2,7 +2,9 @@
 
 ![RNASequest](https://interactivereport.github.io/RNASequest/Figure1_sm.png?raw=true "RNASequest")
 
-## Expression analysis (EA)
+**Fig. 1.** Overview of the RNASequest workflow. (A) Analyst supplies gene expression matrix, sample information to the automated pipeline, ExpressionAnalysis, in abbreviation EA, to generate reports in Bookdown and interactive slide deck formats, and a data visualization app for Biologists with limited computational experience to investigate datasets by reviewing the reports and exploring the data interactively. (B) EA will check covariates and guide ana-lysts to build correct models for differential gene expression analysis. (C) R data objects outputted by EA will be uploaded to Quickomics R Shiny application for further exploration and visualization in PCA, Heatmap, Pathway, Volcano, Boxplot, and Venn Diagram. (D) EA publish module will automatically generate analysis report in both Bookdown and interactive online slides format.  (E) ShinyOne, a R Shiny app will manage the collection of datasets with Quickomics launching links and links to Bookdown documents and slide decks. It provides basic search and sorting functions for users to locate datasets of interest. 
+
+## Expression analysis (EA) Component
 
 A pipeline to analysis RNAseq
 
@@ -13,10 +15,10 @@ Four main functions are provided:
   - EArun: Produce QuickOmics object for webserver loading.
   - EA2DA: Produce required data files for DiseaseAtlas project import.
 
-## Installation/Set up
+### Installation/Set up
 Add "/camhpc/ngs/tools/expressionAnalysis" into your **_PATH_** environment variable.
 
-## EAinit
+### EAinit
 ```
 EAinit A/path/to/a/DNAnexus/result/folder
 ```
@@ -31,7 +33,7 @@ There will be five files in the folder:
 
 **_Please pay attention on the std out messages._**
 
-## EAqc
+### EAqc
 ```
 EAqc A/path/to/a/config/file
 ```
@@ -40,7 +42,7 @@ Based on the above results, you can add covariates into **covariates_adjust** in
 
 **_Please pay attention on the std out messages._**
 
-## EArun
+### EArun
 ```
 EArun A/path/to/a/config/file
 ```
@@ -50,7 +52,7 @@ The execution of above command will produce R object for QuickOmics webserver to
 
 The results (three files) currently will need to be copied to a folder on ngs, in order to have web accession. **_Please pay attention on the std out messages._**
 
-## EA2DA
+### EA2DA
 ```
 EA2DA A/path/to/a/config/file
 ```
@@ -58,7 +60,7 @@ The execution of above command will produce 6 data files which are required for 
 
 **_Please fill the empty entries in the Project_Info.csv before import**
 
-## Administration
+### Administration
 There are two config files in the pipeline folder:
  - config.tmp.yml: The template of the config file, with all default values;
  - sys.yml: the system config file, which includes:
@@ -68,7 +70,15 @@ There are two config files in the pipeline folder:
     4. QuickOmics_path: the file path to store the files for QuickOmics web server display
     4. DA_columns: the column names available for the sample meta table in the DiseaseAtlas system
 
+## Quickomic Component
+GitHub: https://github.com/interactivereport/Quickomics
+Tutorial: https://interactivereport.github.io/Quickomics/tutorial/docs/
 
+## Bookdown component
+
+## Slide deck component
+
+## ShinyOne component
 
 
 
