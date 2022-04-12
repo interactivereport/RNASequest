@@ -85,7 +85,7 @@ EArun A/path/to/a/config/file
 # Example:
 EArun ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
 ```
-**_Please fill the compareInfo.csv before executing the above command_**
+**_Please fill the compareInfo.csv before executing the above command._**
 
 Execution of the above command will produce R objects for QuickOmics webserver to load. The process will generate the covariate-adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation. 
 
@@ -110,7 +110,7 @@ EA2DA A/path/to/a/config/file
 ```
 The execution of above command will produce 6 data files which are required for the OmicsView project import.
 
-**_Please fill the empty entries in the Project_Info.csv before import**
+**_Please fill the empty entries in the Project_Info.csv before import._**
 
 ### Administration
 There are two config files in the pipeline folder:
