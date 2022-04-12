@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Introduction | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
-  <meta name="description" content="Chapter 2 Introduction | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <title>Chapter 7 Advanced plotting features | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
+  <meta name="description" content="Chapter 7 Advanced plotting features | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Introduction | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta property="og:title" content="Chapter 7 Advanced plotting features | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta property="og:type" content="book" />
   
   
@@ -16,22 +16,22 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Introduction | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta name="twitter:title" content="Chapter 7 Advanced plotting features | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   
   
   
 
 
 
-<meta name="date" content="2022-04-12" />
+<meta name="date" content="2022-04-11" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="installation.html"/>
+<link rel="prev" href="output.html"/>
+<link rel="next" href="bookdown-report.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -170,12 +170,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.1" data-path="output.html"><a href="output.html#quickomics-visualization"><i class="fa fa-check"></i><b>6.1</b> QuickOmics visualization</a></li>
 <li class="chapter" data-level="6.2" data-path="output.html"><a href="output.html#other-output-files"><i class="fa fa-check"></i><b>6.2</b> Other output files</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html"><i class="fa fa-check"></i><b>7</b> Advanced plotting functions</a>
+<li class="chapter" data-level="7" data-path="advanced-plotting-features.html"><a href="advanced-plotting-features.html"><i class="fa fa-check"></i><b>7</b> Advanced plotting features</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#pca-plots"><i class="fa fa-check"></i><b>7.1</b> PCA plots</a></li>
-<li class="chapter" data-level="7.2" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#check-covariates"><i class="fa fa-check"></i><b>7.2</b> Check covariates</a></li>
-<li class="chapter" data-level="7.3" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#volcano-plot"><i class="fa fa-check"></i><b>7.3</b> Volcano plot</a></li>
-<li class="chapter" data-level="7.4" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#heatmap"><i class="fa fa-check"></i><b>7.4</b> Heatmap</a></li>
+<li class="chapter" data-level="7.1" data-path="advanced-plotting-features.html"><a href="advanced-plotting-features.html#pca-plots"><i class="fa fa-check"></i><b>7.1</b> PCA plots</a></li>
+<li class="chapter" data-level="7.2" data-path="advanced-plotting-features.html"><a href="advanced-plotting-features.html#check-covariates"><i class="fa fa-check"></i><b>7.2</b> Check covariates</a></li>
+<li class="chapter" data-level="7.3" data-path="advanced-plotting-features.html"><a href="advanced-plotting-features.html#volcano-plot"><i class="fa fa-check"></i><b>7.3</b> Volcano plot</a></li>
+<li class="chapter" data-level="7.4" data-path="advanced-plotting-features.html"><a href="advanced-plotting-features.html#heatmap"><i class="fa fa-check"></i><b>7.4</b> Heatmap</a></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="bookdown-report.html"><a href="bookdown-report.html"><i class="fa fa-check"></i><b>8</b> Bookdown report</a></li>
 <li class="chapter" data-level="9" data-path="online-slide-deck.html"><a href="online-slide-deck.html"><i class="fa fa-check"></i><b>9</b> Online slide deck</a></li>
@@ -199,33 +199,91 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="introduction" class="section level1" number="2">
-<h1><span class="header-section-number">Chapter 2</span> Introduction</h1>
-<p>RNASequest, is a three-in-one RNAseq data analysis, data/app management, and publishing framework. It consists of a reproducible, configurable <strong>Expression Analysis (EA)</strong> module, multi-faceted result exploration in <strong>Quickomics v2.0</strong>, <strong>Bookdown report</strong> and <strong>Online slide deck</strong>, and a centralized data management system of apps and results generated by the workflow for future queries.</p>
-<p>Expression Analysis (EA) is a Converter from a set of RNAseq analysis output to QuickOmics (<a href="http://quickomics.bxgenomics.com" target="_blank">http://quickomics.bxgenomics.com</a>) for interactive visualization.</p>
-<p>The EA pipeline contains four main scripts:</p>
-<ul>
-<li><p><strong>EAinit</strong></p>
-<p>This is the first step of the pipeline. It creates a directory storing files necessary for future steps.</p>
-<p>By default, the directory will be named based on the date of running the pipeline. For example, EA20220328_0 will be created since today is 2022-03-28. If the user runs EA again for the same dataset, the last digit will add up to avoid duplications: EA20220328_1</p></li>
-<li><p><strong>EAqc</strong></p>
-<p>This is the second step of the pipeline.</p>
-<p>It analyzes the covariates against the expression to determine if the expression is needed to be adjusted.</p></li>
-<li><p><strong>EArun</strong></p>
-<p>After running EAqc, the following EArun step will perform differential expression analysis based on defined groups.</p>
-<p>It also produces QuickOmics objects for webserver loading.</p></li>
-<li><p><strong>EAreport</strong></p>
-<p>The last step, EAreport, will generate a user-friendly bookdown report to visualize the EA pipeline results.</p></li>
-</ul>
+<div id="advanced-plotting-features" class="section level1" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Advanced plotting features</h1>
+<p>For advanced users, EA offers advanced plotting features to adjust your figures. Each plot function within <a href="https://github.com/interactivereport/RNASequest/blob/main/src/Plot_Functions.R" target="_blank">Plot_Functions.R</a> has many options, mirroring the user interface from QuickOmics. Here are several examples:</p>
+<div id="pca-plots" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> PCA plots</h2>
+<pre><code>## Load RData created from Earun 
+## The example data I used is 
+## https://github.com/interactivereport/Quickomics/blob/master/data/Mouse_microglia_RNA-Seq.RData 
 
+load(&quot;data/Mouse_microglia_RNA-Seq.RData&quot;)
+
+## Load Plot_Functions.R
+## https://github.com/interactivereport/RNASequest/tree/main/src 
+source(&#39;src/Plot_Functions.R&#39;) 
+
+## Create basic PCA Plot. 
+p&lt;-PCA_Plot(data_wide, MetaData) 
+print(p)  </code></pre>
+<p><a href="https://interactivereport.github.io/RNASequest/tutorial/images/PCA.png"><img src="https://interactivereport.github.io/RNASequest/tutorial/images/PCA.png" /></a></p>
+<pre><code>## PCA plot with additional options:
+p&lt;-PCA_Plot(data_wide, MetaData, pcnum=c(2, 3),label_samples=F, 
+            PCAcolorby=&quot;Age&quot;,  PCAshapeby=&quot;Genotype&quot;, ellipsoid=T, rug = T) 
+
+## Plot only selected samples:
+input_samples=MetaData$sampleid[20:60] 
+p&lt;-PCA_Plot(data_wide, MetaData, input_samples) 
+print(p)  </code></pre>
+</div>
+<div id="check-covariates" class="section level2" number="7.2">
+<h2><span class="header-section-number">7.2</span> Check covariates</h2>
+<pre><code>## Check covariates:
+## This can be displayed as a table in R Markdown
+
+res&lt;-PC_covariates_out(data_wide, MetaData) 
+sig_covariates=res$selVar_All                 #data frame to print as table</code></pre>
+<p><a href="https://interactivereport.github.io/RNASequest/tutorial/images/Covariates.png"><img src="https://interactivereport.github.io/RNASequest/tutorial/images/Covariates.png" /></a></p>
+<pre><code>## Check covariate with more options if needed:
+
+res&lt;-PC_covariates_out(data_wide, MetaData, input_samples, select_covariates=c(&quot;Age&quot;, &quot;Genotype&quot;, &quot;Gender&quot;),  PC_cutoff=3, FDR_cutoff=0.2)
+
+(sig_covariates=res$selVar_All ) </code></pre>
+</div>
+<div id="volcano-plot" class="section level2" number="7.3">
+<h2><span class="header-section-number">7.3</span> Volcano plot</h2>
+<pre><code>## One can loop through the comparisons. 
+
+p&lt;-Volcano_Plot(results_long, ProteinGeneName, comparison=&quot;2yr_KOvs2yr_WT&quot;) 
+print(p) </code></pre>
+<p><a href="https://interactivereport.github.io/RNASequest/tutorial/images/Volcano.png"><img src="https://interactivereport.github.io/RNASequest/tutorial/images/Volcano.png" /></a></p>
+<pre><code>## More controls on volcano plot:
+
+p&lt;-Volcano_Plot(results_long, ProteinGeneName, comparison=&quot;1yr_KOvs1yr_WT&quot;, Ngenes=40, rasterize=&quot;No&quot;, vlegendpos=&quot;right&quot;,  Max_Pvalue=30, Max_logFC=1.5) </code></pre>
+</div>
+<div id="heatmap" class="section level2" number="7.4">
+<h2><span class="header-section-number">7.4</span> Heatmap</h2>
+<pre><code>##Heatmap  
+
+## Overview from 1000 most variable genes 
+
+p&lt;-Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName,heatmap_subset=&quot;variable&quot;, maxgenes=1000) 
+
+draw(p, merge_legend=T,  auto_adjust = FALSE)  </code></pre>
+<p><a href="https://interactivereport.github.io/RNASequest/tutorial/images/Heatmap1.png"><img src="https://interactivereport.github.io/RNASequest/tutorial/images/Heatmap1.png" /></a></p>
+<pre><code>## Heatmap from DEGs of a comparison:
+## This can be done for all comparisons. 
+
+p&lt;-Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName,heatmap_subset=&quot;subset&quot;, comparison=&quot;2yr_WTvs2mo_WT&quot;) 
+
+draw(p, merge_legend=T,  auto_adjust = FALSE)  </code></pre>
+<p><a href="https://interactivereport.github.io/RNASequest/tutorial/images/Heatmap2.png"><img src="https://interactivereport.github.io/RNASequest/tutorial/images/Heatmap2.png" /></a></p>
+<pre><code>## With more options to customize heatmap 
+
+p&lt;-Heatmap_Plot(data_wide, MetaData, results_long, ProteinGeneName,heatmap_subset=&quot;subset&quot;, comparison=&quot;2yr_WTvs2mo_WT&quot;,  heatmap_fccut=4, heatmap_pvalcut=0.01, heatmap_psel = &quot;Padj&quot;, heatmap_row_dend=FALSE, heatmap_annot=c(&quot;Age&quot;, &quot;Genotype&quot;) ) 
+
+draw(p, merge_legend=T,  auto_adjust = FALSE) </code></pre>
+
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="installation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="output.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="bookdown-report.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -256,7 +314,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/02-Introduction.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/07-AdvancedPlottingFeatures.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -264,7 +322,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/02-Introduction.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/07-AdvancedPlottingFeatures.Rmd",
 "text": null
 },
 "download": null,

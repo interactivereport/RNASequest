@@ -20,6 +20,11 @@ eareport
 output
 quickomics-visualization
 other-output-files
+advanced-plotting-functions
+pca-plots
+check-covariates
+volcano-plot
+heatmap
 bookdown-report
 online-slide-deck
 shinyone

@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 7 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
-  <meta name="description" content="Chapter 7 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <title>Chapter 8 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
+  <meta name="description" content="Chapter 8 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 7 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta property="og:title" content="Chapter 8 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta property="og:type" content="book" />
   
   
@@ -16,21 +16,21 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 7 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta name="twitter:title" content="Chapter 8 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   
   
   
 
 
 
-<meta name="date" content="2022-04-11" />
+<meta name="date" content="2022-04-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="output.html"/>
+<link rel="prev" href="advanced-plotting-functions.html"/>
 <link rel="next" href="online-slide-deck.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -170,9 +170,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.1" data-path="output.html"><a href="output.html#quickomics-visualization"><i class="fa fa-check"></i><b>6.1</b> QuickOmics visualization</a></li>
 <li class="chapter" data-level="6.2" data-path="output.html"><a href="output.html#other-output-files"><i class="fa fa-check"></i><b>6.2</b> Other output files</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="bookdown-report.html"><a href="bookdown-report.html"><i class="fa fa-check"></i><b>7</b> Bookdown report</a></li>
-<li class="chapter" data-level="8" data-path="online-slide-deck.html"><a href="online-slide-deck.html"><i class="fa fa-check"></i><b>8</b> Online slide deck</a></li>
-<li class="chapter" data-level="9" data-path="shinyone.html"><a href="shinyone.html"><i class="fa fa-check"></i><b>9</b> ShinyOne</a></li>
+<li class="chapter" data-level="7" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html"><i class="fa fa-check"></i><b>7</b> Advanced plotting functions</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#pca-plots"><i class="fa fa-check"></i><b>7.1</b> PCA plots</a></li>
+<li class="chapter" data-level="7.2" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#check-covariates"><i class="fa fa-check"></i><b>7.2</b> Check covariates</a></li>
+<li class="chapter" data-level="7.3" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#volcano-plot"><i class="fa fa-check"></i><b>7.3</b> Volcano plot</a></li>
+<li class="chapter" data-level="7.4" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#heatmap"><i class="fa fa-check"></i><b>7.4</b> Heatmap</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="bookdown-report.html"><a href="bookdown-report.html"><i class="fa fa-check"></i><b>8</b> Bookdown report</a></li>
+<li class="chapter" data-level="9" data-path="online-slide-deck.html"><a href="online-slide-deck.html"><i class="fa fa-check"></i><b>9</b> Online slide deck</a></li>
+<li class="chapter" data-level="10" data-path="shinyone.html"><a href="shinyone.html"><i class="fa fa-check"></i><b>10</b> ShinyOne</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -192,8 +199,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="bookdown-report" class="section level1" number="7">
-<h1><span class="header-section-number">Chapter 7</span> Bookdown report</h1>
+<div id="bookdown-report" class="section level1" number="8">
+<h1><span class="header-section-number">Chapter 8</span> Bookdown report</h1>
 <p>To enable better visualization and immediate delivery of the results, we employed a Bookdown output to present the key tables and figures after running the EA pipeline.</p>
 <p><a href="https://bookdown.org/" target="_blank">Bookdown</a> is a book-like long-form report originated from R Markdown with dynamic graphics and user-friendly layouts. The bookdown document generated by our pipeline, an interactive webpage in HTML format, allows users to explore the results on a web browser without installing any specific software. It contains a high-level summary of the project, such as the data quality, significant covariates, as well as basic plots including PCA, heatmaps, and volcano plots. Further, it can be hosted in GitHub as exemplified here, for broad sharing especially in publication.</p>
 <p>Here is a screenshot of a bookdown report generated after running the EA pipeline. It contains 5 sections showing multiple exploratory analysis figures: QC figures, Covariates, PCA, Volcano plots, and Heatmaps.</p>
@@ -205,7 +212,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="output.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="advanced-plotting-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="online-slide-deck.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
@@ -237,7 +244,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/07-BookdownReport.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/08-BookdownReport.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -245,7 +252,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/07-BookdownReport.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/08-BookdownReport.Rmd",
 "text": null
 },
 "download": null,

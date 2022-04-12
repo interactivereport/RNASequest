@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 8 Online slide deck | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
-  <meta name="description" content="Chapter 8 Online slide deck | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <title>Chapter 9 Online slide deck | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
+  <meta name="description" content="Chapter 9 Online slide deck | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 8 Online slide deck | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta property="og:title" content="Chapter 9 Online slide deck | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta property="og:type" content="book" />
   
   
@@ -16,14 +16,14 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 8 Online slide deck | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta name="twitter:title" content="Chapter 9 Online slide deck | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   
   
   
 
 
 
-<meta name="date" content="2022-04-11" />
+<meta name="date" content="2022-04-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -170,9 +170,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.1" data-path="output.html"><a href="output.html#quickomics-visualization"><i class="fa fa-check"></i><b>6.1</b> QuickOmics visualization</a></li>
 <li class="chapter" data-level="6.2" data-path="output.html"><a href="output.html#other-output-files"><i class="fa fa-check"></i><b>6.2</b> Other output files</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="bookdown-report.html"><a href="bookdown-report.html"><i class="fa fa-check"></i><b>7</b> Bookdown report</a></li>
-<li class="chapter" data-level="8" data-path="online-slide-deck.html"><a href="online-slide-deck.html"><i class="fa fa-check"></i><b>8</b> Online slide deck</a></li>
-<li class="chapter" data-level="9" data-path="shinyone.html"><a href="shinyone.html"><i class="fa fa-check"></i><b>9</b> ShinyOne</a></li>
+<li class="chapter" data-level="7" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html"><i class="fa fa-check"></i><b>7</b> Advanced plotting functions</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#pca-plots"><i class="fa fa-check"></i><b>7.1</b> PCA plots</a></li>
+<li class="chapter" data-level="7.2" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#check-covariates"><i class="fa fa-check"></i><b>7.2</b> Check covariates</a></li>
+<li class="chapter" data-level="7.3" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#volcano-plot"><i class="fa fa-check"></i><b>7.3</b> Volcano plot</a></li>
+<li class="chapter" data-level="7.4" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#heatmap"><i class="fa fa-check"></i><b>7.4</b> Heatmap</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="bookdown-report.html"><a href="bookdown-report.html"><i class="fa fa-check"></i><b>8</b> Bookdown report</a></li>
+<li class="chapter" data-level="9" data-path="online-slide-deck.html"><a href="online-slide-deck.html"><i class="fa fa-check"></i><b>9</b> Online slide deck</a></li>
+<li class="chapter" data-level="10" data-path="shinyone.html"><a href="shinyone.html"><i class="fa fa-check"></i><b>10</b> ShinyOne</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -192,11 +199,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="online-slide-deck" class="section level1" number="8">
-<h1><span class="header-section-number">Chapter 8</span> Online slide deck</h1>
+<div id="online-slide-deck" class="section level1" number="9">
+<h1><span class="header-section-number">Chapter 9</span> Online slide deck</h1>
 <p>Powered by reveal.js, the online slide deck is an R markdown template utilized by RNASequest to generate an interactive slide deck with emphasis on the graphical representation of QC and basic analysis plots, which makes the primary analysis presentation-ready for engaging biologists to discuss the initial results immediately. Again, it is also GitHub-friendly in terms of hosting.</p>
-<p>Please visit the online slide deck using the following link:</p>
+<p>Please visit an example of the online slide deck using the following link:</p>
 <p><a href="https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck/index.html" target="_blank">https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck/index.html</a></p>
+<p>Here is the tutorial to create your own slide deck after running the EA pipeline:</p>
+<p><strong>1, Find the path of the bookdown.info.txt file, it is located in:</strong></p>
+<pre><code>***/YourPorjectName/EA******/BookdownReport/bookdown.info.txt</code></pre>
+<p><strong>2, Install the required package: <a href="https://cran.r-project.org/web/packages/revealjs/index.html" target="_blank">revealjs</a></strong></p>
+<pre><code>conda activate ExpressionAnalysis
+
+# Type &#39;R&#39; to activate the R program in terminal
+R
+&gt; install.packages(“revealjs”)
+
+# After installation, quit the R session without saving the workspace
+&gt; quit()
+Save workspace image? [y/n/c]: n</code></pre>
+<p><strong>3, Go to the RNASequest/src dir, and modify line #29 of script ‘Slidedeck.Rmd’:</strong></p>
+<pre><code>info_txt &lt;- &lt;your bookdown.info.txt path&gt;</code></pre>
+<p><strong>4, Finally render the slide deck:</strong></p>
+<p>The slide deck <a href="https://github.com/interactivereport/RNASequest/blob/main/src/Slidedeck.Rmd" target="_blank">Slidedeck.Rmd</a> script is under the /src directory of the RNASequest installation.</p>
+<pre><code>Rscript -e &#39;rmarkdown::render(&quot;~/RNASequest/src/Slidedeck.Rmd&quot;, output_file=&quot;yourslidedeck_name.html&quot;)&#39;</code></pre>
+<p>Then it will generate <strong>yourslidedeck_name.html</strong> for visualization.</p>
 
 </div>
             </section>
@@ -236,7 +262,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/08-OnlineSlideDeck.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/09-OnlineSlideDeck.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -244,7 +270,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/08-OnlineSlideDeck.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/09-OnlineSlideDeck.Rmd",
 "text": null
 },
 "download": null,
