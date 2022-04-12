@@ -1,8 +1,8 @@
 # RNASequest: An end-to-end reproducible RNAseq data analysis and publishing frame-work
 
+![RNASequest](https://interactivereport.github.io/RNASequest/Figure1_sm.png?raw=true "RNASequest")
 
-
-# Expression analysis (EA)
+## Expression analysis (EA)
 
 A pipeline to analysis RNAseq
 
@@ -13,10 +13,10 @@ Four main functions are provided:
   - EArun: Produce QuickOmics object for webserver loading.
   - EA2DA: Produce required data files for DiseaseAtlas project import.
 
-# Installation/Set up
+## Installation/Set up
 Add "/camhpc/ngs/tools/expressionAnalysis" into your **_PATH_** environment variable.
 
-# EAinit
+## EAinit
 ```
 EAinit A/path/to/a/DNAnexus/result/folder
 ```
@@ -31,7 +31,7 @@ There will be five files in the folder:
 
 **_Please pay attention on the std out messages._**
 
-# EAqc
+## EAqc
 ```
 EAqc A/path/to/a/config/file
 ```
@@ -40,7 +40,7 @@ Based on the above results, you can add covariates into **covariates_adjust** in
 
 **_Please pay attention on the std out messages._**
 
-# EArun
+## EArun
 ```
 EArun A/path/to/a/config/file
 ```
@@ -50,7 +50,7 @@ The execution of above command will produce R object for QuickOmics webserver to
 
 The results (three files) currently will need to be copied to a folder on ngs, in order to have web accession. **_Please pay attention on the std out messages._**
 
-# EA2DA
+## EA2DA
 ```
 EA2DA A/path/to/a/config/file
 ```
@@ -58,7 +58,7 @@ The execution of above command will produce 6 data files which are required for 
 
 **_Please fill the empty entries in the Project_Info.csv before import**
 
-# Administration
+## Administration
 There are two config files in the pipeline folder:
  - config.tmp.yml: The template of the config file, with all default values;
  - sys.yml: the system config file, which includes:
