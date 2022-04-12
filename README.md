@@ -8,9 +8,9 @@ Tutorial: https://interactivereport.github.io/RNASequest/tutorial/docs/
 
 ## Expression analysis (EA) component
 
-A pipeline to analysis RNAseq
+A pipeline to RNAseq data analysis
 
-Four main functions are provided:
+Five main functions are provided:
 
   - EAinit: Generate a set of project analysis files based on a DNAnexus result folder.
   - EAqc: Analyze the covariates against the expression to determine if the expression is needed to be adjusted.
@@ -107,7 +107,7 @@ By running the command above, the pipeline will generate a **BookdownReport** fo
 ```
 EA2DA A/path/to/a/config/file
 ```
-The execution of above command will produce 6 data files which are required for the OmicsView project import.
+The execution of above command will produce 6 data files which are required for the [OmicsView](https://github.com/interactivereport/OmicsView) project import.
 
 **_Please fill the empty entries in the Project_Info.csv before import._**
 
@@ -119,7 +119,7 @@ There are two config files in the pipeline folder:
     2. notCovariates: the column names from the sample meta information should not be considred as default covariates
     3. qc2meta: the column names from mapping QC file should be extracted and inserted into sample meta table
     4. QuickOmics_path: the file path to store the files for QuickOmics web server display
-    4. DA_columns: the column names available for the sample meta table in the OmicsView system
+    4. DA_columns: the column names available for the sample meta table in the [OmicsView](https://github.com/interactivereport/OmicsView) system
 
 ## Quickomics component
 
