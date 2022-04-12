@@ -1,4 +1,4 @@
-# RNASequest: An end-to-end reproducible RNAseq data analysis and publishing frame-work
+# RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework
 
 ![RNASequest](https://interactivereport.github.io/RNASequest/Figure1_sm.png?raw=true "RNASequest")
 
