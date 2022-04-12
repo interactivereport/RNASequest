@@ -12,11 +12,13 @@ data-preparation
 retrieving-data-from-ncbi-geo
 file-hierarchy
 self-prepared-files
-running-ea-pipeline
+expression-analysis-ea-component
 eainit
 eaqc
 earun
 eareport
+ea2da
+administration
 output
 quickomics-visualization
 other-output-files
@@ -25,6 +27,7 @@ pca-plot
 covariate-checking
 volcano-plot
 heatmap
-bookdown-report
-online-slide-deck
-shinyone
+quickomics-component
+bookdown-component
+slide-deck-component
+shinyone-component

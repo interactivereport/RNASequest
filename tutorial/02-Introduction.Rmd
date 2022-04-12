@@ -29,4 +29,8 @@ The EA pipeline contains four main scripts:
 
   - **EAreport**
   
-    The last step, EAreport, will generate a user-friendly bookdown report to visualize the EA pipeline results.
+    The next step, EAreport, will generate a user-friendly bookdown report to visualize the EA pipeline results.
+
+  - **EA2DA**
+  
+    The last step, EA2DA, produces 6 data files which are required for the [OmicsView](https://github.com/interactivereport/OmicsView){target="_blank"} project import.

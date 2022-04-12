@@ -1,4 +1,4 @@
-# ShinyOne
+# ShinyOne component
 
 We also developed ShinyOne, which is an R Shiny App displaying a web-based searchable table that lists all projects processed by RNASequest and loaded into Quickomics, with Quickomics launching link for each project. 
 

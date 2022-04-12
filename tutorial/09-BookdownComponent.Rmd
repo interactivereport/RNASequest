@@ -1,4 +1,4 @@
-# Bookdown report
+# Bookdown component
 
 To enable better visualization and immediate delivery of the results, we employed a Bookdown output to present the key tables and figures after running the EA pipeline. 
 

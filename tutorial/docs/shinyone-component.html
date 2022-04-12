@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 Running EA pipeline | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
-  <meta name="description" content="Chapter 5 Running EA pipeline | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <title>Chapter 11 ShinyOne component | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
+  <meta name="description" content="Chapter 11 ShinyOne component | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 Running EA pipeline | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta property="og:title" content="Chapter 11 ShinyOne component | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 Running EA pipeline | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta name="twitter:title" content="Chapter 11 ShinyOne component | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   
   
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="data-preparation.html"/>
-<link rel="next" href="output.html"/>
+<link rel="prev" href="slide-deck-component.html"/>
+
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -158,12 +158,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.2" data-path="data-preparation.html"><a href="data-preparation.html#file-hierarchy"><i class="fa fa-check"></i><b>4.2</b> File hierarchy</a></li>
 <li class="chapter" data-level="4.3" data-path="data-preparation.html"><a href="data-preparation.html#self-prepared-files"><i class="fa fa-check"></i><b>4.3</b> Self-prepared files</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html"><i class="fa fa-check"></i><b>5</b> Running EA pipeline</a>
+<li class="chapter" data-level="5" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html"><i class="fa fa-check"></i><b>5</b> Expression analysis (EA) component</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eainit"><i class="fa fa-check"></i><b>5.1</b> EAinit</a></li>
-<li class="chapter" data-level="5.2" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eaqc"><i class="fa fa-check"></i><b>5.2</b> EAqc</a></li>
-<li class="chapter" data-level="5.3" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#earun"><i class="fa fa-check"></i><b>5.3</b> EArun</a></li>
-<li class="chapter" data-level="5.4" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eareport"><i class="fa fa-check"></i><b>5.4</b> EAreport</a></li>
+<li class="chapter" data-level="5.1" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#eainit"><i class="fa fa-check"></i><b>5.1</b> EAinit</a></li>
+<li class="chapter" data-level="5.2" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#eaqc"><i class="fa fa-check"></i><b>5.2</b> EAqc</a></li>
+<li class="chapter" data-level="5.3" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#earun"><i class="fa fa-check"></i><b>5.3</b> EArun</a></li>
+<li class="chapter" data-level="5.4" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#eareport"><i class="fa fa-check"></i><b>5.4</b> EAreport</a></li>
+<li class="chapter" data-level="5.5" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#ea2da"><i class="fa fa-check"></i><b>5.5</b> EA2DA</a></li>
+<li class="chapter" data-level="5.6" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#administration"><i class="fa fa-check"></i><b>5.6</b> Administration</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="output.html"><a href="output.html"><i class="fa fa-check"></i><b>6</b> Output</a>
 <ul>
@@ -177,9 +179,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.3" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#volcano-plot"><i class="fa fa-check"></i><b>7.3</b> Volcano plot</a></li>
 <li class="chapter" data-level="7.4" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#heatmap"><i class="fa fa-check"></i><b>7.4</b> Heatmap</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="bookdown-report.html"><a href="bookdown-report.html"><i class="fa fa-check"></i><b>8</b> Bookdown report</a></li>
-<li class="chapter" data-level="9" data-path="online-slide-deck.html"><a href="online-slide-deck.html"><i class="fa fa-check"></i><b>9</b> Online slide deck</a></li>
-<li class="chapter" data-level="10" data-path="shinyone.html"><a href="shinyone.html"><i class="fa fa-check"></i><b>10</b> ShinyOne</a></li>
+<li class="chapter" data-level="8" data-path="quickomics-component.html"><a href="quickomics-component.html"><i class="fa fa-check"></i><b>8</b> Quickomics component</a></li>
+<li class="chapter" data-level="9" data-path="bookdown-component.html"><a href="bookdown-component.html"><i class="fa fa-check"></i><b>9</b> Bookdown component</a></li>
+<li class="chapter" data-level="10" data-path="slide-deck-component.html"><a href="slide-deck-component.html"><i class="fa fa-check"></i><b>10</b> Slide deck component</a></li>
+<li class="chapter" data-level="11" data-path="shinyone-component.html"><a href="shinyone-component.html"><i class="fa fa-check"></i><b>11</b> ShinyOne component</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -199,65 +202,99 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="running-ea-pipeline" class="section level1" number="5">
-<h1><span class="header-section-number">Chapter 5</span> Running EA pipeline</h1>
-<p>First, activate the conda environment if you haven’t done so:</p>
-<pre><code>conda activate ExpressionAnalysis</code></pre>
-<div id="eainit" class="section level2" number="5.1">
-<h2><span class="header-section-number">5.1</span> EAinit</h2>
-<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="running-ea-pipeline.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> Path/to/a/DNAnexus/result/folder</span>
-<span id="cb17-2"><a href="running-ea-pipeline.html#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="running-ea-pipeline.html#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Example:</span></span>
-<span id="cb17-4"><a href="running-ea-pipeline.html#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> ~/RNASequest/example/SRP199678</span></code></pre></div>
-<p>Execution of the above command will create a sub-folder (EA[timestamp]) in the specified RNAseq result folder.
-There will be five files in the result folder:</p>
+<div id="shinyone-component" class="section level1" number="11">
+<h1><span class="header-section-number">Chapter 11</span> ShinyOne component</h1>
+<p>We also developed ShinyOne, which is an R Shiny App displaying a web-based searchable table that lists all projects processed by RNASequest and loaded into Quickomics, with Quickomics launching link for each project.</p>
+<p>In the backend of Quickomics, we added the capability to load projects directly from URLs after the data files have been saved at user-specified server locations. Together, ShinyOne and URL loading enable many projects to be powered by one Quickomics instance.</p>
+<p>Please use the following link to access ShinyOne:</p>
+<p><a href="http://shinyone.bxgenomics.com" target="_blank">http://shinyone.bxgenomics.com</a></p>
+<p>To add a new project to ShineOne, one can simply add one line to the project.csv file in the ShinyOne App folder. For example, after processing project SRP199678 using the EA pipeline, we have the following:</p>
 <ul>
-<li>compareInfo.csv: an empty comparison definition file (with header). Please fill in this file before the <code>EArun</code> call.</li>
-<li>config.yml: a config file specifies the parameters of the <code>EAqc</code> and <code>EArun</code>. Please update <strong>covariates_adjust</strong> after <code>EAqc</code>.</li>
-<li>geneAnnotation.csv: a gene annotation file including gene symbol.</li>
-<li>sampleMeta.csv: a sample meta-information file, please feel free to add additional columns whose column names should be considered to be added into <strong>covariates_check</strong> in <em>config.yml</em>.</li>
-<li>alignQC.pdf: plots generated from alignment QC metrics.</li>
+<li><p><strong>QuickOmics Visualization Link:</strong></p>
+<p><a href="https://quickomics.bxgenomics.com/?serverfile=SRP199678" target="_blank">https://quickomics.bxgenomics.com/?serverfile=SRP199678</a></p></li>
+<li><p><strong>SlideDeck:</strong></p>
+<p><a href="https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck" target="_blank">https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck</a></p></li>
+<li><p><strong>Bookdown report:</strong></p>
+<p><a href="https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown" target="_blank">https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown</a></p></li>
 </ul>
-<p><strong><em>Please pay attention to the std out messages.</em></strong></p>
+<p>Here is an example of adding these information to the project.csv file:</p>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Project ID
+</th>
+<th style="text-align:center;">
+Description
+</th>
+<th style="text-align:center;">
+Species
+</th>
+<th style="text-align:center;">
+Contact Person
+</th>
+<th style="text-align:center;">
+Release Date
+</th>
+<th style="text-align:center;">
+URL
+</th>
+<th style="text-align:center;">
+Bookdown
+</th>
+<th style="text-align:center;">
+Slidedeck
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+SRP199678
+</td>
+<td style="text-align:center;min-width: 2in; ">
+SRP199678
+</td>
+<td style="text-align:center;">
+(RNASequest Demo) SRP199678 data from Recount3
+</td>
+<td style="text-align:center;">
+Mouse
+</td>
+<td style="text-align:center;">
+Henry Sun
+</td>
+<td style="text-align:center;">
+3/30/2022
+</td>
+<td style="text-align:center;">
+<a href="https://quickomics.bxgenomics.com/?serverfile=SRP199678" class="uri">https://quickomics.bxgenomics.com/?serverfile=SRP199678</a>
+</td>
+<td style="text-align:center;">
+<a href="https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown" class="uri">https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/Bookdown</a>
+</td>
+<td style="text-align:center;">
+<a href="https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck" class="uri">https://interactivereport.github.io/RNASequest/ShinyOne/SRP199678/SlideDeck</a>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="eaqc" class="section level2" number="5.2">
-<h2><span class="header-section-number">5.2</span> EAqc</h2>
-<pre><code>EAqc Path/to/a/config/file
+<p>And it will show up in the ShinyOne Page:</p>
+<p><a href="https://shinyone.bxgenomics.com/" target="_blank">https://shinyone.bxgenomics.com/</a></p>
+<p><a href="https://interactivereport.github.io/RNASequest/tutorial/images/ShinyOne.png"><img src="https://interactivereport.github.io/RNASequest/tutorial/images/ShinyOne.png" /></a></p>
 
-#Example:
-EAqc ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
-<p>Through executing the command with the above default config file, expression PC analysis will be done against covariates specified in <strong>covariates_check</strong> in the <em>config.yml</em> file. An Excel file will list p-values for all numeric and categorical covariates, and significant ones will be in plot pdf files. The analysis before covariate adjusting will have the prefix <em>covariatePCanalysis_noAdjust</em>.
-Based on the above results, you can add covariates into <strong>covariates_adjust</strong> in the <em>config.yml</em> file, and rerun <code>EAqc</code>. This time additional expression PC analysis will be applied to covariate-adjusted expression with files started with <em>covariatePCanalysis_Adjusted</em>.</p>
-<p><strong><em>Please pay attention to the std out messages.</em></strong></p>
-</div>
-<div id="earun" class="section level2" number="5.3">
-<h2><span class="header-section-number">5.3</span> EArun</h2>
-<pre><code>EArun Path/to/a/config/file
-
-#Example:
-EArun ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
-<p><strong><em>Please fill the compareInfo.csv before executing the above command</em></strong></p>
-<p>Execution of the above command will produce R objects for QuickOmics webserver to load. The process will generate the covariate-adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation.</p>
-<p>The results (four files) can be uploaded to the QuickOmics webserver.</p>
-<p><strong><em>Please pay attention to the std out messages.</em></strong></p>
-</div>
-<div id="eareport" class="section level2" number="5.4">
-<h2><span class="header-section-number">5.4</span> EAreport</h2>
-<pre><code>EAreport Path/to/a/config/file
-
-#Example:
-EAreport ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
-<p>By running the command above, the pipeline will generate a <strong>BookdownReport</strong> folder in the same directory as the config file. This folder contains the raw Rmd files, as well as the final bookdown report, which is the <strong>BookdownReport/docs/index.html</strong> file. If you would like to send the full report to your collaborators, please download the tarball created under the EA working directory, named as <strong>ProjectName_BookdownReport.tar.gz</strong> (ProjectName was extracted from the config.yml file). The index.html inside it is the bookdown report.</p>
-
-</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="data-preparation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="output.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="slide-deck-component.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -288,7 +325,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/05-RunningPipeline.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/11-ShinyOneComponent.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -296,7 +333,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/05-RunningPipeline.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/11-ShinyOneComponent.Rmd",
 "text": null
 },
 "download": null,

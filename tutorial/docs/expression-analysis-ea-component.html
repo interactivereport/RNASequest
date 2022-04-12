@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 8 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
-  <meta name="description" content="Chapter 8 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <title>Chapter 5 Expression analysis (EA) component | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework</title>
+  <meta name="description" content="Chapter 5 Expression analysis (EA) component | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 8 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta property="og:title" content="Chapter 5 Expression analysis (EA) component | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 8 Bookdown report | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
+  <meta name="twitter:title" content="Chapter 5 Expression analysis (EA) component | RNASequest: An end-to-end reproducible RNAseq data analysis and publishing framework" />
   
   
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="advanced-plotting-functions.html"/>
-<link rel="next" href="online-slide-deck.html"/>
+<link rel="prev" href="data-preparation.html"/>
+<link rel="next" href="output.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -158,12 +158,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.2" data-path="data-preparation.html"><a href="data-preparation.html#file-hierarchy"><i class="fa fa-check"></i><b>4.2</b> File hierarchy</a></li>
 <li class="chapter" data-level="4.3" data-path="data-preparation.html"><a href="data-preparation.html#self-prepared-files"><i class="fa fa-check"></i><b>4.3</b> Self-prepared files</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html"><i class="fa fa-check"></i><b>5</b> Running EA pipeline</a>
+<li class="chapter" data-level="5" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html"><i class="fa fa-check"></i><b>5</b> Expression analysis (EA) component</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eainit"><i class="fa fa-check"></i><b>5.1</b> EAinit</a></li>
-<li class="chapter" data-level="5.2" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eaqc"><i class="fa fa-check"></i><b>5.2</b> EAqc</a></li>
-<li class="chapter" data-level="5.3" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#earun"><i class="fa fa-check"></i><b>5.3</b> EArun</a></li>
-<li class="chapter" data-level="5.4" data-path="running-ea-pipeline.html"><a href="running-ea-pipeline.html#eareport"><i class="fa fa-check"></i><b>5.4</b> EAreport</a></li>
+<li class="chapter" data-level="5.1" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#eainit"><i class="fa fa-check"></i><b>5.1</b> EAinit</a></li>
+<li class="chapter" data-level="5.2" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#eaqc"><i class="fa fa-check"></i><b>5.2</b> EAqc</a></li>
+<li class="chapter" data-level="5.3" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#earun"><i class="fa fa-check"></i><b>5.3</b> EArun</a></li>
+<li class="chapter" data-level="5.4" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#eareport"><i class="fa fa-check"></i><b>5.4</b> EAreport</a></li>
+<li class="chapter" data-level="5.5" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#ea2da"><i class="fa fa-check"></i><b>5.5</b> EA2DA</a></li>
+<li class="chapter" data-level="5.6" data-path="expression-analysis-ea-component.html"><a href="expression-analysis-ea-component.html#administration"><i class="fa fa-check"></i><b>5.6</b> Administration</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="output.html"><a href="output.html"><i class="fa fa-check"></i><b>6</b> Output</a>
 <ul>
@@ -177,9 +179,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.3" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#volcano-plot"><i class="fa fa-check"></i><b>7.3</b> Volcano plot</a></li>
 <li class="chapter" data-level="7.4" data-path="advanced-plotting-functions.html"><a href="advanced-plotting-functions.html#heatmap"><i class="fa fa-check"></i><b>7.4</b> Heatmap</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="bookdown-report.html"><a href="bookdown-report.html"><i class="fa fa-check"></i><b>8</b> Bookdown report</a></li>
-<li class="chapter" data-level="9" data-path="online-slide-deck.html"><a href="online-slide-deck.html"><i class="fa fa-check"></i><b>9</b> Online slide deck</a></li>
-<li class="chapter" data-level="10" data-path="shinyone.html"><a href="shinyone.html"><i class="fa fa-check"></i><b>10</b> ShinyOne</a></li>
+<li class="chapter" data-level="8" data-path="quickomics-component.html"><a href="quickomics-component.html"><i class="fa fa-check"></i><b>8</b> Quickomics component</a></li>
+<li class="chapter" data-level="9" data-path="bookdown-component.html"><a href="bookdown-component.html"><i class="fa fa-check"></i><b>9</b> Bookdown component</a></li>
+<li class="chapter" data-level="10" data-path="slide-deck-component.html"><a href="slide-deck-component.html"><i class="fa fa-check"></i><b>10</b> Slide deck component</a></li>
+<li class="chapter" data-level="11" data-path="shinyone-component.html"><a href="shinyone-component.html"><i class="fa fa-check"></i><b>11</b> ShinyOne component</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -199,21 +202,99 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="bookdown-report" class="section level1" number="8">
-<h1><span class="header-section-number">Chapter 8</span> Bookdown report</h1>
-<p>To enable better visualization and immediate delivery of the results, we employed a Bookdown output to present the key tables and figures after running the EA pipeline.</p>
-<p><a href="https://bookdown.org/" target="_blank">Bookdown</a> is a book-like long-form report originated from R Markdown with dynamic graphics and user-friendly layouts. The bookdown document generated by our pipeline, an interactive webpage in HTML format, allows users to explore the results on a web browser without installing any specific software. It contains a high-level summary of the project, such as the data quality, significant covariates, as well as basic plots including PCA, heatmaps, and volcano plots. Further, it can be hosted in GitHub as exemplified here, for broad sharing especially in publication.</p>
-<p>Here is a screenshot of a bookdown report generated after running the EA pipeline. It contains 5 sections showing multiple exploratory analysis figures: QC figures, Covariates, PCA, Volcano plots, and Heatmaps.</p>
-<p><a href="https://interactivereport.github.io/RNASequest/tutorial/images/Bookdown_example.png"><img src="https://interactivereport.github.io/RNASequest/tutorial/images/Bookdown_example.png" /></a></p>
+<div id="expression-analysis-ea-component" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Expression analysis (EA) component</h1>
+<p>First, activate the conda environment if you haven’t done so:</p>
+<pre><code>conda activate ExpressionAnalysis</code></pre>
+<div id="eainit" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> EAinit</h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="expression-analysis-ea-component.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> Path/to/a/DNAnexus/result/folder</span>
+<span id="cb17-2"><a href="expression-analysis-ea-component.html#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="expression-analysis-ea-component.html#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Example:</span></span>
+<span id="cb17-4"><a href="expression-analysis-ea-component.html#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="ex">EAinit</span> ~/RNASequest/example/SRP199678</span></code></pre></div>
+<p>Execution of the above command will create a sub-folder (EA[timestamp]) in the specified RNAseq result folder.
+There will be five files in the result folder:</p>
+<ul>
+<li>compareInfo.csv: an empty comparison definition file (with header). Please fill in this file before the <code>EArun</code> call.</li>
+<li>config.yml: a config file specifies the parameters of the <code>EAqc</code> and <code>EArun</code>. Please update <strong>covariates_adjust</strong> after <code>EAqc</code>.</li>
+<li>geneAnnotation.csv: a gene annotation file including gene symbol.</li>
+<li>sampleMeta.csv: a sample meta-information file, please feel free to add additional columns whose column names should be considered to be added into <strong>covariates_check</strong> in <em>config.yml</em>.</li>
+<li>alignQC.pdf: plots generated from alignment QC metrics.</li>
+</ul>
+<p><strong><em>Please pay attention to the std out messages.</em></strong></p>
+</div>
+<div id="eaqc" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> EAqc</h2>
+<pre><code>EAqc Path/to/a/config/file
 
+#Example:
+EAqc ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
+<p>Through executing the command with the above default config file, expression PC analysis will be done against covariates specified in <strong>covariates_check</strong> in the <em>config.yml</em> file. An Excel file will list p-values for all numeric and categorical covariates, and significant ones will be in plot pdf files. The analysis before covariate adjusting will have the prefix <em>covariatePCanalysis_noAdjust</em>.
+Based on the above results, you can add covariates into <strong>covariates_adjust</strong> in the <em>config.yml</em> file, and rerun <code>EAqc</code>. This time additional expression PC analysis will be applied to covariate-adjusted expression with files started with <em>covariatePCanalysis_Adjusted</em>.</p>
+<p><strong><em>Please pay attention to the std out messages.</em></strong></p>
+</div>
+<div id="earun" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> EArun</h2>
+<pre><code>EArun Path/to/a/config/file
+
+#Example:
+EArun ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
+<p><strong><em>Please fill the compareInfo.csv before executing the above command</em></strong></p>
+<p>Execution of the above command will produce R objects for QuickOmics webserver to load. The process will generate the covariate-adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation.</p>
+<p>The results (four files) can be uploaded to the QuickOmics webserver.</p>
+<p><strong><em>Please pay attention to the std out messages.</em></strong></p>
+</div>
+<div id="eareport" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> EAreport</h2>
+<pre><code>EAreport Path/to/a/config/file
+
+#Example:
+EAreport ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
+<p>By running the command above, the pipeline will generate a <strong>BookdownReport</strong> folder in the same directory as the config file. This folder contains the raw Rmd files, as well as the final bookdown report, which is the <strong>BookdownReport/docs/index.html</strong> file. If you would like to send the full report to your collaborators, please download the tarball created under the EA working directory, named as <strong>ProjectName_BookdownReport.tar.gz</strong> (ProjectName was extracted from the config.yml file). The index.html inside it is the bookdown report.</p>
+</div>
+<div id="ea2da" class="section level2" number="5.5">
+<h2><span class="header-section-number">5.5</span> EA2DA</h2>
+<pre><code>EA2DA A/path/to/a/config/file
+
+#Example:
+EA2DA ~/RNASequest/example/SRP199678/EA20220328_0/config.yml</code></pre>
+<p>The execution of above command will produce 6 data files which are required for the <a href="https://github.com/interactivereport/OmicsView" target="_blank">OmicsView</a> project import.</p>
+<p><strong><em>Please fill the empty entries in the Project_Info.csv before import.</em></strong></p>
+</div>
+<div id="administration" class="section level2" number="5.6">
+<h2><span class="header-section-number">5.6</span> Administration</h2>
+<p>There are two config files in the pipeline folder:</p>
+<ul>
+<li><p>config.tmp.yml: The template of the config file, with all default values;</p></li>
+<li><p>sys.yml: the system config file, which includes:</p>
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>genome_path: the root path where the genome definition files (gtf) are located</li>
+</ol></li>
+<li><ol start="2" style="list-style-type: decimal">
+<li>notCovariates: the column names from the sample meta information should not be considred as default covariates</li>
+</ol></li>
+<li><ol start="3" style="list-style-type: decimal">
+<li>qc2meta: the column names from mapping QC file should be extracted and inserted into sample meta table</li>
+</ol></li>
+<li><ol start="4" style="list-style-type: decimal">
+<li>QuickOmics_path: the file path to store the files for QuickOmics web server display</li>
+</ol></li>
+<li><ol start="5" style="list-style-type: decimal">
+<li>DA_columns: the column names available for the sample meta table in the <a href="https://github.com/interactivereport/OmicsView" target="_blank">OmicsView</a> system</li>
+</ol></li>
+</ul></li>
+</ul>
+
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="advanced-plotting-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="online-slide-deck.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="data-preparation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="output.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -244,7 +325,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/08-BookdownReport.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/edit/gh-pages/05-ExpressionAnalysisComponent.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -252,7 +333,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/08-BookdownReport.Rmd",
+"link": "https://github.com/interactivereport/RNASequest/blob/gh-pages/05-ExpressionAnalysisComponent.Rmd",
 "text": null
 },
 "download": null,

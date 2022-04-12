@@ -1,0 +1,11 @@
+# Quickomics component
+
+Quickomics v2.0 is a user-friendly platform for visualizing the results interactively.
+
+Please find the following resources:
+
+GitHub: [https://github.com/interactivereport/Quickomics](https://github.com/interactivereport/Quickomics){target="_blank"}
+
+Tutorial: [https://interactivereport.github.io/Quickomics/tutorial/docs/](https://interactivereport.github.io/Quickomics/tutorial/docs/){target="_blank"}
+
+[![](https://interactivereport.github.io/Quickomics/Upload_Files.png)](https://interactivereport.github.io/Quickomics/Upload_Files.png)

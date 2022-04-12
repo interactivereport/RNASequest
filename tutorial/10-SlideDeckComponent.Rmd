@@ -1,4 +1,4 @@
-# Online slide deck
+# Slide deck component
 
 Powered by reveal.js, the online slide deck is an R markdown template utilized by RNASequest to generate an interactive slide deck with emphasis on the graphical representation of QC and basic analysis plots, which makes the primary analysis presentation-ready for engaging biologists to discuss the initial results immediately. Again, it is also GitHub-friendly in terms of hosting.
 

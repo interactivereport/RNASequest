@@ -1,4 +1,4 @@
-# Running EA pipeline
+# Expression analysis (EA) component
 
 First, activate the conda environment if you haven't done so:
 
@@ -65,3 +65,31 @@ EAreport ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
 ```
 
 By running the command above, the pipeline will generate a **BookdownReport** folder in the same directory as the config file. This folder contains the raw Rmd files, as well as the final bookdown report, which is the **BookdownReport/docs/index.html** file. If you would like to send the full report to your collaborators, please download the tarball created under the EA working directory, named as **ProjectName_BookdownReport.tar.gz** (ProjectName was extracted from the config.yml file). The index.html inside it is the bookdown report.
+
+## EA2DA
+```
+EA2DA A/path/to/a/config/file
+
+#Example:
+EA2DA ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
+```
+The execution of above command will produce 6 data files which are required for the [OmicsView](https://github.com/interactivereport/OmicsView){target="_blank"} project import.
+
+**_Please fill the empty entries in the Project_Info.csv before import._**
+
+## Administration
+There are two config files in the pipeline folder:
+
+ - config.tmp.yml: The template of the config file, with all default values;
+ 
+ - sys.yml: the system config file, which includes:
+ 
+    - 1. genome_path: the root path where the genome definition files (gtf) are located
+    
+    - 2. notCovariates: the column names from the sample meta information should not be considred as default covariates
+    
+    - 3. qc2meta: the column names from mapping QC file should be extracted and inserted into sample meta table
+    
+    - 4. QuickOmics_path: the file path to store the files for QuickOmics web server display
+    
+    - 5. DA_columns: the column names available for the sample meta table in the [OmicsView](https://github.com/interactivereport/OmicsView){target="_blank"} system
