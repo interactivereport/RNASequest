@@ -43,3 +43,19 @@ Rscript -e 'rmarkdown::render("~/RNASequest/src/Slidedeck.Rmd", output_file="you
 ```
 
 Then it will generate **yourslidedeck_name.html** for visualization.
+
+**Please note:**
+
+1, Please run [EAreport](https://github.com/interactivereport/RNASequest/blob/main/EAreport){target="_blank"} first before generating the slide deck. For more details, please check the [manual](https://interactivereport.github.io/RNASequest/tutorial/docs/running-ea-pipeline.html#eareport){target="_blank"}.
+
+2, The Slidedeck.Rmd only plots the first two covariates for ‘covariates plot’, so as to avoid plotting hundreds of figures/slides. If users want to plot a specific covariates, please edit the **‘config.yml’** file by moving your desired covariates to the first two.
+
+For example:
+
+```
+# The original:
+covariates_check: [cvt1, cvt2, …, cv_desire1, cv_desire2, …]
+
+# Change it to:
+covariates_check: [cv_desire1, cv_desire2, cvt1, cvt2, …]
+```

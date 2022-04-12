@@ -223,6 +223,15 @@ Save workspace image? [y/n/c]: n</code></pre>
 <p>The slide deck <a href="https://github.com/interactivereport/RNASequest/blob/main/src/Slidedeck.Rmd" target="_blank">Slidedeck.Rmd</a> script is under the /src directory of the RNASequest installation.</p>
 <pre><code>Rscript -e &#39;rmarkdown::render(&quot;~/RNASequest/src/Slidedeck.Rmd&quot;, output_file=&quot;yourslidedeck_name.html&quot;)&#39;</code></pre>
 <p>Then it will generate <strong>yourslidedeck_name.html</strong> for visualization.</p>
+<p><strong>Please note:</strong></p>
+<p>1, Please run <a href="https://github.com/interactivereport/RNASequest/blob/main/EAreport" target="_blank">EAreport</a> first before generating the slide deck. For more details, please check the <a href="https://interactivereport.github.io/RNASequest/tutorial/docs/running-ea-pipeline.html#eareport" target="_blank">manual</a>.</p>
+<p>2, The Slidedeck.Rmd only plots the first two covariates for ‘covariates plot’, so as to avoid plotting hundreds of figures/slides. If users want to plot a specific covariates, please edit the <strong>‘config.yml’</strong> file by moving your desired covariates to the first two.</p>
+<p>For example:</p>
+<pre><code># The original:
+covariates_check: [cvt1, cvt2, …, cv_desire1, cv_desire2, …]
+
+# Change it to:
+covariates_check: [cv_desire1, cv_desire2, cvt1, cvt2, …]</code></pre>
 
 </div>
             </section>
