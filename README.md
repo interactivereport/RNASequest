@@ -45,7 +45,6 @@ PATH=$PATH:$HOME/RNASequest
 # Source the file
 source ~/.bash_profile
 ```
-
 ### EAinit
 ```
 EAinit A/path/to/a/DNAnexus/result/folder
@@ -122,7 +121,7 @@ There are two config files in the pipeline folder:
     4. QuickOmics_path: the file path to store the files for QuickOmics web server display
     4. DA_columns: the column names available for the sample meta table in the OmicsView system
 
-## Quickomic component
+## Quickomics component
 
 GitHub: https://github.com/interactivereport/Quickomics
 
