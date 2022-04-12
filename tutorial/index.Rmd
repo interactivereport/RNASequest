@@ -31,6 +31,9 @@ author:
   - name: Hima Yalamanchili
     email: hima.yalamanchili@biogen.com
     affiliation: Biogen
+  - name: Yirui Chen
+    email: yirui.chen@biogen.com
+    affiliation: Biogen
   - name: Xinmin Zhang
     email: xinmin.zhang@biogen.com
     affiliation: BioInfoRx
