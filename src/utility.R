@@ -605,7 +605,7 @@ useAlias <- function(config,D){
         if(!is.null(D$logTPM)) colnames(D$logTPM) <- rownames(D$meta)
         if(!is.null(D$seqQC)) rownames(D$seqQC) <- rownames(D$meta)
     }
-    print(names(D))
+    #print(names(D))
     return(D)
 }
 
