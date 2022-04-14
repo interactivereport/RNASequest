@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Covariates | Bookdown report of SRP094781</title>
+  <meta name="description" content="Chapter 2 Covariates | Bookdown report of SRP094781" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Covariates | Bookdown report of SRP094781" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Covariates | Bookdown report of SRP094781" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="qc-plots.html"/>
+<link rel="next" href="pca-plots.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Expression Analysis Report</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Introduction</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-overview"><i class="fa fa-check"></i>Project overview</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-files"><i class="fa fa-check"></i>Project files</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="qc-plots.html"><a href="qc-plots.html"><i class="fa fa-check"></i><b>1</b> QC plots</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="qc-plots.html"><a href="qc-plots.html#top-gene-ratio"><i class="fa fa-check"></i><b>1.1</b> Top gene ratio</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="qc-plots.html"><a href="qc-plots.html#top1-of-total-tpm"><i class="fa fa-check"></i><b>1.1.1</b> Top1 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.2" data-path="qc-plots.html"><a href="qc-plots.html#top10-of-total-tpm"><i class="fa fa-check"></i><b>1.1.2</b> Top10 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.3" data-path="qc-plots.html"><a href="qc-plots.html#top30-of-total-tpm"><i class="fa fa-check"></i><b>1.1.3</b> Top30 % of Total TPM</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="qc-plots.html"><a href="qc-plots.html#top-expressed-genes"><i class="fa fa-check"></i><b>1.2</b> Top expressed genes</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-tpm"><i class="fa fa-check"></i><b>1.2.1</b> Top genes by TPM</a></li>
+<li class="chapter" data-level="1.2.2" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-counts"><i class="fa fa-check"></i><b>1.2.2</b> Top genes by counts</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="covariates.html"><a href="covariates.html"><i class="fa fa-check"></i><b>2</b> Covariates</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="covariates.html"><a href="covariates.html#list-of-covariates"><i class="fa fa-check"></i><b>2.1</b> List of covariates</a></li>
+<li class="chapter" data-level="2.2" data-path="covariates.html"><a href="covariates.html#plots-of-significant-covariates"><i class="fa fa-check"></i><b>2.2</b> Plots of significant covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="pca-plots.html"><a href="pca-plots.html"><i class="fa fa-check"></i><b>3</b> PCA plots</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="pca-plots.html"><a href="pca-plots.html#general-pca-plot"><i class="fa fa-check"></i><b>3.1</b> General PCA plot</a></li>
+<li class="chapter" data-level="3.2" data-path="pca-plots.html"><a href="pca-plots.html#pca-plots-by-covariates"><i class="fa fa-check"></i><b>3.2</b> PCA plots by covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="volcano-plots.html"><a href="volcano-plots.html"><i class="fa fa-check"></i><b>4</b> Volcano plots</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp2.vs.grp1"><i class="fa fa-check"></i><b>4.1</b> Comparison: group_grp2.vs.grp1</a></li>
+<li class="chapter" data-level="4.2" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp3.vs.grp1"><i class="fa fa-check"></i><b>4.2</b> Comparison: group_grp3.vs.grp1</a></li>
+<li class="chapter" data-level="4.3" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp3.vs.grp2"><i class="fa fa-check"></i><b>4.3</b> Comparison: group_grp3.vs.grp2</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="heatmap-plots.html"><a href="heatmap-plots.html"><i class="fa fa-check"></i><b>5</b> Heatmap plots</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-1000-most-variable-genes"><i class="fa fa-check"></i><b>5.1</b> Heatmap of 1000 most variable genes</a></li>
+<li class="chapter" data-level="5.2" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-all-comparisons"><i class="fa fa-check"></i><b>5.2</b> Heatmap of all comparisons</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp2.vs.grp1-1"><i class="fa fa-check"></i><b>5.2.1</b> Comparison: group_grp2.vs.grp1</a></li>
+<li class="chapter" data-level="5.2.2" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp3.vs.grp1-1"><i class="fa fa-check"></i><b>5.2.2</b> Comparison: group_grp3.vs.grp1</a></li>
+<li class="chapter" data-level="5.2.3" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp3.vs.grp2-1"><i class="fa fa-check"></i><b>5.2.3</b> Comparison: group_grp3.vs.grp2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bookdown report of SRP094781</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="covariates" class="section level1" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Covariates</h1>
+<p>This <strong>Covariates</strong> chapter provides flexibility to visualize the covariates in the current dataset, such as Age, Group, Genotype, etc. This dynamic table contains several columns, including the PC, Covariate, Type, Significance, p-value, and FDR for each covariate listed.</p>
+<p>The <strong>PC</strong> column shows the principal component that the covariate belongs to. We will see the same covariate name appears in different PC, such as PC1 and PC2, with different Significance.</p>
+<p>The <strong>Covariate</strong> column displays the name of each covariate, and the terms are self-explainable. For example, some covariates are the sample annotation of the dataset, such as Age, Group, Genotype. On the other hand, some covariates are related to the data analysis steps, such as the metrics from the genome mapping step. If the data is downloaded from GEO and incorporated into the pipeline using <a href="http://rna.recount.bio/" target="_blank">recount3</a>, metrics from the recount3 pipeline will also show up in the <strong>Covariate</strong> column.</p>
+<p>The <strong>Type</strong> column indicates the type of each covariate. Covariates can be Numeric or Categorical types.</p>
+<p>The <strong>Significance</strong> column lists the ANOVA FDR information between each covariate v.s. PC. For Numeric covariates, an r value is associated with each ANOVA test. However, for Categorical covariates, only FDR values are displayed.</p>
+<p>The last two columns, <strong>P-value</strong> and <strong>FDR</strong>, indicate the results of statistical tests (P-value) and adjusted P-values.</p>
+<div id="list-of-covariates" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> List of covariates</h2>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-6">Table 2.1: </span>Significant covariates
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+PC
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Covariate
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Type
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Significance
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+P-value
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_splices_at_ac
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_splices_at_ac vs. PC1: r=-0.544; fdr=2.7e-07
+</td>
+<td style="text-align:center;">
+0.0000000
+</td>
+<td style="text-align:center;">
+0.0000003
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_of_reads_unmapped_other
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_of_reads_unmapped_other vs. PC2: r=0.408; fdr=1.4e-03
+</td>
+<td style="text-align:center;">
+0.0000104
+</td>
+<td style="text-align:center;">
+0.0014013
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_intron_sum
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_intron_sum vs. PC1: r=-0.367; fdr=3.8e-03
+</td>
+<td style="text-align:center;">
+0.0000882
+</td>
+<td style="text-align:center;">
+0.0038327
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_unmapped_other
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_unmapped_other vs. PC2: r=0.364; fdr=3.8e-03
+</td>
+<td style="text-align:center;">
+0.0000994
+</td>
+<td style="text-align:center;">
+0.0038327
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_splices_gc_ag
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_splices_gc_ag vs. PC1: r=-0.371; fdr=3.8e-03
+</td>
+<td style="text-align:center;">
+0.0000725
+</td>
+<td style="text-align:center;">
+0.0038327
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_junction_count
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_junction_count vs. PC1: r=-0.365; fdr=3.8e-03
+</td>
+<td style="text-align:center;">
+0.0000947
+</td>
+<td style="text-align:center;">
+0.0038327
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_unmapped_other_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_unmapped_other_both vs. PC2: r=0.364; fdr=3.8e-03
+</td>
+<td style="text-align:center;">
+0.0000994
+</td>
+<td style="text-align:center;">
+0.0038327
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_exon_fc_unique_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_exon_fc_unique_percent vs. PC1: r=0.355; fdr=4.5e-03
+</td>
+<td style="text-align:center;">
+0.0001502
+</td>
+<td style="text-align:center;">
+0.0045066
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_intron_sum_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_intron_sum_percent vs. PC1: r=-0.356; fdr=4.5e-03
+</td>
+<td style="text-align:center;">
+0.0001457
+</td>
+<td style="text-align:center;">
+0.0045066
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_bc_frag_mean_length
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_bc_frag_mean_length vs. PC2: r=0.35; fdr=5.2e-03
+</td>
+<td style="text-align:center;">
+0.0001911
+</td>
+<td style="text-align:center;">
+0.0051596
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_mapped_reads_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_mapped_reads_both vs. PC1: r=-0.346; fdr=5.7e-03
+</td>
+<td style="text-align:center;">
+0.0002311
+</td>
+<td style="text-align:center;">
+0.0056714
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_aligned_readspercent_chrx
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_aligned_readspercent_chrx vs. PC1: r=-0.34; fdr=6.1e-03
+</td>
+<td style="text-align:center;">
+0.0003010
+</td>
+<td style="text-align:center;">
+0.0061227
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_deletion_average_length
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_deletion_average_length vs. PC1: r=-0.339; fdr=6.1e-03
+</td>
+<td style="text-align:center;">
+0.0003047
+</td>
+<td style="text-align:center;">
+0.0061227
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_seq_qc_percentg
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_seq_qc_percentg vs. PC1: r=0.339; fdr=6.1e-03
+</td>
+<td style="text-align:center;">
+0.0003175
+</td>
+<td style="text-align:center;">
+0.0061227
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_uniquely_mapped_reads_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_uniquely_mapped_reads_percent vs. PC1: r=-0.335; fdr=6.1e-03
+</td>
+<td style="text-align:center;">
+0.0003631
+</td>
+<td style="text-align:center;">
+0.0061281
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_uniquely_mapped_reads_percent_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_uniquely_mapped_reads_percent_both vs. PC1: r=-0.337; fdr=6.1e-03
+</td>
+<td style="text-align:center;">
+0.0003450
+</td>
+<td style="text-align:center;">
+0.0061281
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_reads_unmapped_too_short_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_reads_unmapped_too_short_both vs. PC1: r=0.334; fdr=6.2e-03
+</td>
+<td style="text-align:center;">
+0.0003908
+</td>
+<td style="text-align:center;">
+0.0062076
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_gene_fc_unique_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_gene_fc_unique_percent vs. PC1: r=0.332; fdr=6.3e-03
+</td>
+<td style="text-align:center;">
+0.0004206
+</td>
+<td style="text-align:center;">
+0.0063086
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_of_reads_unmapped_too_short
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_of_reads_unmapped_too_short vs. PC1: r=0.325; fdr=7.9e-03
+</td>
+<td style="text-align:center;">
+0.0005535
+</td>
+<td style="text-align:center;">
+0.0078648
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC3
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_bc_auc_unique_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_bc_auc_unique_percent vs. PC3: r=0.306; fdr=1.7e-02
+</td>
+<td style="text-align:center;">
+0.0012235
+</td>
+<td style="text-align:center;">
+0.0165175
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_unmapped_too_short
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_unmapped_too_short vs. PC1: r=0.301; fdr=1.8e-02
+</td>
+<td style="text-align:center;">
+0.0014488
+</td>
+<td style="text-align:center;">
+0.0177802
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_unmapped_too_short_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_unmapped_too_short_both vs. PC1: r=0.301; fdr=1.8e-02
+</td>
+<td style="text-align:center;">
+0.0014488
+</td>
+<td style="text-align:center;">
+0.0177802
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_of_reads_mapped_to_too_many_loci
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_of_reads_mapped_to_too_many_loci vs. PC2: r=0.3; fdr=1.8e-02
+</td>
+<td style="text-align:center;">
+0.0015278
+</td>
+<td style="text-align:center;">
+0.0179345
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_seq_qc_percenta
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_seq_qc_percenta vs. PC1: r=-0.296; fdr=2.0e-02
+</td>
+<td style="text-align:center;">
+0.0017673
+</td>
+<td style="text-align:center;">
+0.0198821
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_reads_mapped_to_too_many_loci_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_reads_mapped_to_too_many_loci_both vs. PC2: r=0.292; fdr=2.3e-02
+</td>
+<td style="text-align:center;">
+0.0020858
+</td>
+<td style="text-align:center;">
+0.0225270
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_of_reads_mapped_to_multiple_loci
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_of_reads_mapped_to_multiple_loci vs. PC2: r=-0.288; fdr=2.4e-02
+</td>
+<td style="text-align:center;">
+0.0024343
+</td>
+<td style="text-align:center;">
+0.0237980
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_mapped_to_multiple_loci
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_mapped_to_multiple_loci vs. PC2: r=-0.287; fdr=2.4e-02
+</td>
+<td style="text-align:center;">
+0.0024692
+</td>
+<td style="text-align:center;">
+0.0237980
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_mapped_to_multiple_loci_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_mapped_to_multiple_loci_both vs. PC2: r=-0.287; fdr=2.4e-02
+</td>
+<td style="text-align:center;">
+0.0024692
+</td>
+<td style="text-align:center;">
+0.0237980
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_reads_mapped_to_multiple_loci_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_reads_mapped_to_multiple_loci_both vs. PC2: r=-0.286; fdr=2.4e-02
+</td>
+<td style="text-align:center;">
+0.0025561
+</td>
+<td style="text-align:center;">
+0.0237980
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_bc_auc_unique_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_bc_auc_unique_percent vs. PC1: r=0.277; fdr=3.2e-02
+</td>
+<td style="text-align:center;">
+0.0036048
+</td>
+<td style="text-align:center;">
+0.0324429
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_of_reads_unmapped_other
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_of_reads_unmapped_other vs. PC1: r=-0.274; fdr=3.4e-02
+</td>
+<td style="text-align:center;">
+0.0038764
+</td>
+<td style="text-align:center;">
+0.0337622
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_reads_unmapped_other_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_reads_unmapped_other_both vs. PC1: r=-0.273; fdr=3.4e-02
+</td>
+<td style="text-align:center;">
+0.0040591
+</td>
+<td style="text-align:center;">
+0.0342487
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_aligned_readspercent_chrm
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_aligned_readspercent_chrm vs. PC2: r=-0.267; fdr=4.1e-02
+</td>
+<td style="text-align:center;">
+0.0050544
+</td>
+<td style="text-align:center;">
+0.0413540
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+group
+</td>
+<td style="text-align:center;">
+Categorical
+</td>
+<td style="text-align:center;">
+group vs. PC1 ANOVA fdr: 4.9e-02
+</td>
+<td style="text-align:center;">
+0.0121922
+</td>
+<td style="text-align:center;">
+0.0487687
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+sra_sample_attributes
+</td>
+<td style="text-align:center;">
+Categorical
+</td>
+<td style="text-align:center;">
+sra_sample_attributes vs. PC1 ANOVA fdr: 4.9e-02
+</td>
+<td style="text-align:center;">
+0.0121922
+</td>
+<td style="text-align:center;">
+0.0487687
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+response
+</td>
+<td style="text-align:center;">
+Categorical
+</td>
+<td style="text-align:center;">
+response vs. PC1 ANOVA fdr: 4.9e-02
+</td>
+<td style="text-align:center;">
+0.0121922
+</td>
+<td style="text-align:center;">
+0.0487687
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_junction_count
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_junction_count vs. PC2: r=0.256; fdr=5.7e-02
+</td>
+<td style="text-align:center;">
+0.0072009
+</td>
+<td style="text-align:center;">
+0.0571834
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC3
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_bc_auc_all_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_bc_auc_all_percent vs. PC3: r=0.255; fdr=5.8e-02
+</td>
+<td style="text-align:center;">
+0.0075149
+</td>
+<td style="text-align:center;">
+0.0578633
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_seq_qc_percentc
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_seq_qc_percentc vs. PC2: r=0.254; fdr=5.8e-02
+</td>
+<td style="text-align:center;">
+0.0077151
+</td>
+<td style="text-align:center;">
+0.0578633
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_reads_mapped_to_multiple_loci_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_reads_mapped_to_multiple_loci_both vs. PC1: r=0.25; fdr=6.1e-02
+</td>
+<td style="text-align:center;">
+0.0086196
+</td>
+<td style="text-align:center;">
+0.0612446
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_seq_qc_percentt
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_seq_qc_percentt vs. PC1: r=-0.251; fdr=6.1e-02
+</td>
+<td style="text-align:center;">
+0.0085142
+</td>
+<td style="text-align:center;">
+0.0612446
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_percent_of_reads_mapped_to_multiple_loci
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_percent_of_reads_mapped_to_multiple_loci vs. PC1: r=0.247; fdr=6.4e-02
+</td>
+<td style="text-align:center;">
+0.0096109
+</td>
+<td style="text-align:center;">
+0.0639623
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_mapped_to_too_many_loci
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_mapped_to_too_many_loci vs. PC2: r=0.247; fdr=6.4e-02
+</td>
+<td style="text-align:center;">
+0.0097128
+</td>
+<td style="text-align:center;">
+0.0639623
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_mapped_to_too_many_loci_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_mapped_to_too_many_loci_both vs. PC2: r=0.247; fdr=6.4e-02
+</td>
+<td style="text-align:center;">
+0.0097128
+</td>
+<td style="text-align:center;">
+0.0639623
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_unmapped_other
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_unmapped_other vs. PC1: r=-0.244; fdr=6.7e-02
+</td>
+<td style="text-align:center;">
+0.0106223
+</td>
+<td style="text-align:center;">
+0.0666982
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_star_number_of_reads_unmapped_other_both
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_star_number_of_reads_unmapped_other_both vs. PC1: r=-0.244; fdr=6.7e-02
+</td>
+<td style="text-align:center;">
+0.0106223
+</td>
+<td style="text-align:center;">
+0.0666982
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_bc_auc_all_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_bc_auc_all_percent vs. PC1: r=0.229; fdr=9.8e-02
+</td>
+<td style="text-align:center;">
+0.0164923
+</td>
+<td style="text-align:center;">
+0.0975494
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC1
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_gene_fc_all_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_gene_fc_all_percent vs. PC1: r=0.23; fdr=9.8e-02
+</td>
+<td style="text-align:center;">
+0.0159684
+</td>
+<td style="text-align:center;">
+0.0975494
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PC2
+</td>
+<td style="text-align:center;min-width: 2in; ">
+recount_qc_gene_fc_unique_percent
+</td>
+<td style="text-align:center;">
+Numeric
+</td>
+<td style="text-align:center;">
+recount_qc_gene_fc_unique_percent vs. PC2: r=-0.229; fdr=9.8e-02
+</td>
+<td style="text-align:center;">
+0.0166195
+</td>
+<td style="text-align:center;">
+0.0975494
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="plots-of-significant-covariates" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Plots of significant covariates</h2>
+<p>Loop through the significant covariates and product all plots.</p>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-4.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-5.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-6.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-7.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-8.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-9.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-10.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-11.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-12.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-13.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-14.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-15.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-16.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-17.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-18.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-19.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-20.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-21.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-22.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-23.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-24.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-25.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-26.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-27.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-28.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-29.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-30.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-31.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-32.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-33.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-34.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-35.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-36.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-37.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-38.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-39.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-40.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-41.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-42.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-43.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-44.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-45.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-46.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-47.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-48.png" width="672" /><img src="bookdownproj_files/figure-html/unnamed-chunk-7-49.png" width="672" /></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="qc-plots.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="pca-plots.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 1 QC plots | Bookdown report of SRP039361</title>
+  <meta name="description" content="Chapter 1 QC plots | Bookdown report of SRP039361" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 1 QC plots | Bookdown report of SRP039361" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 1 QC plots | Bookdown report of SRP039361" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="covariates.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Expression Analysis Report</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Introduction</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-overview"><i class="fa fa-check"></i>Project overview</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-files"><i class="fa fa-check"></i>Project files</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="qc-plots.html"><a href="qc-plots.html"><i class="fa fa-check"></i><b>1</b> QC plots</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="qc-plots.html"><a href="qc-plots.html#top-gene-ratio"><i class="fa fa-check"></i><b>1.1</b> Top gene ratio</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="qc-plots.html"><a href="qc-plots.html#top1-of-total-tpm"><i class="fa fa-check"></i><b>1.1.1</b> Top1 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.2" data-path="qc-plots.html"><a href="qc-plots.html#top10-of-total-tpm"><i class="fa fa-check"></i><b>1.1.2</b> Top10 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.3" data-path="qc-plots.html"><a href="qc-plots.html#top30-of-total-tpm"><i class="fa fa-check"></i><b>1.1.3</b> Top30 % of Total TPM</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="qc-plots.html"><a href="qc-plots.html#top-expressed-genes"><i class="fa fa-check"></i><b>1.2</b> Top expressed genes</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-tpm"><i class="fa fa-check"></i><b>1.2.1</b> Top genes by TPM</a></li>
+<li class="chapter" data-level="1.2.2" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-counts"><i class="fa fa-check"></i><b>1.2.2</b> Top genes by counts</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="covariates.html"><a href="covariates.html"><i class="fa fa-check"></i><b>2</b> Covariates</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="covariates.html"><a href="covariates.html#list-of-covariates"><i class="fa fa-check"></i><b>2.1</b> List of covariates</a></li>
+<li class="chapter" data-level="2.2" data-path="covariates.html"><a href="covariates.html#plots-of-significant-covariates"><i class="fa fa-check"></i><b>2.2</b> Plots of significant covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="pca-plots.html"><a href="pca-plots.html"><i class="fa fa-check"></i><b>3</b> PCA plots</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="pca-plots.html"><a href="pca-plots.html#general-pca-plot"><i class="fa fa-check"></i><b>3.1</b> General PCA plot</a></li>
+<li class="chapter" data-level="3.2" data-path="pca-plots.html"><a href="pca-plots.html#pca-plots-by-covariates"><i class="fa fa-check"></i><b>3.2</b> PCA plots by covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="volcano-plots.html"><a href="volcano-plots.html"><i class="fa fa-check"></i><b>4</b> Volcano plots</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp2.vs.grp1"><i class="fa fa-check"></i><b>4.1</b> Comparison: group_grp2.vs.grp1</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="heatmap-plots.html"><a href="heatmap-plots.html"><i class="fa fa-check"></i><b>5</b> Heatmap plots</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-1000-most-variable-genes"><i class="fa fa-check"></i><b>5.1</b> Heatmap of 1000 most variable genes</a></li>
+<li class="chapter" data-level="5.2" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-all-comparisons"><i class="fa fa-check"></i><b>5.2</b> Heatmap of all comparisons</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp2.vs.grp1-1"><i class="fa fa-check"></i><b>5.2.1</b> Comparison: group_grp2.vs.grp1</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bookdown report of SRP039361</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="qc-plots" class="section level1" number="1">
+<h1><span class="header-section-number">Chapter 1</span> QC plots</h1>
+<p><strong>Quality control (QC)</strong> is critical to examine the basic QC metrics of the data. In this section, we present several QC plots to visualize the quality of each dataset within the project.</p>
+<p>The first set of QC plots show the <strong>Top Gene Ratios</strong>. There are always top genes in the samples, and we are usually interested in knowing what are they, and how do they drive the overall expression profiles. Thus, these three top gene ratio plots are useful to determine what the percentage of the Top 1, 10 and 30 genes in the overall TPM. Since the sum of TPM values will always be 1 million, the percentage of TPM value indicates how these genes influence the RNA content detected in the samples.</p>
+<p>To better narrow down the top genes, the second set of QC plots shows the list of <strong>Top Genes</strong> and their expression ranges, for TPM and counts (if the counts information is available). Since there may be multiple samples across the whole project, here, we present the union of top 10 genes, to make sure at least 10 genes will be plotted. The user can easily pinpoint what are those highly expressed genes, and learn how they express across all samples. It would be beneficial to notice that certain tissues should have a signature of highly expressed genes, and these plots may serve as a quality checking step of the current dataset.</p>
+<div id="top-gene-ratio" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Top gene ratio</h2>
+<p>The following three plots present the Top N (1, 10, 30) gene ratios using the percentage (%) of TPM.</p>
+<div id="top1-of-total-tpm" class="section level3" number="1.1.1">
+<h3><span class="header-section-number">1.1.1</span> Top1 % of Total TPM</h3>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-4-1.png" width="960" /></p>
+</div>
+<div id="top10-of-total-tpm" class="section level3" number="1.1.2">
+<h3><span class="header-section-number">1.1.2</span> Top10 % of Total TPM</h3>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-4-2.png" width="960" /></p>
+</div>
+<div id="top30-of-total-tpm" class="section level3" number="1.1.3">
+<h3><span class="header-section-number">1.1.3</span> Top30 % of Total TPM</h3>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-4-3.png" width="960" /></p>
+</div>
+</div>
+<div id="top-expressed-genes" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Top expressed genes</h2>
+<p>The following plots present the union of top 10 expressed genes across samples in the project. We used 10 genes by default because if the project contains a couple of samples, the union of top genes may result in a long list. Here, we ensure at least 10 genes to plot, but won’t be too many even if this project is large.</p>
+<div id="top-genes-by-tpm" class="section level3" number="1.2.1">
+<h3><span class="header-section-number">1.2.1</span> Top genes by TPM</h3>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-5-1.png" width="960" /></p>
+</div>
+<div id="top-genes-by-counts" class="section level3" number="1.2.2">
+<h3><span class="header-section-number">1.2.2</span> Top genes by counts</h3>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-5-2.png" width="960" /></p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="covariates.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

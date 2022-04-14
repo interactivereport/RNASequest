@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Bookdown report of SRP094781</title>
+  <meta name="description" content="Bookdown report of SRP094781" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Bookdown report of SRP094781" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bookdown report of SRP094781" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="qc-plots.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Expression Analysis Report</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Introduction</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-overview"><i class="fa fa-check"></i>Project overview</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#project-files"><i class="fa fa-check"></i>Project files</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="qc-plots.html"><a href="qc-plots.html"><i class="fa fa-check"></i><b>1</b> QC plots</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="qc-plots.html"><a href="qc-plots.html#top-gene-ratio"><i class="fa fa-check"></i><b>1.1</b> Top gene ratio</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="qc-plots.html"><a href="qc-plots.html#top1-of-total-tpm"><i class="fa fa-check"></i><b>1.1.1</b> Top1 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.2" data-path="qc-plots.html"><a href="qc-plots.html#top10-of-total-tpm"><i class="fa fa-check"></i><b>1.1.2</b> Top10 % of Total TPM</a></li>
+<li class="chapter" data-level="1.1.3" data-path="qc-plots.html"><a href="qc-plots.html#top30-of-total-tpm"><i class="fa fa-check"></i><b>1.1.3</b> Top30 % of Total TPM</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="qc-plots.html"><a href="qc-plots.html#top-expressed-genes"><i class="fa fa-check"></i><b>1.2</b> Top expressed genes</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-tpm"><i class="fa fa-check"></i><b>1.2.1</b> Top genes by TPM</a></li>
+<li class="chapter" data-level="1.2.2" data-path="qc-plots.html"><a href="qc-plots.html#top-genes-by-counts"><i class="fa fa-check"></i><b>1.2.2</b> Top genes by counts</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="covariates.html"><a href="covariates.html"><i class="fa fa-check"></i><b>2</b> Covariates</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="covariates.html"><a href="covariates.html#list-of-covariates"><i class="fa fa-check"></i><b>2.1</b> List of covariates</a></li>
+<li class="chapter" data-level="2.2" data-path="covariates.html"><a href="covariates.html#plots-of-significant-covariates"><i class="fa fa-check"></i><b>2.2</b> Plots of significant covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="pca-plots.html"><a href="pca-plots.html"><i class="fa fa-check"></i><b>3</b> PCA plots</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="pca-plots.html"><a href="pca-plots.html#general-pca-plot"><i class="fa fa-check"></i><b>3.1</b> General PCA plot</a></li>
+<li class="chapter" data-level="3.2" data-path="pca-plots.html"><a href="pca-plots.html#pca-plots-by-covariates"><i class="fa fa-check"></i><b>3.2</b> PCA plots by covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="volcano-plots.html"><a href="volcano-plots.html"><i class="fa fa-check"></i><b>4</b> Volcano plots</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp2.vs.grp1"><i class="fa fa-check"></i><b>4.1</b> Comparison: group_grp2.vs.grp1</a></li>
+<li class="chapter" data-level="4.2" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp3.vs.grp1"><i class="fa fa-check"></i><b>4.2</b> Comparison: group_grp3.vs.grp1</a></li>
+<li class="chapter" data-level="4.3" data-path="volcano-plots.html"><a href="volcano-plots.html#comparison-group_grp3.vs.grp2"><i class="fa fa-check"></i><b>4.3</b> Comparison: group_grp3.vs.grp2</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="heatmap-plots.html"><a href="heatmap-plots.html"><i class="fa fa-check"></i><b>5</b> Heatmap plots</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-1000-most-variable-genes"><i class="fa fa-check"></i><b>5.1</b> Heatmap of 1000 most variable genes</a></li>
+<li class="chapter" data-level="5.2" data-path="heatmap-plots.html"><a href="heatmap-plots.html#heatmap-of-all-comparisons"><i class="fa fa-check"></i><b>5.2</b> Heatmap of all comparisons</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp2.vs.grp1-1"><i class="fa fa-check"></i><b>5.2.1</b> Comparison: group_grp2.vs.grp1</a></li>
+<li class="chapter" data-level="5.2.2" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp3.vs.grp1-1"><i class="fa fa-check"></i><b>5.2.2</b> Comparison: group_grp3.vs.grp1</a></li>
+<li class="chapter" data-level="5.2.3" data-path="heatmap-plots.html"><a href="heatmap-plots.html#comparison-group_grp3.vs.grp2-1"><i class="fa fa-check"></i><b>5.2.3</b> Comparison: group_grp3.vs.grp2</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bookdown report of SRP094781</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Bookdown report of SRP094781</h1>
+<p class="date"><em>Generated on 2022-04-12</em></p>
+</div>
+<div id="introduction" class="section level1 unnumbered">
+<h1>Introduction</h1>
+<p>As an essential part of the <a href="https://github.com/interactivereport/RNASequest" target="_blank">RNASequest</a> framework, the Expression Analysis (EA) pipeline analyzes RNAseq data provided by the user, or from the NCBI/GEO database, and generates results for interactive visualization.</p>
+<p>This is a summary report generated by EAreport (part of Expression Analysis) using <a href="https://bookdown.org/" target="_blank">Bookdown</a>.</p>
+<p>This report contains basic plots and tables generated by the pipeline.</p>
+<div id="project-overview" class="section level3 unnumbered">
+<h3>Project overview</h3>
+<p>Here is a brief overview of the project:</p>
+<ul>
+<li><p>Project Name: <strong>SRP094781</strong></p></li>
+<li><p>Species: <strong>human</strong></p></li>
+<li><p>Description: ****</p></li>
+<li><p>Number of Samples: <strong>109</strong></p></li>
+<li><p>Number of Groups: <strong>4</strong></p></li>
+<li><p>Number of Genes/Proteins: <strong>51264</strong></p></li>
+<li><p>Number of Comparisons: <strong>3</strong></p></li>
+<li><p>Number of Samples in Each Group:</p></li>
+</ul>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+grp2
+</th>
+<th style="text-align:center;">
+grp3
+</th>
+<th style="text-align:center;">
+grp1
+</th>
+<th style="text-align:center;">
+grp4
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+count
+</td>
+<td style="text-align:center;">
+34
+</td>
+<td style="text-align:center;">
+23
+</td>
+<td style="text-align:center;">
+48
+</td>
+<td style="text-align:center;">
+4
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="project-files" class="section level3 unnumbered">
+<h3>Project files</h3>
+<p>The EA pipeline also produced several files under the working directory:</p>
+<ul>
+<li><p><strong>notAdjusted_Covariate_PC_Results.rds</strong></p></li>
+<li><p><strong>notAdjusted_Covariate_PC_Results.xlsx</strong></p></li>
+<li><p><strong>notAdjusted_PCA_Plots.pdf</strong></p></li>
+<li><p><strong>notAdjusted_Significant_Categorical_Covariates.pdf</strong></p></li>
+<li><p><strong>notAdjusted_Significant_Numeric_Covariates.pdf</strong></p></li>
+<li><p><strong>sequenceQC.pdf</strong></p></li>
+<li><p><strong>sequenceQC.unionTop.TPM.csv</strong></p></li>
+</ul>
+<p>For more flexible and interactive visualization, please upload the following Rdata files to <a href="http://quickomics.bxgenomics.com/" target="_blank">Quickomics</a>.</p>
+<ul>
+<li><p><strong>SRP094781_estCount.rds</strong></p></li>
+<li><p><strong>SRP094781_network.RData</strong></p></li>
+<li><p><strong>SRP094781.RData</strong></p></li>
+<li><p><strong>SRP094781.csv</strong></p></li>
+</ul>
+<p>The following sections are included in this bookdown report:</p>
+<ul>
+<li><p><a href="qc-plots.html#qc-plots">QC plots</a></p></li>
+<li><p><a href="covariates.html#covariates">Covariates</a></p></li>
+<li><p><a href="pca-plots.html#pca-plots">PCA plots</a></p></li>
+<li><p><a href="volcano-plots.html#volcano-plots">Volcano plots</a></p></li>
+<li><p><a href="heatmap-plots.html#heatmap-plots">Heatmap plots</a></p></li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="qc-plots.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
