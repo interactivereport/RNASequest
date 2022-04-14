@@ -13,6 +13,7 @@ conda env create -f install.yml
 condaPath=$(dirname $(dirname $condaPath))
 sed -i "1s|^|#. $condaPath/etc/profile.d/conda.sh;conda activate ExpressionAnalysis\n|" src/sys.yml
 
+conda activate ExpressionAnalysis
 R -q -e 'if(!require(revealjs)) install.packages("revealjs",repos = "http://cran.us.r-project.org")'
 
 #printf 'Please install R revealjs package in the ExpressionAnalysis conda environment.\nR\ninstall.packages("revealjs")\n'
