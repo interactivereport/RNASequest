@@ -181,6 +181,7 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   	}
   	
   	comp_result = as.data.frame(res[, c(2,4,5)])
+  	colnames(comp_result) =  paste0(comp_name[i],"_DESeq2.",colnames(comp_result))
   	if (exists("beta_coef_matrix") && nrow(beta_coef_matrix) > 0) {
   		result_list[[length(result_list)+1]] <- list("DEG" = comp_result, "beta_coef_matrix" = beta_coef_matrix)
   	} else {

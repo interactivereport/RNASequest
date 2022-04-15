@@ -22,6 +22,7 @@ echo 'end of HOST'
 ",substring(readLines(paste0(strSrc,"sys.yml"),n=1),2),"\nexport OPENBLAS_NUM_THREADS=1\n")
     strOut <- paste0(strWK,"/qsubOut/")
     system(paste0("rm -f -R ",strOut,";mkdir -p ",strOut))
+    comp_info <- cbind(CompareName=rownames(comp_info),comp_info)
     save(estCount,meta,comp_info,core,file=paste0(strOut,qsubDEGsrcFile))
     ## submit each comparison job
     compList <- getCompList(comp_info)
