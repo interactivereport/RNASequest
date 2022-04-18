@@ -25,7 +25,7 @@ server <- function(input, output) {
   
   output$table1 <- renderDataTable({
     my_table=read.csv("projects.csv", check.names=F)
-    my_table<-my_table%>%dplyr::mutate(URL=createLink(URL) )%>%
+    my_table<-my_table%>%dplyr::mutate(Visualization=createLink(Visualization, name="Quickomics") )%>%
       dplyr::mutate(Bookdown=ifelse(str_detect(Bookdown, "http"), createLink(Bookdown, name="Bookdown"), Bookdown ), 
                     Slidedeck=ifelse(str_detect(Slidedeck, "http"), createLink(Slidedeck, name="Slidedeck"), Slidedeck ) )             
     #browser() #debug
