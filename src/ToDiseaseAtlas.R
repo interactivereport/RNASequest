@@ -29,7 +29,7 @@ if(!file.exists(project_file)){
 
 ## project info -----
 p_info = read.csv(project_file)
-if (!p_info$Species[1] %in% c("human", "mouse", "rat")) {
+if (!p_info$Species[1] %in% c("human", "homo_sapiens", "mouse", "mus_musculus", "rat", "rattus_norvegicus")) {
   stop("The DA system does not support species other than human, mouse and rat. The program is stopped.")
 }
 
@@ -113,14 +113,15 @@ for (i in 1:nrow(c_info)) {
     S_meta_sub = Subset$S_meta
   }
   DA_meta_sub = DA_MetaData[rownames(S_meta_sub),]
-  
+
   if (comp_info$Analysis_method[i] == "DESeq2") {
     c_info$ComparisonID[i] = paste0(c_info$ComparisonID[i], "_DESeq")
   } else if (comp_info$Analysis_method[i] == "limma") {
     c_info$ComparisonID[i] = paste0(c_info$ComparisonID[i], "_limma")
   }    
-
   compare_group_ori = comp_info$Group_name[i]
+  print(compare_group_ori)
+  print(head(S_meta_sub))
   c_info$Case_SampleIDs[i]=str_c(DA_meta_sub[S_meta_sub[, compare_group_ori]==comp_info$Group_test[i], 'SampleID'], collapse=";") 
   c_info$Control_SampleIDs[i]=str_c(DA_meta_sub[S_meta_sub[, compare_group_ori]==comp_info$Group_ctrl[i], 'SampleID'], collapse=";") 
   
