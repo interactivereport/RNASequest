@@ -60,8 +60,8 @@ initInternal <- function(strInput,sysConfig){
         strPrj <- gsub("tsv$","json",strSample)
         if(file.exists(strPrj)){
             prjInfo <- rjson::fromJSON(file=strPrj)$Project
-            pInfo[["prjID"]] <- prjInfo$TSTID
-            pInfo[["prjTitle"]] <- prjInfo$Study_Title
+            if(!is.null(prjInfo$Study_Title))
+              pInfo[["prjTitle"]] <- prjInfo$Study_Title
         }
         #res <- list.files(strInput,"estcount",recursive=T,full.names=T)
         
@@ -445,6 +445,9 @@ require(data.table)
 checkConfig <- function(config){
     if(is.null(config$sample_name)) stop("sample_name is required in the config. Default is Sample_Name")
     correctNaive(config)
+    if(is.null(config$prj_name) || nchar(config$prj_name)<2){
+      stop("'prj_name' is required in the config.")
+    }
     if(config$prj_name!="initPrjName"){
         if(is.null(config$prj_counts) || !file.exists(config$prj_counts))
             stop(paste("The count file is required, ",config$prj_counts,", does NOT exist!"))
