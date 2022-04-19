@@ -4,7 +4,7 @@ Tutorial: https://interactivereport.github.io/RNASequest/tutorial/docs/
 
 ![RNASequest](https://interactivereport.github.io/RNASequest/Figure1_sm.png?raw=true "RNASequest")
 
-**Fig. 1.** Overview of the RNASequest workflow. (A) Analyst supplies gene expression matrix, sample information to the automated pipeline, ExpressionAnalysis, in abbreviation EA, to generate reports in Bookdown and interactive slide deck formats, and a data visualization app for Biologists with limited computational experience to investigate datasets by reviewing the reports and exploring the data interactively. (B) EA will check covariates and guide ana-lysts to build correct models for differential gene expression analysis. (C) R data objects outputted by EA will be uploaded to Quickomics R Shiny application for further exploration and visualization in PCA, Heatmap, Pathway, Volcano, Boxplot, and Venn Diagram. (D) EA publish module will automatically generate analysis report in both Bookdown and interactive online slides format.  (E) ShinyOne, a R Shiny app will manage the collection of datasets with Quickomics launching links and links to Bookdown documents and slide decks. It provides basic search and sorting functions for users to locate datasets of interest. 
+**Fig. 1.** Overview of the RNASequest workflow. (A) Analyst supplies gene expression matrix, sample information to the automated pipeline, ExpressionAnalysis, in abbreviation EA, to generate reports in Bookdown and interactive slide deck formats, and a data visualization app for Biologists with limited computational experience to investigate datasets by reviewing the reports and exploring the data interactively. (B) EA will check covariates and guide ana-lysts to build correct models for differential gene expression analysis. (C) R data objects outputted by EA will be uploaded to Quickomics R Shiny application for further exploration and visualization in PCA, Heatmap, Pathway, Volcano, Boxplot, and Venn Diagram. (D) EA publish module will automatically generate analysis reports in both Bookdown and interactive online slides format.  (E) ShinyOne, an R Shiny app will manage the collection of datasets with Quickomics launching links and links to Bookdown documents and slide decks. It provides basic search and sorting functions for users to locate datasets of interest. 
 
 ## Expression analysis (EA) component
 
@@ -12,15 +12,15 @@ A pipeline to RNAseq data analysis
 
 Five main functions are provided:
 
-  - EAinit: Generate a set of project analysis files based on a DNAnexus result folder.
-  - EAqc: Analyze the covariates against the expression to determine if the expression is needed to be adjusted.
-  - EArun: Produce QuickOmics object for webserver loading.
-  - EAreport: Generate a bookdown report for visualization.
-  - EA2DA: Produce required data files for [OmicsView](https://github.com/interactivereport/OmicsView) project import.
+  - **EAinit**: Generates a set of project analysis files based on the input files.
+  - **EAqc**: Analyzes the covariates against the expression to determine if the expression is needed to be adjusted.
+  - **EArun**: Performs differential expression analysis and produces QuickOmics objects for webserver loading.
+  - **EAreport**: Generates a bookdown report for visualization.
+  - **EA2DA**: Produces required data files for [OmicsView](https://github.com/interactivereport/OmicsView) project import.
 
 ### Installation/Set up
 
-First we install the ExpressionAnalysis by downloading the scripts from GitHub:
+First we install RNASequest by downloading the scripts from GitHub:
 
 ```
 git clone https://github.com/interactivereport/RNASequest.git
@@ -106,8 +106,11 @@ By running the command above, the pipeline will generate a **BookdownReport** fo
 ### EA2DA
 ```
 EA2DA A/path/to/a/config/file
+
+# Example:
+EA2DA ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
 ```
-The execution of above command will produce 6 data files which are required for the [OmicsView](https://github.com/interactivereport/OmicsView) project import.
+Execution of the above command will produce 6 data files which are required for the [OmicsView](https://github.com/interactivereport/OmicsView) project import.
 
 **_Please fill the empty entries in the Project_Info.csv before import._**
 
@@ -116,9 +119,9 @@ There are two config files in the pipeline folder:
  - config.tmp.yml: The template of the config file, with all default values;
  - sys.yml: the system config file, which includes:
     1. genome_path: the root path where the genome definition files (gtf) are located
-    2. notCovariates: the column names from the sample meta information should not be considred as default covariates
-    3. qc2meta: the column names from mapping QC file should be extracted and inserted into sample meta table
-    4. QuickOmics_path: the file path to store the files for QuickOmics web server display
+    2. notCovariates: the column names from the sample meta information should not be considered as default covariates
+    3. qc2meta: the column names from the mapping QC file should be extracted and inserted into the sample meta table
+    4. QuickOmics_path: the file path to store the files for the QuickOmics web server display
     4. DA_columns: the column names available for the sample meta table in the [OmicsView](https://github.com/interactivereport/OmicsView) system
 
 ## Quickomics component
@@ -129,15 +132,15 @@ Tutorial: https://interactivereport.github.io/Quickomics/tutorial/docs/
 
 ## Bookdown component
 
-https://interactivereport.github.io/RNASequest/tutorial/docs/bookdown-report.html#bookdown-report
+https://interactivereport.github.io/RNASequest/tutorial/docs/bookdown-component.html
 
 ## Slide deck component
 
-https://interactivereport.github.io/RNASequest/tutorial/docs/online-slide-deck.html#online-slide-deck
+https://interactivereport.github.io/RNASequest/tutorial/docs/slide-deck-component.html
 
 
 ## ShinyOne component
 
-https://interactivereport.github.io/RNASequest/tutorial/docs/shinyone.html#shinyone
+https://interactivereport.github.io/RNASequest/tutorial/docs/shinyone-component.html
 
 
