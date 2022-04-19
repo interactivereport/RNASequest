@@ -223,8 +223,8 @@ fwrite(c_info, file.path(output_path, "Comparisons_Info.csv"))
 
 
 ## comparison data ------
-comp_data = data_results[, which(str_detect(names(data_results), "logFC|P.value|Adj.P.value"))]
-
+comp_data = data_results[, which(str_detect(names(data_results), 
+								"log2FoldChange|pvalue|padj|logFC|P.value|Adj.P.value"))]
 Comparison_long <- NULL
 for (i in seq(1, ncol(comp_data), 3)) {
   subdata=comp_data[, i:(i+2)]
