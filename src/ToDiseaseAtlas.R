@@ -229,11 +229,12 @@ Comparison_long <- NULL
 for (i in seq(1, ncol(comp_data), 3)) {
   subdata=comp_data[, i:(i+2)]
   subdata$Gene=rownames(comp_data)
-  subdata$ComparisonID=str_replace(names(subdata)[which(str_detect(names(subdata), "logFC"))], ".logFC", "")
+  subdata$ComparisonID=str_replace(names(subdata)[which(str_detect(names(subdata), "log2FoldChange"))], ".log2FoldChange", "")
   names(subdata)=str_replace(names(subdata), subdata$ComparisonID[1], "")
   names(subdata)=str_replace(names(subdata), "^\\.", "")
-  names(subdata)=str_replace(names(subdata), "Adj.P.value", "adj.P.Val")
-  names(subdata)=str_replace(names(subdata), "P.value", "P.Value")
+  names(subdata)=str_replace(names(subdata), "padj", "adj.P.Val")
+  names(subdata)=str_replace(names(subdata), "pvalue", "P.Value")
+  names(subdata)=str_replace(names(subdata), "log2FoldChange", "logFC")
   subdata = subdata[, c('Gene', 'ComparisonID', 'logFC', 'P.Value', 'adj.P.Val')]
   if (is.null(Comparison_long)) {Comparison_long=subdata} else {
     Comparison_long=rbind(Comparison_long, subdata)
