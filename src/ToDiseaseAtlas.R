@@ -115,7 +115,7 @@ for (i in 1:nrow(c_info)) {
   DA_meta_sub = DA_MetaData[rownames(S_meta_sub),]
 
   if (comp_info$Analysis_method[i] == "DESeq2") {
-    c_info$ComparisonID[i] = paste0(c_info$ComparisonID[i], "_DESeq")
+    c_info$ComparisonID[i] = paste0(c_info$ComparisonID[i], "_DESeq2")
   } else if (comp_info$Analysis_method[i] == "limma") {
     c_info$ComparisonID[i] = paste0(c_info$ComparisonID[i], "_limma")
   }    
