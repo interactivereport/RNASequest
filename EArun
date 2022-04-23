@@ -8,7 +8,7 @@ if [[ -n "$1" ]]; then
       exit
     fi
 
-    env -i config=$1 src="$src" bash -c 'set -o allexport;source $src/.env;set +o allexport;eval $condaEnv;Rscript $src/DEanalysis.R $src/ $config'
+    env -i config=$1 src="$src" bash -c 'source $src/.env;eval $condaEnv;Rscript $src/DEanalysis.R $src/ $config'
 
 else
     echo "=============== EArun path/to/config/file"

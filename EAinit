@@ -7,7 +7,7 @@ if [[ -n "$1" ]]; then
       exit
     fi
 
-    env -i src="$src" a=$1 b=$2 c=$3 bash -c 'set -o allexport;source $src/.env;set +o allexport;eval $condaEnv;Rscript $src/initConfig.R $src/ $a $b $c'
+    env -i src="$src" a=$1 b=$2 c=$3 bash -c 'source $src/.env;eval $condaEnv;Rscript $src/initConfig.R $src/ $a $b $c'
     
     #condaEnv=$(head -n 1 $(dirname $0)/src/sys.yml)
     #condaEnv=${condaEnv:1}
