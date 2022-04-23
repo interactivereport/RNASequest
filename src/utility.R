@@ -1,6 +1,6 @@
-#source("utility.R",chdir=T)
-#.libPaths(c(grep("home",.libPaths(),invert=T,value=T),grep("home",.libPaths(),value=T)))
-
+strConfig <- paste0(args[1],"sys.yml")
+if(!file.exists(strConfig))
+  stop(paste0("=====\nPlease contact admins to set the sys.yml in ",args[1],".\nAn Example is 'sys_example.yml'.\n====="))
 ## save session ------
 initialMsg <- function(strSRC="."){
   strSRC <- normalizePath(strSRC)
@@ -13,7 +13,7 @@ initialMsg <- function(strSRC="."){
   message("## git HEAD: ",system(cmdHEAD,intern=T),"\n###########\n")
 }
 saveSessionInfo <- function(strF,strSRC){
-    message("\nPowered by the Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]")
+    message("\nPowered by ",sysConfig$powerby)
     writeLines(capture.output(sessionInfo()), strF)
     conn <- file(strF,"a")
     sink(conn,type="message")
@@ -1146,6 +1146,16 @@ finishSplit <- function(){
 ## EArun functions ----
 require(dplyr)
 source("QuickOmics_DEG.R")
+checkShinyTestSetting <- function(config){
+  if(is.null(config$QuickOmics_test_folder) || 
+     is.null(config$QuickOmics_test_link)){
+    message("#####################")
+    warning(paste("#################\nThe ShinyOne is not set up (No finishing web link)!\nPlease contact",
+                  config$powerby,"\n#################\n"))
+    return(F)
+  }
+  return(T)
+}
 saveCountsAlias <- function(config,estC){
     saveRDS(estC,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
 }
@@ -1345,6 +1355,7 @@ saveQuickOmics <- function(config,EAdata,DEGs){
 }
 finishRun <- function(strMsg){
     message("=================================================\nResults are saved in ",strMsg$output)
+    if(!checkShinyTestSetting(sysConfig)) return()
     system(paste0("cp ",strMsg$output,"/",strMsg$prj_name,"* ",strMsg$QuickOmics_test_folder))
     message(paste0("\n-----> Please visit: ",strMsg$QuickOmics_test_link,strMsg$prj_name))
     message("Please carefully review the results before publishing:")
@@ -1356,6 +1367,15 @@ finishRun <- function(strMsg){
 
 
 ## EApub functions --------
+checkShinySetting <- function(config){
+  if(is.null(config$QuickOmics_test_folder) || 
+     is.null(config$QuickOmics_test_link) || 
+     is.null(config$QuickOmics_publish_folder) || 
+     is.null(config$QuiclOmics_publish_link) || 
+     is.null(config$shinyApp) || 
+     is.null(config$shinyAppKey))
+    stop(paste("The ShinyOne is not set up!\nPlease contact",config$powerby))
+}
 getShinyOneInfo <- function(config){
     shinyOneData <- config[grep("^shinyOne_",names(config))]
     names(shinyOneData) <- gsub("shinyOne_","",names(shinyOneData))
@@ -1374,6 +1394,7 @@ getShinyOneInfo <- function(config){
     return(shinyOneData)
 }
 pubShinyOne <- function(config){
+    checkShinySetting()
     strF <- paste0(config$QuickOmics_publish_folder,config$prj_name,".RData")
     if(file.exists(strF)){
         stop("The project already exists in ShinyOne!\nPlease remove the record and associated files or change prj_name and re-EArun!")
@@ -1382,7 +1403,7 @@ pubShinyOne <- function(config){
     shinyOneData <- getShinyOneInfo(config)
     shinyOneCMD <- paste0("curl -s -k -X POST -d 'data={",
                           paste(paste0('"',names(shinyOneData),'": "',shinyOneData,'"'),collapse = ", "),
-                          "}' '",config$shinyApp,"api_add_project.php?api_key=lnpJMJ5ClbuHCylWqfBY8BoxxdrpU0'")
+                          "}' '",config$shinyApp,"api_add_project.php?api_key=",config$shinyAppKey,"'")
 
     message("submitting to ShinyOne manager ...")
     res <- system(shinyOneCMD,intern=T)
@@ -1394,7 +1415,7 @@ pubShinyOne <- function(config){
     })
     if(!shinyMsg$Status){
         stop(paste0(paste(paste(names(shinyMsg),shinyMsg,sep=":"),collapse="\n"),
-                    "\nPlease contact Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]"))
+                    "\nPlease contact ",config$powerby))
     }
     system(paste0("cp ",config$output,"/",config$prj_name,"* ",config$QuickOmics_publish_folder))
     return(shinyMsg$ID)

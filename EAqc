@@ -2,11 +2,18 @@
 # sva::ComBat_seq is not available in R/3.5.1
 
 if [[ -n "$1" ]]; then
-    condaEnv=$(head -n 1 $(dirname $0)/src/sys.yml)
-    condaEnv=${condaEnv:1}
-    eval "$condaEnv"
+    src="$(dirname $0)/src"
+    if [[ ! -f "$src/.env" ]]; then
+      echo "EAqc: Please run ./install to setup necessary env variables"
+      exit
+    fi
+
+    env -i src="$src" a=$1 b=$2 c=$3 bash -c 'set -o allexport;source $src/.env;set +o allexport;eval $condaEnv;Rscript $src/QCanalysis.R $src/ $a $b $c'
+    #condaEnv=$(head -n 1 $(dirname $0)/src/sys.yml)
+    #condaEnv=${condaEnv:1}
+    #eval "$condaEnv"
     
-    Rscript $(dirname $0)/src/QCanalysis.R $(dirname $0)/src/ $@
+    #Rscript $(dirname $0)/src/QCanalysis.R $(dirname $0)/src/ $@
 else
     echo "=============== EAqc path/to/config/file"
     exePath=$(dirname $0)

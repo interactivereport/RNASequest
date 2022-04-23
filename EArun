@@ -3,12 +3,13 @@
 
 if [[ -n "$1" ]]; then
     src="$(dirname $0)/src"
-    condaEnv=$(head -n 1 $src/sys.yml)
-    condaEnv=${condaEnv:1}
-    config=$1
-    
-    env -i OPENBLAS_NUM_THREADS=1 condaEnv="$condaEnv" src="$src" config="$config" PATH="$PATH" SGE_EXECD_PORT=6449 SGE_QMASTER_PORT=6448 SGE_ROOT=/camhpc/admin/sge/8.6.6 bash -c 'eval $condaEnv;Rscript $src/DEanalysis.R $src/ $config'
-    
+    if [[ ! -f "$src/.env" ]]; then
+      echo "EArun: Please run ./install to setup necessary env variables"
+      exit
+    fi
+
+    env -i config=$1 src="$src" bash -c 'set -o allexport;source $src/.env;set +o allexport;eval $condaEnv;Rscript $src/DEanalysis.R $src/ $config'
+
 else
     echo "=============== EArun path/to/config/file"
     echo "This function is used to process the bulk RNAseq data and produce the QuickOmics R object."

@@ -56,4 +56,4 @@ dependencies:
   - bioconductor-recount3
   - r-bookdown
   - r-kableextra
-prefix: /share/miniconda/Miniconda3/envs/ExpressionAnalysis
+  - git=2.35.1

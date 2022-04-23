@@ -13,6 +13,7 @@ config$ylab <- paste0("log2(TPM+",config$count_prior,")")
 
 ## loading EA data --------
 checkConfig(config)
+a <- checkShinyTestSetting(sysConfig)
 D <- getEAData(config,withCom=T)
 D <- useAlias(config,D)
 
