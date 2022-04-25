@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-04-12" />
+<meta name="date" content="2022-04-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -210,19 +210,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Here is the tutorial to create your own slide deck after running the EA pipeline:</p>
 <p><strong>1, Find the path of the bookdown.info.txt file, it is located in:</strong></p>
 <pre><code>***/YourPorjectName/EA******/BookdownReport/bookdown.info.txt</code></pre>
-<p><strong>2, Install the required package: <a href="https://cran.r-project.org/web/packages/revealjs/index.html" target="_blank">revealjs</a></strong></p>
-<pre><code>conda activate ExpressionAnalysis
-
-# Type &#39;R&#39; to activate the R program in terminal
-R
-&gt; install.packages(“revealjs”)
-
-# After installation, quit the R session without saving the workspace
-&gt; quit()
-Save workspace image? [y/n/c]: n</code></pre>
-<p><strong>3, Go to the RNASequest/src dir, and modify line #29 of script ‘Slidedeck.Rmd’:</strong></p>
+<p><strong>2, Go to the RNASequest/src dir, and modify line #29 of script ‘Slidedeck.Rmd’:</strong></p>
 <pre><code>info_txt &lt;- &lt;your bookdown.info.txt path&gt;</code></pre>
-<p><strong>4, Finally render the slide deck:</strong></p>
+<p><strong>3, Finally render the slide deck:</strong></p>
 <p>The slide deck <a href="https://github.com/interactivereport/RNASequest/blob/main/src/Slidedeck.Rmd" target="_blank">Slidedeck.Rmd</a> script is under the /src directory of the RNASequest installation.</p>
 <pre><code>Rscript -e &#39;rmarkdown::render(&quot;~/RNASequest/src/Slidedeck.Rmd&quot;, output_file=&quot;yourslidedeck_name.html&quot;)&#39;</code></pre>
 <p>Then it will generate <strong>yourslidedeck_name.html</strong> for visualization.</p>

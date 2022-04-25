@@ -14,27 +14,13 @@ Here is the tutorial to create your own slide deck after running the EA pipeline
 ***/YourPorjectName/EA******/BookdownReport/bookdown.info.txt
 ```
 
-**2, Install the required package: [revealjs](https://cran.r-project.org/web/packages/revealjs/index.html){target="_blank"}**
-
-```
-conda activate ExpressionAnalysis
-
-# Type 'R' to activate the R program in terminal
-R
-> install.packages(“revealjs”)
-
-# After installation, quit the R session without saving the workspace
-> quit()
-Save workspace image? [y/n/c]: n
-```
-
-**3, Go to the RNASequest/src dir, and modify line #29 of script ‘Slidedeck.Rmd’:**
+**2, Go to the RNASequest/src dir, and modify line #29 of script ‘Slidedeck.Rmd’:**
 
 ```
 info_txt <- <your bookdown.info.txt path>
 ```
 
-**4, Finally render the slide deck:**
+**3, Finally render the slide deck:**
 
 The slide deck [Slidedeck.Rmd](https://github.com/interactivereport/RNASequest/blob/main/src/Slidedeck.Rmd){target="_blank"} script is under the /src directory of the RNASequest installation.
 

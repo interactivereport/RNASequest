@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2022-04-12" />
+<meta name="date" content="2022-04-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -217,19 +217,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-8"><a href="installation.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#Activate the conda environment</span></span>
 <span id="cb1-9"><a href="installation.html#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate ExpressionAnalysis</span>
 <span id="cb1-10"><a href="installation.html#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="installation.html#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Check the path of current directory and add it to $PATH:</span></span>
-<span id="cb1-12"><a href="installation.html#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="va">CurrentDir</span><span class="op">=</span><span class="kw">`</span><span class="bu">pwd</span><span class="kw">`</span></span>
-<span id="cb1-13"><a href="installation.html#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$CurrentDir</span><span class="st">:</span><span class="va">$PATH</span><span class="st">&quot;</span></span>
-<span id="cb1-14"><a href="installation.html#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="installation.html#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#However, the above command only adds the RNASequest directory to $PATH temporarily</span></span>
-<span id="cb1-16"><a href="installation.html#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#To add it to the environment permanently, edit ~/.bash_profile or ~/.bashrc:</span></span>
-<span id="cb1-17"><a href="installation.html#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> ~/.bash_profile</span>
-<span id="cb1-18"><a href="installation.html#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#Add the full path of the RNASequest directory to $PATH, for example, $HOME/RNASequest</span></span>
-<span id="cb1-19"><a href="installation.html#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:<span class="va">$HOME</span>/RNASequest</span>
-<span id="cb1-20"><a href="installation.html#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#Source the file</span></span>
-<span id="cb1-21"><a href="installation.html#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.bash_profile</span></code></pre></div>
+<span id="cb1-11"><a href="installation.html#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Also, .env will be created under the src directory:</span></span>
+<span id="cb1-12"><a href="installation.html#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> ~/RNASequest/src/.env</span>
+<span id="cb1-13"><a href="installation.html#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="installation.html#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Check the path of current directory and add it to $PATH:</span></span>
+<span id="cb1-15"><a href="installation.html#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="va">CurrentDir</span><span class="op">=</span><span class="kw">`</span><span class="bu">pwd</span><span class="kw">`</span></span>
+<span id="cb1-16"><a href="installation.html#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$CurrentDir</span><span class="st">:</span><span class="va">$PATH</span><span class="st">&quot;</span></span>
+<span id="cb1-17"><a href="installation.html#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="installation.html#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#However, the above command only adds the RNASequest directory to $PATH temporarily</span></span>
+<span id="cb1-19"><a href="installation.html#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#To add it to the environment permanently, edit ~/.bash_profile or ~/.bashrc:</span></span>
+<span id="cb1-20"><a href="installation.html#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> ~/.bash_profile</span>
+<span id="cb1-21"><a href="installation.html#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#Add the full path of the RNASequest directory to $PATH, for example, $HOME/RNASequest</span></span>
+<span id="cb1-22"><a href="installation.html#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:<span class="va">$HOME</span>/RNASequest</span>
+<span id="cb1-23"><a href="installation.html#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#Source the file</span></span>
+<span id="cb1-24"><a href="installation.html#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.bash_profile</span></code></pre></div>
 <p>Set the default paths for ExpressionAnalysis:</p>
-<p>In <a href="https://github.com/interactivereport/RNASequest/blob/main/src/sys.yml" target="_blank">sys.yml</a> file is used to set the default configurations of the whole pipeline, including paths for Quickomics visualization. Please modify this file before running the pipeline, since the paths will be different from server to server.</p>
+<p>In <a href="https://github.com/interactivereport/RNASequest/blob/main/src/sys_example.yml" target="_blank">sys_example.yml</a> file is used to set the default configurations of the whole pipeline, including paths for Quickomics visualization. Please modify this file before running the pipeline, since the paths will be different from server to server.</p>
+<p><strong>Please use this sys_example.yml to create a sys.yml file under the src directory, and fill in the necessary information.</strong> Here is an example of the sys.yml file:</p>
 <p>The QuickOmics_test_folder and QuickOmics_publish_folder are defined by the config.csv file in the QuickOmics app folder (See 3.2).</p>
 <pre><code>## path to the reference genome is on HPC
 genome_path: /path/to/genome/references

@@ -1,9 +1,9 @@
 # Expression analysis (EA) component
 
-First, activate the conda environment if you haven't done so:
+First, make sure the .env has been created under the src folder:
 
 ```
-conda activate ExpressionAnalysis
+ls ~/RNASequest/src/.env
 ```
 
 ## EAinit
