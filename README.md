@@ -30,8 +30,8 @@ cd RNASequest
 # Please make sure you have conda installed before, and this step may take a while
 bash install
 
-# Activate the conda environment
-conda activate ExpressionAnalysis
+# The .env will be created under the src directory
+ls ~/RNASequest/src/.env
 
 # Check the path of current directory and add it to $PATH:
 CurrentDir=`pwd`
