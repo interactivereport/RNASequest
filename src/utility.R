@@ -1391,10 +1391,11 @@ getShinyOneInfo <- function(config){
                                                  sep="; ")
     shinyOneData[["Date"]] <- as.character(Sys.Date())
     shinyOneData[["URL"]] <- paste0(config$QuiclOmics_publish_link,config$prj_name)
+    shinyOneData[["Data_Cleaning"]] <- paste("Data processing folder:",config$output)
     return(shinyOneData)
 }
 pubShinyOne <- function(config){
-    checkShinySetting()
+    checkShinySetting(config)
     strF <- paste0(config$QuickOmics_publish_folder,config$prj_name,".RData")
     if(file.exists(strF)){
         stop("The project already exists in ShinyOne!\nPlease remove the record and associated files or change prj_name and re-EArun!")
