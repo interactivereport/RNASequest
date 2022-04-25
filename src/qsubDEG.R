@@ -19,7 +19,7 @@ qsubDEG <- function(estCount,meta,comp_info,strWK,strSrc,core=8,qsubTime=180){
 cat $PE_HOSTFILE
 echo 'end of HOST'
 
-",substring(readLines(paste0(strSrc,"sys.yml"),n=1),2),"\nexport OPENBLAS_NUM_THREADS=1\n")
+")
     strOut <- paste0(strWK,"/qsubOut/")
     system(paste0("rm -f -R ",strOut,";mkdir -p ",strOut))
     comp_info <- cbind(CompareName=rownames(comp_info),comp_info)
@@ -109,7 +109,7 @@ qsubSID <- function(sIDs,jID,strOut,core,qsubDEGsh,strSrc,reN=0,badNodes=NULL,qs
                                 gsub("cName",i,
                                      gsub("wkPath",strOut,
                                           gsub("qsubCore",core,qsubDEGsh)))),
-                           "Rscript ",strSrc,"qsubDEG.R ",strSrc," ",qsubDEGsrcFile,' "',paste(sIDs[[i]],collapse=","),'" ',i,'\n'),
+                           "env -i bash -c 'source ",strSrc,".env;eval $condaEnv;Rscript ",strSrc,"qsubDEG.R ",strSrc," ",qsubDEGsrcFile,' "',paste(sIDs[[i]],collapse=","),'" ',i,"'\n"),
                     file=strQsub)
             }
         })
