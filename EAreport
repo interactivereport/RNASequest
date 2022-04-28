@@ -2,9 +2,14 @@
 # EAreport generates a bookdown summary of the current project
 
 if [[ -n "$1" ]]; then
-    condaEnv=$(head -n 1 $(dirname $0)/src/sys.yml)
-    condaEnv=${condaEnv:1}
-    eval "$condaEnv"
+    src="$(dirname $0)/src"
+    if [[ ! -f "$src/.env" ]]; then
+        echo "EAreport: Please run ./install to setup necessary env variables"
+        exit
+    fi
+
+    source $src/.env
+    eval $condaEnv
     
     workingdir=$(dirname $1)
     configdir=$1
@@ -46,7 +51,7 @@ if [[ -n "$1" ]]; then
     echo -e "Rscript $(dirname $0)/src/BookdownReport.R \ \n    $(dirname $0)/src/ \ \n    $workingdir/BookdownReport/ \ \n    $configdir"
     Rscript $(dirname $0)/src/BookdownReport.R $(dirname $0)/src/ $workingdir/BookdownReport/ $configdir && \
         echo -e "Done building report ..." && \
-	    echo -e "Please find the report in: \n    "$workingdir/BookdownReport/docs/index.html && \
+	echo -e "Please find the report in: \n    "$workingdir/BookdownReport/docs/index.html && \
         mkdir $workingdir/${ProjName}_BookdownReport && \
         cp -r $workingdir/BookdownReport/docs/* $workingdir/${ProjName}_BookdownReport && \
         cd $workingdir && \
@@ -56,6 +61,7 @@ if [[ -n "$1" ]]; then
 	
 else
     echo "=============== EAreport path/to/config/file"
+    echo "EAreport generates a bookdown summary of the current project"
     exePath=$(dirname $0)
     echo "An example config file can be found: $exePath/example/config.yml"
     echo "'EAinit' can be used to create a config file for a RNAseq project downloaded from DNAnexus"
