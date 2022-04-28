@@ -7,6 +7,10 @@ if [[ -n "$1" ]]; then
       echo "EAqc: Please run ./install to setup necessary env variables"
       exit
     fi
+    source $src/.env;eval $condaEnv
+    if [[ ! -f "$HOME/.gitconfig" ]] || [[ $(grep "$(dirname $0)/.git" ~/.gitconfig | wc -l) == 0 ]];then # 
+      git config --global --add safe.directory $(dirname $0)/.git
+    fi
 
     env -i src="$src" a=$1 b=$2 c=$3 bash -c 'source $src/.env;eval $condaEnv;Rscript $src/QCanalysis.R $src/ $a $b $c'
     #condaEnv=$(head -n 1 $(dirname $0)/src/sys.yml)
