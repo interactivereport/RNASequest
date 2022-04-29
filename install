@@ -21,7 +21,7 @@ echo "export SGE_QMASTER_PORT=$SGE_QMASTER_PORT" >> $src/.env
 echo "export SGE_ROOT=$SGE_ROOT" >> $src/.env
 
 ## additional packages which are not available on anaconda
-env -i src="$src" bash -c 'set -o allexport;source $src/.env;set +o allexport;eval $condaEnv;R -q -e '"'"'suppressWarnings({if(!require(revealjs)) install.packages("revealjs",repos = "https://cran.us.r-project.org")})'"'"
+env -i src="$src" bash -c 'source $src/.env;eval $condaEnv;R -q -e '"'"'suppressWarnings({if(!require(revealjs)) install.packages("revealjs",repos = "https://cran.us.r-project.org")})'"'"
 
 #conda activate ExpressionAnalysis
 #R -q -e 'if(!require(revealjs)) install.packages("revealjs",repos = "http://cran.us.r-project.org")'
