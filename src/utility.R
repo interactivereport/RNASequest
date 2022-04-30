@@ -655,7 +655,7 @@ covariateRM <- function(X,effeL,batchX=NULL,method='limma',
     }else{
         stop("unknown batch removal method!")
     }
-    logTPM <- covariateRM_estTPM(ad_X,effeL,sizeF,prior)
+    logTPM <- covariateRM_estTPM(ad_X,effeL[rownames(ad_X),],sizeF,prior)
     message("Finished TPM estimation!")
     return(logTPM)
 }
