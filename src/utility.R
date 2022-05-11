@@ -1,16 +1,33 @@
-strConfig <- paste0(args[1],"sys.yml")
+strConfig <- file.path(getwd(),"sys.yml")
 if(!file.exists(strConfig))
   stop(paste0("=====\nPlease contact admins to set the sys.yml in ",args[1],".\nAn Example is 'sys_example.yml'.\n====="))
 ## save session ------
 initialMsg <- function(strSRC="."){
   strSRC <- normalizePath(strSRC)
-  cmdURL<-sprintf("cd %s;git config --get remote.origin.url",strSRC)
-  cmdDate=sprintf("cd %s;git show -s --format=%%ci",strSRC)
-  cmdHEAD=sprintf("cd %s;git rev-parse HEAD",strSRC)
-  message("###########\n## ExpressionAnalysis: ",system(cmdURL,intern=T))
-  message("## Pipeline Path: ",strSRC)
-  message("## Pipeline Date: ",system(cmdDate,intern=T))
-  message("## git HEAD: ",system(cmdHEAD,intern=T),"\n###########\n")
+  if(dir.exists(file.path(strSRC,".git"))){
+    gitConfig <- readLines(file.path(strSRC,".git","config"))
+    pos <- grep("^\\[.*\\]$",gitConfig)
+    sel <- (1:length(pos))[grepl("remote",gitConfig[pos])&grepl("origin",gitConfig[pos])]
+    if(length(sel)==0) return()
+    pos <- c(pos,length(gitConfig)+1)
+    url <- sapply(strsplit(grep("^url",trimws(gitConfig[pos[sel]:(pos[sel+1]-1)]),value=T),
+                           " "),tail,1)
+    gitLog <- unlist(strsplit(unlist(tail(data.table::fread(file.path(strSRC,".git","logs","HEAD"),header=F),1))[1]," "))
+    #cmdURL<-sprintf("cd %s;git config --get remote.origin.url",strSRC)
+    #cmdDate=sprintf("cd %s;git show -s --format=%%ci",strSRC)
+    #cmdHEAD=sprintf("cd %s;git rev-parse HEAD",strSRC)
+    message("###########\n## ExpressionAnalysis: ",url)
+    message("## Pipeline Path: ",strSRC)
+    message("## Pipeline Date: ",
+            format(as.POSIXct(as.numeric(tail(gitLog,2)[1]),
+                              origin="1970-01-01"),
+                   format="%Y-%m-%d %H:%M:%S"),
+            " ",tail(gitLog,1))
+    message("## git HEAD: ",gitLog[2],"\n###########\n")
+  }else if(file.exists(file.path(strSRC,"release"))){
+    system(paste("cat",file.path(strSRC,"release")))
+    message("## Pipeline Path: ",strSRC)
+  }
 }
 saveSessionInfo <- function(strF,strSRC){
     message("\nPowered by ",sysConfig$powerby)
@@ -820,8 +837,9 @@ correctNaive <- function(config){
 }
 ## EAqc functions ------
 source("PC_Covariates.R")
-require(ggplot2)
-require(reshape2)
+suppressPackageStartupMessages({
+  require(ggplot2)
+  require(reshape2)}) 
 plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,10,30),gInfo=NULL,replot=F){#,50,100
     if(file.exists(strPDF) && !replot) return()
     message("plotting sequencing QC @",strPDF)
@@ -1428,3 +1446,4 @@ finishShinyOne <- function(shinyMsg){
 }
 
 ## others ----------
+initialMsg(dirname(getwd()))

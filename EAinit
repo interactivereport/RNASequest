@@ -19,13 +19,15 @@ if [[ -n "$1" ]]; then
     #eval "$condaEnv"
     #Rscript $(dirname $0)/src/initConfig.R $(dirname $0)/src/ $@
 else
-    cd $(dirname $0)
-    echo "##### ExpressionAnalysis: $(git config --get remote.origin.url)"
-    echo "## Pipeline Path: $(dirname $0)"
-    echo "## Pipeline Date: $(git show -s --format=%ci)"
-    echo "## Head commit hash: $(git rev-parse HEAD)"
-    echo "#####"
-    echo
+    #cd $(dirname $0)
+    #echo "##### ExpressionAnalysis: $(git config --get remote.origin.url)"
+    #echo "## Pipeline Path: $(dirname $0)"
+    #echo "## Pipeline Date: $(git show -s --format=%ci)"
+    #echo "## Head commit hash: $(git rev-parse HEAD)"
+    #echo "#####"
+    #echo
+    src=$(dirname $0)
+    env -i src="$src" bash -c 'cd $src/src;source .env;eval $condaEnv;Rscript utility.R .'
     
     echo "=============== EAinit path/to/a/DNAnexus/download/folder"
     echo "e.g.: EAinit /camhpc/ngs/projects/TST11000/dnanexus/20210709173527_fergal.casey"

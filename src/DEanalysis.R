@@ -4,8 +4,7 @@ if(length(args)<2){
     stop("config yaml file is required!")
 }
 message("loading resource ...")
-suppressMessages(source(paste0(args[1],"utility.R"),chdir=T))
-initialMsg(dirname(args[1]))
+source(paste0(args[1],"utility.R"),chdir=T)
 config <- sapply(yaml::read_yaml(args[2]),unlist)
 sysConfig <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 config$srcDir <- args[1]

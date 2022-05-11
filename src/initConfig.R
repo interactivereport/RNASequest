@@ -4,8 +4,7 @@ if(length(args)<2){
     stop("A path to a RNAseq project downloaded from DNAnexus is required!")
 }
 message("loading resource ...")
-suppressMessages(source(paste0(args[1],"utility.R"),chdir=T))
-initialMsg(dirname(args[1]))
+source(paste0(args[1],"utility.R"),chdir=T)
 configTmp <- yaml::read_yaml(paste0(args[1],"config.tmp.yml"))
 sysConfig <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 
