@@ -3,6 +3,7 @@ if(!file.exists(strConfig))
   stop(paste0("=====\nPlease contact admins to set the sys.yml in ",args[1],".\nAn Example is 'sys_example.yml'.\n====="))
 ## save session ------
 initialMsg <- function(strSRC="."){
+  message("\n\n***** ",Sys.time()," *****")
   strSRC <- normalizePath(strSRC)
   if(dir.exists(file.path(strSRC,".git"))){
     gitConfig <- readLines(file.path(strSRC,".git","config"))
@@ -13,9 +14,6 @@ initialMsg <- function(strSRC="."){
     url <- sapply(strsplit(grep("^url",trimws(gitConfig[pos[sel]:(pos[sel+1]-1)]),value=T),
                            " "),tail,1)
     gitLog <- unlist(strsplit(unlist(tail(data.table::fread(file.path(strSRC,".git","logs","HEAD"),header=F),1))[1]," "))
-    #cmdURL<-sprintf("cd %s;git config --get remote.origin.url",strSRC)
-    #cmdDate=sprintf("cd %s;git show -s --format=%%ci",strSRC)
-    #cmdHEAD=sprintf("cd %s;git rev-parse HEAD",strSRC)
     message("###########\n## ExpressionAnalysis: ",url)
     message("## Pipeline Path: ",strSRC)
     message("## Pipeline Date: ",

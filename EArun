@@ -7,12 +7,8 @@ if [[ -n "$1" ]]; then
       echo "EArun: Please run ./install to setup necessary env variables"
       exit
     fi
-    source $src/.env;eval $condaEnv
-    if [[ ! -f "$HOME/.gitconfig" ]] || [[ $(grep "$(dirname $0)/.git" ~/.gitconfig | wc -l) == 0 ]];then # 
-      git config --global --add safe.directory $(dirname $0)/.git
-    fi
 
-    env -i config=$1 src="$src" bash -c 'source $src/.env;eval $condaEnv;Rscript $src/DEanalysis.R $src/ $config'
+    env -i config=$1 src="$src" bash -c 'source $src/.env;eval $condaEnv;Rscript $src/DEanalysis.R $src/ $config 2>&1 | tee -a $(dirname $config)/EArun.$(date +%Y%m%d).log'
 
 else
     echo "=============== EArun path/to/config/file"
