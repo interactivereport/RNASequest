@@ -1,4 +1,4 @@
-name: ExpressionAnalysis
+---
 channels:
   - bioconda
   - conda-forge
@@ -56,4 +56,3 @@ dependencies:
   - bioconductor-recount3
   - r-bookdown
   - r-kableextra
-  - git=2.35.1

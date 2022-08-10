@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+appEnvName="RNAsequest"
 
 condaPath=$(which conda)
 if [[ ${#condaPath} -lt 3 ]]; then
@@ -10,20 +11,24 @@ else
 fi
 
 src="$(dirname $0)/src"
-conda env create -f install.yml
 condaPath=$(dirname $(dirname $condaPath))
-# sed -i "1s|^|#. $condaPath/etc/profile.d/conda.sh;conda activate ExpressionAnalysis\n|" src/sys.yml
-echo "export condaEnv='. $condaPath/etc/profile.d/conda.sh;conda activate ExpressionAnalysis'" > $src/.env
+#if { conda env list | grep "^$appEnvName"; } >/dev/null 2>/dev/null; then conda env remove -n $appEnvName; fi
+# mamba is not in the base conda
+#conda create -y -n $appEnvName "mamba=0.24.0" -c conda-forge
+source $condaPath/etc/profile.d/conda.sh
+conda activate $appEnvName
+mamba env update -f install.yml
+
+echo "export condaEnv='. $condaPath/etc/profile.d/conda.sh;conda activate $CONDA_PREFIX'" > $src/.env
 echo "export PATH=$PATH" >> $src/.env
 echo "export OPENBLAS_NUM_THREADS=1" >> $src/.env
 echo "export SGE_EXECD_PORT=$SGE_EXECD_PORT" >> $src/.env
 echo "export SGE_QMASTER_PORT=$SGE_QMASTER_PORT" >> $src/.env
 echo "export SGE_ROOT=$SGE_ROOT" >> $src/.env
+echo "export SLURM_CONF=$SLURM_CONF" >> $src/.env
+conda deactivate
 
 ## additional packages which are not available on anaconda
 env -i src="$src" bash -c 'source $src/.env;eval $condaEnv;R -q -e '"'"'suppressWarnings({if(!require(revealjs)) install.packages("revealjs",repos = "https://cran.us.r-project.org")})'"'"
 
-#conda activate ExpressionAnalysis
-#R -q -e 'if(!require(revealjs)) install.packages("revealjs",repos = "http://cran.us.r-project.org")'
-
-#printf 'Please install R revealjs package in the ExpressionAnalysis conda environment.\nR\ninstall.packages("revealjs")\n'
+echo "If no errors above, RNAsequest installation/configuration is successful!"
