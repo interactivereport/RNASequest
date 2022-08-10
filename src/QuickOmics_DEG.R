@@ -54,7 +54,6 @@ Batch_DEG = function(Counts_table, S_meta, comp_info, create_beta_coef_matrix=F,
   return(DEG_result_list)
 }
 
-
 DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) {
   comp_name = comp_info$CompareName
   Subset_group = unique(comp_info$Subsetting_group)
@@ -86,7 +85,6 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
   return(list(result_list))
 }
 
-
 subset_data <- function(Subset_group, Sample_meta, Counts_table) {
   Subset_group_levels = trimws(strsplit(Subset_group, ";")[[1]])
   Subset_group_level_vec <- setNames(trimws(sapply(strsplit(Subset_group_levels,":"),tail,1)),trimws(sapply(strsplit(Subset_group_levels,":"),head,1)))
@@ -96,7 +94,6 @@ subset_data <- function(Subset_group, Sample_meta, Counts_table) {
   Counts_table = Counts_table[,rownames(Sample_meta)]
   return(list(S_meta=Sample_meta,Counts_table=Counts_table))
 }
-
 
 beta.coef <- function(response_table, design_table, coef_table, digits = 5) { # start function code
   # response_table, table of response variable, y$E from limma voom() object

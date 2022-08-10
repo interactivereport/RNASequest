@@ -1179,11 +1179,18 @@ comparisonAnalysis <- function(config,estC,meta,comp_info){
     message("====== Starting DEG analyses ...")
     saveCountsAlias(config,estC)
     ## comparison -----------
-    if(!is.null(config$qsub) && config$qsub){
+    if((!is.null(config[['qsub']]) && config[['qsub']]) || (!is.null(config$parallel) && config$parallel=="sge")){
+       message("sge DEG process ...")
         source(paste0(config$srcDir,"/qsubDEG.R"))
         return(qsubDEG(estC,meta,comp_info,config$output,config$srcDir,
                        core=config$core,qsubTime=config$qsubTime))
+    }else if(!is.null(config$parallel) && config$parallel=="slurm"){
+        message("slurm DEG process ...")
+        source(paste0(config$srcDir,"/sbatchDEG.R"))
+        return(sbatchDEG(estC,meta,comp_info,config$output,config$srcDir,
+                     core=config$core))
     }else{
+        message("serial DEG process ...")
         return(Batch_DEG(estC,meta,comp_info,core=config$core))
     }
 }
