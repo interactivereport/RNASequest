@@ -1175,6 +1175,102 @@ checkShinyTestSetting <- function(config){
 saveCountsAlias <- function(config,estC){
     saveRDS(estC,file=paste0(config$output,"/",config$prj_name,"_estCount.rds"))
 }
+plotCovBio <- function(config,meta,comp_info){
+  selCov <- unique(c(config$covariates_check,config$covariates_adjust))
+  selCom <- unique(comp_info$Group_name)
+  selCov <- selCov[!selCov%in%selCom]
+  if(is.null(selCom) || is.null(selCov)) return
+  selAll <- c(selCov,selCom)
+  meta <- meta[,selAll]
+
+  ## change the Well_Row from charactor to numeric
+  oneMeta <- "Well_Row"
+  if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
+  # remove meta with only one unique value
+  meta <- meta[,apply(meta,2,function(x)return(length(unique(x))>1)),drop=F]
+  for(one in selCom) meta[,one] <- as.factor(meta[,one])
+  
+  pdf(paste0(config$output,"/cov.vs.bio.pdf"))
+  D <- plotEachCor(meta[,selCom,drop=F],
+                   meta[,selCov,drop=F])
+  print(ggplot(D,aes(compGrp,CovGrp))+
+          geom_tile(aes(fill=-log10(pvalue)))+
+          xlab("Comparison groups")+ylab("Covariate groups")+
+          scale_fill_gradient("-log10(pvalue) \n",low="#fee0d2",high="#99000d")+
+          theme_minimal()+
+          theme(axis.text.x=element_text(angle=90)))
+  a <- dev.off()
+  data.table::fwrite(D,paste0(config$output,"/cov.vs.bio.csv"))
+}
+plotEachCor <- function(X,Y){
+  corD <- NULL
+  for(x in colnames(X)){
+    for(y in colnames(Y)){
+      D <- cbind(X[,x,drop=F],Y[,y,drop=F]) %>% na.omit()
+      oneCor <- data.frame(compGrp=x,CovGrp=y,method="",estimate=0,pvalue=1,sampleN=nrow(D))
+      if(nrow(D)<3){
+        corD <- rbind(corD,oneCor)
+        next
+      }else{
+        oldNames <- colnames(D)
+        colnames(D) <- names(oldNames) <- gsub("^[0-9]","x",gsub(" |[[:punct:]]","_",oldNames))
+        x <- colnames(D)[1]
+        y <- colnames(D)[2]
+        if(is.numeric(D[,x]) && is.numeric(D[,y])){
+          a <- cor.test(D[,x],D[,y],method="spearman")
+          oneCor$method <- "spearman"
+          oneCor$estimate <- as.vector(a$estimate)
+          oneCor$pvalue <- as.vector(a$p.value)
+          oneCor$stat <- as.vector(a$statistic)
+          print(ggplot(D,aes_string(x,y))+
+                  geom_point()+
+                  geom_smooth()+
+                  xlab(oldNames[x])+ylab(oldNames[y])+
+                  theme_light())
+        }else if(is.numeric(D[,x]) && (is.factor(D[,y]) || is.character(D[,y]))){
+          a <- anova(lm(as.formula(paste(c(x,y),collapse="~")),data=D))
+          oneCor$method <- "Anova"
+          oneCor$pvalue <- as.vector(a$'Pr(>F)'[1])
+          oneCor$stat <- as.vector(a$'F value'[1])
+          print(ggplot(D,aes_string(y,x))+
+                  geom_boxplot()+
+                  geom_dotplot(binaxis='y',stackdir='center',dotsize=1)+
+                  xlab(oldNames[y])+ylab(oldNames[x])+
+                  theme_light())
+          
+        }else if(is.numeric(D[,y]) && (is.factor(D[,x]) || is.character(D[,x]))){
+          a <- anova(lm(as.formula(paste(c(y,x),collapse="~")),data=D))
+          oneCor$method <- "Anova"
+          oneCor$pvalue <- as.vector(a$'Pr(>F)'[1])
+          oneCor$stat <- as.vector(a$'F value'[1])
+          suppressMessages(suppressWarnings({
+            print(ggplot(D,aes_string(x,y))+
+                    geom_boxplot()+
+                    geom_dotplot(binaxis='y',stackdir='center',dotsize=0.5)+
+                    xlab(oldNames[x])+ylab(oldNames[y])+
+                    theme_light())
+          }))
+        }else if((is.factor(D[,x]) || is.character(D[,x])) && (is.factor(D[,y]) || is.character(D[,y]))){
+          require(gridExtra)
+          a <- suppressWarnings(chisq.test(D[,x],D[,y]))
+          oneCor$method <- "Chisq"
+          oneCor$pvalue <- as.vector(a$p.value)
+          oneCor$stat <- as.vector(a$statistic)
+          chiTable <- table(D)
+          if(sum(nchar(rownames(chiTable)))<sum(nchar(colnames(chiTable)))) chiTable <- t(chiTable)
+          labs <- names(dimnames(chiTable))
+          grid.arrange(tableGrob(chiTable),
+                       left=labs[1],
+                       top=labs[2],
+                       padding=unit(2, "line"))
+        }
+      }
+      corD <- rbind(corD,oneCor)
+    }
+  }
+  return(corD)
+}
+
 comparisonAnalysis <- function(config,estC,meta,comp_info){
     message("====== Starting DEG analyses ...")
     saveCountsAlias(config,estC)

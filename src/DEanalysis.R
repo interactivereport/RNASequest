@@ -15,6 +15,8 @@ checkConfig(config)
 a <- checkShinyTestSetting(sysConfig)
 D <- getEAData(config,withCom=T)
 D <- useAlias(config,D)
+## check correlation between covariates and comparison groups -----
+plotCovBio(config,D$meta,D$comp_info)
 
 ## comparison file checking ---------
 DEGs <- comparisonAnalysis(config,D$counts,D$meta,D$comp_info)
