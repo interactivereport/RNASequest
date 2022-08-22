@@ -28,15 +28,16 @@ gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     #some files use gene_biotype, some files use gene_type
     if (sum(str_detect(gtf$V9, "gene_biotype"))>100) {gene_type_key="gene_biotype"} else {gene_type_key="gene_type"}
     
-    if (sum(gtf$V3=="transcript")>100) { #standard annotations have transcript
-        tx_info<-gtf%>%filter(V3=="transcript")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F) %>%
-            tidyr::extract(V9, c("gene_name"), 'gene_name "(.+?)";', remove=F)%>%
-            tidyr::extract(V9, c("gene_type"), str_c(gene_type_key, ' "(.+?)";'), remove=F)
-    } else { #some annotation files only have exons, like Monkey_REV4b.transcript.gtf.gz
+    #always get transcript info from exons
+    #if (sum(gtf$V3=="transcript")>100) { #standard annotations have transcript
+    #    tx_info<-gtf%>%filter(V3=="transcript")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F) %>%
+    #        tidyr::extract(V9, c("gene_name"), 'gene_name "(.+?)";', remove=F)%>%
+    #        tidyr::extract(V9, c("gene_type"), str_c(gene_type_key, ' "(.+?)";'), remove=F)
+    #} else { #some annotation files only have exons, like Monkey_REV4b.transcript.gtf.gz
         tx_info<-gtf%>%filter(V3=="exon")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F) %>%
             tidyr::extract(V9, c("gene_name"), 'gene_name "(.+?)";', remove=F)%>%
             tidyr::extract(V9, c("gene_type"), str_c(gene_type_key, ' "(.+?)";'), remove=F)
-    }
+    #}
     
     colSums(is.na(tx_info)) #if there are NAs, check why the information is not extracted. Some files don't have gene type info.
     
@@ -46,7 +47,8 @@ gtf.gz_to_gene_info <- function(strGTF,strOut=NULL){
     ERCC<-gtf%>%filter(str_detect(V1, "ERCC"))%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F) %>%
         tidyr::extract(V9, c("gene_name"), 'gene_name "(.+?)";', remove=F)%>%
         tidyr::extract(V9, c("gene_type"), str_c(gene_type_key, ' "(.+?)";'), remove=F)
-    #add plasmid genes. If no plasmid genes, get empty data.table which won't affect the results
+    #add plasmid genes from gb2gtf program (in case V3 is not listed as exon for some plasmid genes). 
+    #If no plasmid genes, the empty data.table which won't affect the results
     plasmid_genes<-gtf%>%filter(V2=="gb2gtf")%>%tidyr::extract(V9, c("geneID"), 'gene_id "(.+?)";', remove=F) %>%
         tidyr::extract(V9, c("gene_name"), 'transcript_id "(.+?)";', remove=F)%>%
         tidyr::extract(V9, c("gene_type"), 'Feature_type "(.+?)"', remove=F)
