@@ -1179,7 +1179,9 @@ plotCovBio <- function(config,meta,comp_info){
   selCov <- unique(c(config$covariates_check,config$covariates_adjust))
   selCom <- unique(comp_info$Group_name)
   selCov <- selCov[!selCov%in%selCom]
-  if(is.null(selCom) || is.null(selCov)) return
+  if(is.null(selCom) || is.null(selCov)) return()
+  message("Plotting correlation between covarites and comparison groups:\n\t",
+          paste(selCov,collapse=",")," v.s. ",paste(selCom,collapse=","))
   selAll <- c(selCov,selCom)
   meta <- meta[,selAll]
 
