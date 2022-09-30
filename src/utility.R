@@ -1162,6 +1162,7 @@ finishSplit <- function(){
 ## EArun functions ----
 require(dplyr)
 source("QuickOmics_DEG.R")
+
 checkShinyTestSetting <- function(config){
   if(is.null(config$QuickOmics_test_folder) || 
      is.null(config$QuickOmics_test_link)){
@@ -1181,7 +1182,7 @@ plotCovBio <- function(config,meta,comp_info){
   selCov <- selCov[!selCov%in%selCom]
   if(is.null(selCom) || is.null(selCov)) return()
   message("Plotting correlation between covarites and comparison groups:\n\t",
-          paste(selCov,collapse=",")," v.s. ",paste(selCom,collapse=","))
+          paste(selCov,collapse=", ")," v.s. ",paste(selCom,collapse=","))
   selAll <- c(selCov,selCom)
   meta <- meta[,selAll]
 
@@ -1208,9 +1209,14 @@ plotEachCor <- function(X,Y){
   corD <- NULL
   for(x in colnames(X)){
     for(y in colnames(Y)){
+      message("\t",x," .vs. ",y)
       D <- cbind(X[,x,drop=F],Y[,y,drop=F]) %>% na.omit()
-      oneCor <- data.frame(compGrp=x,CovGrp=y,method="",estimate=0,pvalue=1,sampleN=nrow(D))
+      oneCor <- data.frame(compGrp=x,CovGrp=y,method="",estimate=0,pvalue=1,stat=0,sampleN=nrow(D))
       if(nrow(D)<3){
+        corD <- rbind(corD,oneCor)
+        next
+      }else if(length(unique(D[,x]))<2 || length(unique(D[,y]))<2){
+        message("\t\tSkip! only 1 unique value in ",x," or ",y," after NA removed.")
         corD <- rbind(corD,oneCor)
         next
       }else{
@@ -1253,7 +1259,7 @@ plotEachCor <- function(X,Y){
                     theme_light())
           }))
         }else if((is.factor(D[,x]) || is.character(D[,x])) && (is.factor(D[,y]) || is.character(D[,y]))){
-          require(gridExtra)
+          suppressMessages(suppressWarnings(require(gridExtra)))
           a <- suppressWarnings(chisq.test(D[,x],D[,y]))
           oneCor$method <- "Chisq"
           oneCor$pvalue <- as.vector(a$p.value)
