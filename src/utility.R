@@ -486,7 +486,7 @@ getEAData <- function(config,withCom=F){
         D$comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
                                            D$meta,config$comparison_file)
     D <- c(D,getCounts(config,rownames(D$meta)))
-    D <- c(D,getEffLength(config,colnames(D$counts),rownames(D$counts)))
+    D <- c(D,getEffLength(config,colnames(D$counts),rownames(D$counts),D$gInfo,config$min_median_effective_length))
     D <- c(D,getTPM(config,colnames(D$counts),rownames(D$counts)))
     D <- c(D,getSeqQC(config,colnames(D$counts)))
     if(is.null(D$logTPM)){
@@ -584,13 +584,21 @@ checkGeneName <- function(D,gID){
     D <- D[gID,,drop=F]
     return(D)
 }
-getEffLength <- function(config,sID,gID){
+getEffLength <- function(config,sID,gID,gInfo=NULL,gLength=NULL){
     D <- NULL
     if(!is.null(config$prj_effLength) && file.exists(config$prj_effLength)){
         message("reading effective length")
         D <- read.table(config$prj_effLength,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
         D <- checkSampleName(D,sID)
         D <- checkGeneName(D,gID)
+        if(!is.null(gInfo) && !is.null(gLength)){
+          selG <- rownames(D)[apply(D,1,median,na.rm=T)<gLength]
+          if(length(selG)>0){
+            message("\t\tThe nominal length of following ",length(selG)," genes will be used:")
+            message("\t\t",paste(gInfo[selG,"Gene.Name"],collapse=", "))
+            D[selG,] <- matrix(gInfo[selG,"Length"],nrow=length(selG),ncol=ncol(D))
+          }
+        }
     }
     return(list(effLength=D))
 }
