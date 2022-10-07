@@ -1324,6 +1324,50 @@ comparisonAnalysis <- function(config,estC,meta,comp_info){
         return(Batch_DEG(estC,meta,comp_info,core=config$core))
     }
 }
+plotDEG_MA <- function(deg,logTPM,meta,comp_info,config){
+  suppressMessages(suppressWarnings(require(ggrastr)))
+  pdf(paste0(config$output,"/deg.MA.pdf"))
+  for(one in names(deg)){
+    if(one %in% rownames(comp_info)){
+      testID <- rownames(meta)[meta[,comp_info[one,"Group_name"]]==comp_info[one,"Group_test"]]
+      ctrlID <- rownames(meta)[meta[,comp_info[one,"Group_name"]]==comp_info[one,"Group_ctrl"]]
+      testExp <- apply(logTPM[,testID],1,mean)
+      ctrlExp <- apply(logTPM[,ctrlID],1,mean)
+      gID <- intersect(rownames(logTPM),rownames(deg[[one]]$DEG))
+      X <- rbind(data.frame(gID=gID,
+                            Exp=apply(cbind(testExp[gID],testExp[gID]),1,max),
+                            log2FC=testExp[gID]-ctrlExp[gID],
+                            method="from Exp"),
+                 data.frame(gID=gID,
+                            Exp=apply(cbind(testExp[gID],testExp[gID]),1,max),
+                            log2FC=deg[[one]]$DEG[gID,grep("log2FoldChange",colnames(deg[[one]]$DEG))],
+                            method="from DEG"))
+      tryCatch(
+        expr={
+          p <- ggplot(X,aes(Exp,log2FC,color=method))+
+            rasterise(geom_point(), dpi=100,dev="ragg")+
+            scale_color_manual(values=c('from Exp'="#bdbdbd80",'from DEG'="#de2d26e0"))+
+            ggtitle(one)+
+            xlab("Expression (log2)")+
+            ylab("log2FC")+
+            theme_light()
+          print(p)
+        },
+        error=function(e){
+          p <- ggplot(X,aes(Exp,log2FC,color=method))+
+            geom_point()+
+            scale_color_manual(values=c('from Exp'="#bdbdbd80",'from DEG'="#de2d26e0"))+
+            ggtitle(one)+
+            xlab("Expression (log2)")+
+            ylab("log2FC")+
+            theme_light()
+          print(p)
+        }
+      )
+    }
+  }
+  a <- dev.off()
+}
 Hmisc.rcorr <- function (x, y, type = "pearson"){
     type <- match.arg(type)#c("pearson", "spearman")
     if (!missing(y))

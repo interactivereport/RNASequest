@@ -18,8 +18,9 @@ D <- useAlias(config,D)
 ## check correlation between covariates and comparison groups -----
 plotCovBio(config,D$meta,D$comp_info)
 
-## comparison file checking ---------
+## comparison analysis ---------
 DEGs <- comparisonAnalysis(config,D$counts,D$meta,D$comp_info)
+plotDEG_MA(DEGs,D$logTPM,D$meta,D$comp_info,config)
 
 ## covariate removal -----
 if(!is.null(config$covariates_adjust) && length(config$covariates_adjust)>0){

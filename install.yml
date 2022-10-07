@@ -56,3 +56,4 @@ dependencies:
   - bioconductor-recount3
   - r-bookdown
   - r-kableextra
+  - r-ggrastr
