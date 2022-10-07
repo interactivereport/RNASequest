@@ -498,7 +498,7 @@ getEAData <- function(config,withCom=F){
                               UniqueID=rownames(D),
                               Gene.Name=rownames(D))
     }
-    return(D)
+    return(filterGene(config,D))
 }
 getMeta <- function(config){
     message("reading sample meta")
@@ -569,7 +569,7 @@ getCounts <- function(config,sID){
         }
     }
     D <- checkSampleName(D,sID)
-    return(list(counts=D,gInfo=gInfo))
+    return(filterGene(config,list(counts=D,gInfo=gInfo)))
 }
 checkSampleName <- function(D,sID){
     if(sum(!sID%in%colnames(D))>0)
@@ -622,6 +622,24 @@ getSeqQC <- function(config,sID){
                     ") defined in sample meta table are NOT available in sequence QC table"))
     D <- D[sID,,drop=F]
     return(list(seqQC=D))
+}
+filterGene <- function(config,D){
+  if(length(config$rmGeneStartWith)>0 && !is.null(D$gInfo)){
+    selRM <- rep(F,nrow(D$gInfo))
+    for(one in config$rmGeneStartWith){
+      selRM <- selRM | grepl(paste0("^",one),D$gInfo$Gene.Name)
+    }
+    if(sum(selRM)>0){
+      message("The following genes will be filtered out:\n\t",
+              paste(D$gInfo$Gene.Name[selRM],collapse=", "))
+      selG <- D$gInfo$UniqueID[selRM]
+      D$gInfo <- D$gInfo[!selRM,]
+      D$counts <- D$counts[!rownames(D$counts)%in%selG,]
+      if("logTPM"%in%names(D))
+        D$logTPM <- D$logTPM[!rownames(D$logTPM)%in%selG,]
+    }
+  }
+  return(D)
 }
 useAlias <- function(config,D){
     if(!is.null(config$sample_alias)){

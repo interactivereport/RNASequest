@@ -41,6 +41,7 @@ qsubTime: 180 #in minites, 3hr # not used for slurm
 min_median_effective_length: 5 #nominal length will be used If the median effective length is smaller than the specified
 seqQC_replot: false
 geneLength_QC: false
+rmGeneStartWith: [] # remove genes whose names start with specified
 
 # ====== The QC parameters ========
 # covariates_check: The listed covariates will checked against PCA of 
