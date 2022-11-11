@@ -1207,8 +1207,6 @@ plotCovBio <- function(config,meta,comp_info){
   selCom <- unique(comp_info$Group_name)
   selCov <- selCov[!selCov%in%selCom]
   if(is.null(selCom) || is.null(selCov)) return()
-  message("Plotting correlation between covarites and comparison groups:\n\t",
-          paste(selCov,collapse=", ")," v.s. ",paste(selCom,collapse=","))
   selAll <- c(selCov,selCom)
   meta <- meta[,selAll]
 
@@ -1217,8 +1215,11 @@ plotCovBio <- function(config,meta,comp_info){
   if(oneMeta %in% colnames(meta)) meta[,oneMeta] <- as.numeric(as.factor(meta[,oneMeta]))
   # remove meta with only one unique value
   meta <- meta[,apply(meta,2,function(x)return(length(unique(x))>1)),drop=F]
+  selCov <- selCov[selCov%in%colnames(meta)]
   for(one in selCom) meta[,one] <- as.factor(meta[,one])
   
+  message("Plotting correlation between covarites and comparison groups:\n\t",
+          paste(selCov,collapse=", ")," v.s. ",paste(selCom,collapse=","))
   pdf(paste0(config$output,"/cov.vs.bio.pdf"))
   D <- plotEachCor(meta[,selCom,drop=F],
                    meta[,selCov,drop=F])

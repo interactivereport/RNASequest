@@ -13,6 +13,7 @@ fi
 src="$(dirname $0)/src"
 condaPath=$(dirname $(dirname $condaPath))
 if { conda env list | grep "^$appEnvName"; } >/dev/null 2>/dev/null; then conda env remove -n $appEnvName; fi
+#conda env create -f install.yml
 # mamba is not in the base conda
 conda create -y -n $appEnvName "mamba=0.24.0" -c conda-forge
 source $condaPath/etc/profile.d/conda.sh
