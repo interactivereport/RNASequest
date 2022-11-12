@@ -1307,7 +1307,7 @@ plotEachCor <- function(X,Y){
 }
 
 comparisonAnalysis <- function(config,estC,meta,comp_info){
-    message("====== Starting DEG analyses ...")
+    message("====== Starting DE analyses ...")
     saveCountsAlias(config,estC)
     ## comparison -----------
     if((!is.null(config[['qsub']]) && config[['qsub']]) || (!is.null(config$parallel) && config$parallel=="sge")){
