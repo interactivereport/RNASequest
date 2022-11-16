@@ -1596,6 +1596,7 @@ pubShinyOne <- function(config){
     checkShinySetting(config)
     strF <- paste0(config$QuickOmics_publish_folder,config$prj_name,".RData")
     if(file.exists(strF)){
+        message("project files exists in ",config$QuickOmics_publish_folder)
         stop("The project already exists in ShinyOne!\nPlease remove the record and associated files or change prj_name and re-EArun!")
     }
     message("preparing information for ShinyOne")
