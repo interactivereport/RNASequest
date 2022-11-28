@@ -176,8 +176,10 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   		beta_coef_matrix = beta.coef(assay(vst(dds)), model.matrix(design(dds)), coef(dds), digits = 5)
   		# write.csv(beta_coef_matrix, str_c(comp_name, "_beta_coef.csv"))
   	}
-  	
-  	comp_result = as.data.frame(res[, c(2,4,5)])
+  	sel <- c(grep("log",colnames(res),ignore.case=T,value=T),
+  	         grep("pvalue",colnames(res),ignore.case=T,value=T),
+  	         grep("padj",colnames(res),ignore.case=T,value=T))
+  	comp_result = as.data.frame(res[, sel])#log2FoldChange, pvalue, padj
   	colnames(comp_result) =  paste0(comp_name[i],"_DESeq2.",colnames(comp_result))
   	if (exists("beta_coef_matrix") && nrow(beta_coef_matrix) > 0) {
   		result_list[[length(result_list)+1]] <- list("DEG" = comp_result, "beta_coef_matrix" = beta_coef_matrix)
@@ -277,8 +279,11 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
   #  tt$logFC = predFCm(fit2,coef=column, all.de=T, prop.true.null.method="lfdr")
   #}
   
-  ###########################    
-  comp_result = tt[, c(1,4,5)]
+  ###########################  
+  sel <- c(grep("log",colnames(tt),ignore.case=T,value=T),
+           grep("^p.",colnames(tt),ignore.case=T,value=T),
+           grep("^adj.",colnames(tt),ignore.case=T,value=T))
+  comp_result = tt[, sel]#"logFC","P.value","Adj.P.value"
   colnames(comp_result) =  paste0(comp_name,"_limma.",c("logFC","P.value","Adj.P.value"))
   #rownames(comp_result) = str_split(rownames(comp_result), '\\.', simplify = T)[,1]
   # write.csv(comp_result, str_c(comp_name, "_DEG.csv"))
