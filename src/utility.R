@@ -553,8 +553,8 @@ getCounts <- function(config,sID){
     message("reading sample counts")
     D <- read.table(config$prj_counts,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
     ix <- apply(as.matrix(D),1,function(x)return(sum(x>=config$min_count)))>=config$min_sample
-    message("\tFiltering genes (",sum(ix),") with minimal counts ",
-            config$min_count," in at least ",config$min_sample," samples")
+    message("\tFiltering genes (",sum(ix),") with minimal counts (>=) ",
+            config$min_count," in at least (>=) ",config$min_sample," samples")
     D <- D[ix,]
     gInfo <- NULL
     if(!is.null(config$gene_annotation)){
