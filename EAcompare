@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [[ $# -gt 1 ]]; then
+    src="$(dirname $0)/src"
+    if [[ ! -f "$src/.env" ]]; then
+      echo "EArun: Please run ./install to setup necessary env variables"
+      exit
+    fi
+
+    env -i obj1=$1 obj2=$2 src="$src" bash -c 'source $src/.env;eval $condaEnv;Rscript $src/EAcompare.R $obj1 $obj2 2>&1 | tee -a $(dirname $obj1)/EAcompare.$(date +%Y%m%d).log'
+
+else
+    echo "=============== EAcompare path/to/first/RData/file path/to/second/RData/file"
+    echo "This function is used to compare equalty of two QuickOmics R object."
+    exePath=$(dirname $0)
+    echo "An example config file can be found: $exePath/example/config.yml"
+    echo "'EArun' can be used to create a QuickOmics R object"
+    echo "==============="
+    exit 0
+fi

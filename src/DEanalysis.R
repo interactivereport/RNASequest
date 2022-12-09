@@ -1,6 +1,6 @@
 args = commandArgs(trailingOnly=T)
 if(length(args)<2){
-    message("'EAinit' can be used to create a config file for an RNAseq project")
+    #message("'EArun can be used to create a config file for an RNAseq project")
     stop("config yaml file is required!")
 }
 message("loading resource ...")
