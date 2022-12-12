@@ -493,10 +493,10 @@ getEAData <- function(config,withCom=F){
         D$logTPM <- as.data.frame(covariateRM(D$counts,D$effLength,prior=config$count_prior))
     }
     if(is.null(D$gInfo)){
-        D$gInfo <- data.frame(row.names = rownames(D),
-                              id=0:(nrow(D)-1),
-                              UniqueID=rownames(D),
-                              Gene.Name=rownames(D))
+        D$gInfo <- data.frame(row.names = rownames(D$counts),
+                              id=0:(nrow(D$counts)-1),
+                              UniqueID=rownames(D$counts),
+                              Gene.Name=rownames(D$counts))
     }
     return(filterGene(config,D))
 }
