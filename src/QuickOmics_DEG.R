@@ -165,7 +165,8 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   			dds <- nbinomWaldTest(dds)
   			message("\t\trelevel")
   		}
-  		res <- lfcShrink(dds,coef=strContrast, type="apeglm", parallel=T)
+  		res <- suppressMessages(lfcShrink(dds,coef=strContrast, type="apeglm",
+  		                                  parallel=T,lfcThreshold=LFC_cutoff[i]))
   	}else{
   		res <- results(dds,contrast=c(group_var,trt_group[i],ctrl_group[i]),
   					   lfcThreshold=LFC_cutoff[i], altHypothesis="greaterAbs",
