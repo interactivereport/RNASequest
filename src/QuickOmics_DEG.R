@@ -157,6 +157,9 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   
   for(i in 1:nrow(comp_info)){
   	message("\t--- ",comp_name[i])
+    res <- results(dds,contrast=c(group_var,trt_group[i],ctrl_group[i]),
+                   lfcThreshold=LFC_cutoff[i], altHypothesis="greaterAbs",
+                   parallel=T)
   	if (toupper(shrink_logFC[i]) == "YES") {
   		strContrast <- str_c(group_var, "_", trt_group[i], "_vs_", ctrl_group[i])
   		if(!strContrast%in%resultsNames(dds)){
@@ -165,12 +168,11 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   			dds <- nbinomWaldTest(dds)
   			message("\t\trelevel")
   		}
-  		res <- suppressMessages(lfcShrink(dds,coef=strContrast, type="apeglm",
+  		shrinkLFC <- suppressMessages(lfcShrink(dds,coef=strContrast, type="apeglm",
+  		                                  format="DataFrame",
   		                                  parallel=T,lfcThreshold=LFC_cutoff[i]))
-  	}else{
-  		res <- results(dds,contrast=c(group_var,trt_group[i],ctrl_group[i]),
-  					   lfcThreshold=LFC_cutoff[i], altHypothesis="greaterAbs",
-  					   parallel=T)
+  		lfc <- "log2FoldChange"
+  		res[[lfc]] <- shrinkLFC[[lfc]]
   	}
   	if (create_beta_coef_matrix) {
   		beta_coef_matrix = data.frame()
