@@ -687,11 +687,11 @@ covariateRM <- function(X,effeL,batchX=NULL,method='limma',
         ad_X <- X
     }else if(method=="limma"){
         ad_X <- covariateRM_limmaRM(X[ix,],batchX,prior)
-        ad_X <- rbind(ad_X,X[!ix,])
+        ad_X <- rbind(ad_X,X[!ix,,drop=F])
         sizeF <- covariateRM_getSizeF(ad_X)
     }else if(method=="combat_seq"){
         ad_X <- covariateRM_ComBatRM(X[ix,],batchX[,1])
-        ad_X <- rbind(ad_X,X[!ix,])
+        ad_X <- rbind(ad_X,X[!ix,,drop=F])
         sizeF <- covariateRM_getSizeF(ad_X)
     }else{
         stop("unknown batch removal method!")
