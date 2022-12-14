@@ -74,7 +74,7 @@ squeue <- function(strOut,srcDir,comNames,core,jID=NULL,runCount=NULL){
   return(list(comNames=c(runJobs,resubJobs),jID=jID,runCount=runCount))
 }
 getRunJobs <- function(jID){
-  jRec <- system(paste0("squeue | grep '",jID,"_'"),intern=T)
+  jRec <- suppressWarnings(system(paste0("squeue | grep '",jID,"_'"),intern=T))
   if(length(jRec)==0) return(NULL)
   
   jNames <- sapply(jRec,function(one){
