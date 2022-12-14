@@ -1493,24 +1493,21 @@ formatQuickOmicsResult <- function(DEGs,logTPM,grp,gInfo){
     return(list(Dw=Dw,Dl=Dl))
 }
 formatQuickOmicsMeta <- function(meta,comNames){
+  if(nrow(meta)>=length(comNames)){
     MetaData <- list(sampleid=rownames(meta),
                      group=meta$group,
                      Order=unique(meta$group),
                      ComparePairs=comNames)
-    MetaData <- as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F)
-    meta <- meta[,-grep("group",colnames(meta),ignore.case=T),drop=F]
-    if(nrow(MetaData)>nrow(meta))
-        MetaData <- cbind(MetaData,
-                          rbind(meta,
-                                data.frame(matrix(NA,
-                                                  nrow=nrow(MetaData)-nrow(meta),
-                                                  ncol=ncol(meta),
-                                                  dimnames=list(1:(nrow(MetaData)-nrow(meta)),colnames(meta))))))
-    else
-        MetaData <- cbind(MetaData,meta)
-
-    suppressWarnings(MetaData[is.na(MetaData)] <- "")
-    return(MetaData)
+  }else{
+    MetaData <- list(sampleid=rownames(meta),
+                     group=meta$group,
+                     Order=unique(meta$group),
+                     ComparePairs="")
+  }
+  MetaData <- as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F)
+  meta <- meta[,-grep("group",colnames(meta),ignore.case=T),drop=F]
+  MetaData <- cbind(MetaData,meta)
+  return(MetaData)
 }
 saveQuickOmics <- function(config,EAdata,DEGs){
     message("saving QuickOmics object ...")
