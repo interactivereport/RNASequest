@@ -300,6 +300,15 @@ limma_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix) 
 }
 
 checkComparisonInfo <- function(comp_info, meta, comp_info_file) {
+  requiredCols = c("Subsetting_group","Model","Covariate_levels","Group_name",
+				   "Group_test","Group_ctrl","Analysis_method","Shrink_logFC","LFC_cutoff")
+  notmatching = setdiff(requiredCols,names(comp_info))
+  if (length(notmatching) > 0) 
+  { 
+    stop(paste0(comp_info_file," should have column header(s): ",
+         paste(notmatching, collapse=',')
+		 ))
+  }
   if(nrow(comp_info)==0){
     stop(paste0("Empty comparison definition file (", comp_info_file, ") is NOT allowed!"))
   }
