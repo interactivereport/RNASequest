@@ -169,10 +169,12 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   			message("\t\trelevel")
   		}
   		shrinkLFC <- suppressMessages(lfcShrink(dds,coef=strContrast, type="apeglm",
-  		                                  format="DataFrame",
+  		                                  format="DataFrame",svalue=T,
   		                                  parallel=T,lfcThreshold=LFC_cutoff[i]))
   		lfc <- "log2FoldChange"
-  		res[[lfc]] <- shrinkLFC[[lfc]]
+  		res[[lfc]] <- shrinkLFC[rownames(res),lfc]
+  		res <- cbind(res,data.frame(svalue=shrinkLFC[rownames(res),"svalue"],
+  		                            sadj=p.adjust(shrinkLFC[rownames(res),"svalue"],"BH")))
   	}
   	if (create_beta_coef_matrix) {
   		beta_coef_matrix = data.frame()
@@ -181,7 +183,9 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   	}
   	sel <- c(grep("log",colnames(res),ignore.case=T,value=T),
   	         grep("pvalue",colnames(res),ignore.case=T,value=T),
-  	         grep("padj",colnames(res),ignore.case=T,value=T))
+  	         grep("padj",colnames(res),ignore.case=T,value=T),
+  	         grep("svalue",colnames(res),ignore.case=T,value=T),
+  	         grep("sadj",colnames(res),ignore.case=T,value=T))
   	comp_result = as.data.frame(res[, sel])#log2FoldChange, pvalue, padj
   	colnames(comp_result) =  paste0(comp_name[i],"_DESeq2.",colnames(comp_result))
   	if (exists("beta_coef_matrix") && nrow(beta_coef_matrix) > 0) {

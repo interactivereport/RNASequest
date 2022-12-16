@@ -1480,7 +1480,12 @@ formatQuickOmicsResult <- function(DEGs,logTPM,grp,gInfo){
     Dl <- NULL
     for(i in names(DEGs)){
         res <- DEGs[[i]]$DEG
-        colnames(res) <- c("logFC","P.Value","Adj.P.Value")
+        if(ncol(res)<5){
+          res <- cbind(res,data.frame(row.names=rownames(res),
+                                      rep(list(rep(NA,nrow(res))),5-ncol(res))))
+        }
+        colnames(res)[1:5] <- c("logFC","P.Value","Adj.P.Value","S.Value","Adj.S.Value")
+        res <- res[,1:5]
         res <- cbind(UniqueID=rownames(res),
                      test=factor(i,levels=names(DEGs)),
                      res)
