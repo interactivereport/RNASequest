@@ -1,0 +1,6 @@
+project: SRP199678
+species: mouse
+file_source: sra
+project_home: data_sources_sra
+project_type: data_sources
+number_samples: 155

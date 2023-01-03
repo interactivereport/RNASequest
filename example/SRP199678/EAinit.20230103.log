@@ -1,0 +1,33 @@
+loading resource ...
+
+
+***** 2023-01-03 14:07:51 *****
+###########
+## ExpressionAnalysis: https://github.com/interactivereport/RNASequest.git
+## Pipeline Path: /mnt/depts/dept04/compbio/users/zouyang/tools/RNASequest
+## Pipeline Date: 2022-12-16 18:54:27 -0500
+## git HEAD: e9b7b3227146c1427f5b8c8e34bf5d305acca0a2
+###########
+
+Warning messages:
+1: package ‘R.oo’ was built under R version 4.1.3 
+2: package ‘R.methodsS3’ was built under R version 4.1.3 
+3: package ‘matrixStats’ was built under R version 4.1.3 
+Appending sequencing QC into sample meta file ...
+Creating project folder
+saving initialization ...
+==========================================
+ExpressionAnalysis project folder is created at /mnt/depts/dept04/compbio/users/zouyang/tools/RNASequest/example/SRP199678/EA20230103_0
+-----> 'EAqc' can be used to identify the covariates to be adjusted as:
+		EAqc /mnt/depts/dept04/compbio/users/zouyang/tools/RNASequest/example/SRP199678/EA20230103_0/config.yml
+
+
+----->'EArun' can be used to obtain the QuickOmics objects after comparison definition file is updated:
+			/mnt/depts/dept04/compbio/users/zouyang/tools/RNASequest/example/SRP199678/EA20230103_0/data/compareInfo.csv
+		EArun /mnt/depts/dept04/compbio/users/zouyang/tools/RNASequest/example/SRP199678/EA20230103_0/config.yml
+
+
+-----> (additional) 'EAsplit' can be used to split into sub-project according to one column (split_meta) defined in the sample meta file.
+
+
+Powered by the Research Data Sciences Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]

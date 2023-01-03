@@ -1,0 +1,87 @@
+# ====== The project information ==========
+# prj_name: will be used as a part of the output file names, and 
+#           project information in QuickOmics, which can be changed in output CSV file
+# prj_counts: 
+# prj_effLength: 
+# prj_seqQC: 
+# prj_TPM: 
+# DA_file_outpath: folder to store the data files used for DiseaseAtlas project import. 
+# sample_meta: sample definition file, meta data, rows as samples, columns as phenotypes
+# sample_name: the column name in the above table which contains the sample name used for the count matrix
+#               empty means the first column (the row names)
+# sample_alias: the column name in the meta table to replace the sample names, empty means no-replace
+# split_meta: the column name in the meta table is used to split the data into sub folder
+# min_count: 
+# min_sample:
+#               The genes considered in the analysis require at least (min_sample) samples expressed
+#               at least (min_count).
+# count_prior: the small numeric added before log transform
+# output: the result folder
+prj_name: SRP199678
+prj_title: SRP199678
+prj_counts: ./data/count.tsv
+prj_effLength: ./data/effLength.tsv
+prj_seqQC:  #optional
+prj_TPM:  #prj_effLength or prj_TPM is required
+sample_meta: ./data/sampleMeta.csv
+sample_factor: ./data/sampleMetaFactor.yml
+sample_name: Sample_Name
+sample_alias:
+split_meta:
+species: human
+gene_annotation: ./data/geneAnnotation.csv
+min_count: 1
+min_sample: 1
+count_prior: 0.25
+output: .
+DA_file_outpath: ./DA_Import_Files
+core: 2
+parallel: false # or sge or slurm
+qsubTime: 180 #in minites, 3hr # not used for slurm
+min_median_effective_length: 5 #nominal length will be used If the median effective length is smaller than the specified
+seqQC_replot: false
+geneLength_QC: false
+rmGeneStartWith: [] # remove genes whose names start with specified
+
+# ====== The QC parameters ========
+# covariates_check: The listed covariates will checked against PCA of 
+#                   log TPM before and after covariates removal
+# covariates_rm: the global covariates to be removed from expression visualization 
+covariates_check: [rail_id,external_id,sra_sample_acc_x,sra_experiment_acc,sra_experiment_title,sra_sample_attributes,sra_experiment_attributes,sra_sample_name,sra_sample_title,sra_sample_bases,sra_sample_spots,sra_run_published,sra_size,sra_run_total_bases,sra_run_total_spots,sra_num_spots,sra_read_info,sra_run_alias,recount_qc_aligned_readspercent_chrm,recount_qc_aligned_readspercent_chrx,recount_qc_aligned_readspercent_chry,recount_qc_bc_auc_all_reads_all_bases,recount_qc_bc_auc_all_reads_annotated_bases,recount_qc_bc_auc_unique_reads_all_bases,recount_qc_bc_auc_unique_reads_annotated_bases,recount_qc_bc_auc_all_percent,recount_qc_bc_auc_unique_percent,recount_qc_bc_frag_count,recount_qc_bc_frag_kallisto_count,recount_qc_bc_frag_kallisto_mean_length,recount_qc_bc_frag_mean_length,recount_qc_bc_frag_mode_length,recount_qc_bc_frag_mode_length_count,recount_qc_exon_fc_all_percent,recount_qc_exon_fc_unique_percent,recount_qc_exon_fc_count_all_total,recount_qc_exon_fc_count_all_assigned,recount_qc_exon_fc_count_unique_total,recount_qc_exon_fc_count_unique_assigned,recount_qc_gene_fc_all_percent,recount_qc_gene_fc_unique_percent,recount_qc_gene_fc_count_all_total,recount_qc_gene_fc_count_all_assigned,recount_qc_gene_fc_count_unique_total,recount_qc_gene_fc_count_unique_assigned,recount_qc_intron_sum,recount_qc_iintron_sum_percent,recount_qc_star_percent_of_chimeric_reads,recount_qc_star_percent_of_reads_mapped_to_multiple_loci,recount_qc_star_percent_of_reads_mapped_to_too_many_loci,recount_qc_star_percent_of_reads_unmapped_other,recount_qc_star_percent_of_reads_unmapped_too_short,recount_qc_star_all_mapped_reads,recount_qc_star_average_input_read_length,recount_qc_star_average_mapped_length,recount_qc_star_deletion_average_length,recount_qc_star_deletion_rate_per_base,recount_qc_star_insertion_average_length,recount_qc_star_mapping_speed_million_of_reads_per_hour,recount_qc_star_mismatch_rate_per_base_percent,recount_qc_star_number_of_chimeric_reads,recount_qc_star_number_of_input_reads,recount_qc_star_number_of_reads_mapped_to_multiple_loci,recount_qc_star_number_of_reads_mapped_to_too_many_loci,recount_qc_star_number_of_reads_unmapped_other,recount_qc_star_number_of_reads_unmapped_too_short,recount_qc_star_number_of_splices_at_ac,recount_qc_star_number_of_splices_gc_ag,recount_qc_star_number_of_splices_gt_ag,recount_qc_star_number_of_splices_non_canonical,recount_qc_star_number_of_splices_total,recount_qc_star_uniquely_mapped_reads_percent,recount_qc_star_uniquely_mapped_reads_number,recount_qc_junction_count,recount_qc_junction_coverage,recount_qc_junction_avg_coverage,recount_qc_star_number_of_input_reads_both,recount_qc_star_all_mapped_reads_both,recount_qc_star_number_of_chimeric_reads_both,recount_qc_star_number_of_reads_mapped_to_multiple_loci_both,recount_qc_star_number_of_reads_mapped_to_too_many_loci_both,recount_qc_star_number_of_reads_unmapped_other_both,recount_qc_star_number_of_reads_unmapped_too_short_both,recount_qc_star_uniquely_mapped_reads_number_both,recount_qc_star_percent_mapped_reads_both,recount_qc_star_percent_chimeric_reads_both,recount_qc_star_percent_reads_mapped_to_multiple_loci_both,recount_qc_star_percent_reads_mapped_to_too_many_loci_both,recount_qc_star_percent_reads_unmapped_other_both,recount_qc_star_percent_reads_unmapped_too_short_both,recount_qc_star_uniquely_mapped_reads_percent_both,recount_seq_qc_avg_len,recount_seq_qc_bases,recount_seq_qc_percenta,recount_seq_qc_percentc,recount_seq_qc_percentg,recount_seq_qc_percentt,recount_seq_qc_percentn,recount_seq_qc_avgq,recount_seq_qc_errq,recount_pred_sample_acc_y,recount_pred_pred_type,BigWigURL,age,cell.type,cx3cr1.genotype,Sex,source_name,treatment,group]
+covariates_check_PCcutoff: 5
+covariates_check_FDRcutoff: 0.1
+covariates_check_plotNcol: 3
+covariates_adjust: []
+
+# ====== The comparison information for quickOmics convert ========
+# comparison_file: comparison file defnition file
+# sample_group: the column name(s) in the meta table which will be used to calculate the
+#               mean/sd for all group combinations shown in QuickOmics.
+#               If empty, the first group variable in the comparison file will be used
+comparison_file: ./data/compareInfo.csv
+sample_group: []
+
+# ====== The gene network parameters ===============
+# gene_network_high_variable_N: the number of highly variable genes (sorted by sd) used for
+#                               the gene network construction
+# gene_network_cor_cutoff: the Pearson's correlation coefficients cutoff for the network edge
+# gene_network_p_cutoff: the correlation p-value cutoff for the network edge
+# gene_network_max_edge: The maximum network edge (will increase the cutoff if needed)
+gene_network_high_variable_N: 10000
+gene_network_cor_cutoff: 0.7
+gene_network_p_cutoff: 0.05
+gene_network_max_edge: 2e6
+gene_network_min_edge: 2e3
+
+# ====== This section for ShinyOne project manager =========
+shinyOne_Title: 
+shinyOne_Description: 
+shinyOne_Data_Generated_By: 
+shinyOne_Disease_Model:  #e.g. AD, ALS
+shinyOne_Biological_System:  #e.g. Brain, Heart
+shinyOne_Sample_Type:   #e.g. Blood, Cell
+shinyOne_Technology_Platform: RNA-Seq
+shinyOne_Data_Source: Internal
+shinyOne_Data_Cleaning:
+
+

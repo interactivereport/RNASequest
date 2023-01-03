@@ -53,7 +53,8 @@ dependencies:
   - r-caret
   - ca-certificates
   - openssl
-  - bioconductor-recount3
+  - bioconductor-recount3=1.4.0
   - r-bookdown
   - r-kableextra
   - r-ggrastr
+  - r-dplyr=1.0.9
