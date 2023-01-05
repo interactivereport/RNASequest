@@ -618,7 +618,7 @@ getSeqQC <- function(config,sID){
     message("reading sequence QC")
     D <- read.table(config$prj_seqQC,sep="\t",header=T,as.is=T,check.names=F,row.names=1)
     if(sum(!sID%in%rownames(D))>0)
-        stop(paste0("samples (",paste(sID[!sID%in%colnames(D)],collapse=","),
+        stop(paste0("samples (",paste(sID[!sID%in%rownames(D)],collapse=","),
                     ") defined in sample meta table are NOT available in sequence QC table"))
     D <- D[sID,,drop=F]
     return(list(seqQC=D))
