@@ -4,15 +4,12 @@ author:
   - name: Jing Zhu
     email: jing.zhu@biogen.com
     affiliation: Biogen
-  - name: Fergal Casey
-    email: fergal.casey@biogen.com
+  - name: Yu (Henry) Sun
+    email: yuhenry.sun@biogen.com
     affiliation: Biogen
   - name: Zhengyu Ouyang
     email: oyoung@bioinforx.com
     affiliation: BioInfoRx
-  - name: Yu (Henry) Sun
-    email: yuhenry.sun@biogen.com
-    affiliation: Biogen
   - name: Kejie Li
     email: kejie.li@biogen.com
     affiliation: Biogen
@@ -37,10 +34,13 @@ author:
   - name: Xinmin Zhang
     email: xinmin.zhang@biogen.com
     affiliation: BioInfoRx
+  - name: Fergal Casey (Corresponding Author)
+    email: fergal.casey@biogen.com
+    affiliation: Biogen
   - name: Baohong Zhang (Corresponding Author)
     email: baohong.zhang@biogen.com
     affiliation: Biogen
-  - name: These authors contribute equally Jing Zhu, Fergal Casey, Zhengyu Ouyang
+  - name: These authors contribute equally Jing Zhu, Yu (Henry) Sun, Zhengyu Ouyang
 address:
   - code: Biogen, Inc
     address: 225 Binney St, Cambridge, MA 02142, USA
