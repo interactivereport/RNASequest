@@ -20,7 +20,7 @@ This example has been uploaded to the QuickOmics site:
 
 Also, the EA pipeline generates a couple of files under the working directory.
 
-The pdf files and index.html can be directly visualized by the user. However, we suggest the user to download the ready-to-transfer ProjectName_BookdownReport.tar.gz tarball and open the index.html file inside for visualization.
+The pdf files and index.html can be directly visualized by the user. However, we suggest the user download the ready-to-transfer ProjectName_BookdownReport.tar.gz tarball and open the index.html file inside for visualization.
 
 Here is an example of the output directory hierarchy:
 

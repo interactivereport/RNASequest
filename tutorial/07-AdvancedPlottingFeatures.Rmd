@@ -16,7 +16,7 @@ load("data/Mouse_microglia_RNA-Seq.RData")
 setwd("~/RNASequest/src/")
 source("Plot_Functions.R") 
 
-# Create basic PCA Plot. 
+# Create a basic PCA Plot. 
 p<-PCA_Plot(data_wide, MetaData) 
 print(p)  
 ```

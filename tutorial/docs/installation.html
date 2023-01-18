@@ -23,7 +23,7 @@
 
 
 
-<meta name="date" content="2023-01-16" />
+<meta name="date" content="2023-01-18" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -280,10 +280,10 @@ FileName:
 <h2><span class="header-section-number">3.2</span> Install Quickomics</h2>
 <div id="install-r-packages" class="section level3" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Install R packages</h3>
-<p>Method 1. Create conda environment from yml file. This is the easiest way to install all packages. Please download the file <a href="https://github.com/interactivereport/Quickomics/blob/master/conda_environment/QuickOmics.yml" target="_blank">https://github.com/interactivereport/Quickomics/blob/master/conda_environment/QuickOmics.yml</a>, load your conda, then run:</p>
+<p><strong>Method 1.</strong> Create conda environment from yml file. This is the easiest way to install all packages. Please download the file <a href="https://github.com/interactivereport/Quickomics/blob/master/conda_environment/QuickOmics.yml" target="_blank">https://github.com/interactivereport/Quickomics/blob/master/conda_environment/QuickOmics.yml</a>, load your conda, then run:</p>
 <pre><code>conda env create -f QuickOmics.yml
 #The above command may take a while, then you will have a new conda environment called QuickOmics</code></pre>
-<p>Method 2. Install all packages in your current R environment. Depending on your system, you may need to install other required programs. We recommend using the conda environment method whenever possible.</p>
+<p><strong>Method 2.</strong> Install all packages in your current R environment. Depending on your system, you may need to install other required programs. We recommend using the conda environment method whenever possible.</p>
 <pre><code>cran_packages=c(&quot;shiny&quot;, &quot;shinythemes&quot;, &quot;shinyjs&quot;, &quot;plotly&quot;, &quot;reshape2&quot;, &quot;tidyverse&quot;, &quot;gplots&quot;, &quot;ggpubr&quot;,
 &quot;gridExtra&quot;, &quot;ggrepel&quot;, &quot;RcolorBrewer&quot;, &quot;pheatmap&quot;, &quot;rgl&quot;, &quot;car&quot;, &quot;colourpicker&quot;, &quot;VennDiagram&quot;, &quot;factoextra&quot;,
 &quot;openxlsx&quot;, &quot;visNetwork&quot;, &quot;cowplot&quot;, &quot;circlize&quot;, &quot;svglite&quot;, &quot;shinyjqui&quot;, &quot;Hmisc&quot;, &quot;ggrastr&quot;,
@@ -310,7 +310,7 @@ BiocManager::install(c(&quot;Mfuzz&quot;, &quot;biomaRt&quot;, &quot;ComplexHeat
 </div>
 <div id="configure-quickomics-to-load-projects-directly-from-urls" class="section level3" number="3.2.4">
 <h3><span class="header-section-number">3.2.4</span> Configure QuickOmics to load projects directly from URLs</h3>
-<p>QuickOmics has a feature to load a project directly from URL in the form of <a href="https://quickomics.bxgenomics.com/?serverfile=SRP199678" target="_blank">https://quickomics.bxgenomics.com/?serverfile=SRP199678</a>, which requires saving project data files to a user-specified directory on the sever hosting QuickOmics. To use this feature, create a file called config.csv in the QuickOmics App folder.</p>
+<p>QuickOmics has a feature to load a project directly from URL in the form of <a href="https://quickomics.bxgenomics.com/?serverfile=SRP199678" target="_blank">https://quickomics.bxgenomics.com/?serverfile=SRP199678</a>, which requires saving project data files to a user-specified directory on the server hosting QuickOmics. To use this feature, create a file called config.csv in the QuickOmics App folder.</p>
 <pre><code>category,value
 server_dir,{Path/to/Server/File}
 test_dir,{Path/to/Test/Files}</code></pre>

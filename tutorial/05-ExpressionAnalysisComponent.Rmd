@@ -47,7 +47,7 @@ EArun Path/to/a/config/file
 #Example:
 EArun ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
 ```
-**_Please fill the compareInfo.csv before executing the above command_**
+**_Please fill in the compareInfo.csv before executing the above command_**
 
 Execution of the above command will produce R objects for QuickOmics webserver to load. The process will generate the covariate-adjusted logTPM for visualization; complete differentially expressed gene analysis and gene network generation. 
 
@@ -73,9 +73,9 @@ EA2DA A/path/to/a/config/file
 #Example:
 EA2DA ~/RNASequest/example/SRP199678/EA20220328_0/config.yml
 ```
-The execution of above command will produce 6 data files which are required for the [OmicsView](https://github.com/interactivereport/OmicsView){target="_blank"} project import.
+The execution of the above command will produce 6 data files which are required for the [OmicsView](https://github.com/interactivereport/OmicsView){target="_blank"} project import.
 
-**_Please fill the empty entries in the Project_Info.csv before import._**
+**_Please fill in the empty entries in the Project_Info.csv before import._**
 
 ## Administration
 There are two config files in the pipeline folder:
@@ -86,7 +86,7 @@ There are two config files in the pipeline folder:
  
     - 1. genome_path: the root path where the genome definition files (gtf) are located
     
-    - 2. notCovariates: the column names from the sample meta information should not be considred as default covariates
+    - 2. notCovariates: the column names from the sample meta information should not be considered as default covariates
     
     - 3. qc2meta: the column names from mapping QC file should be extracted and inserted into sample meta table
     

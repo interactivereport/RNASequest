@@ -34,7 +34,7 @@ Then it will generate **yourslidedeck_name.html** for visualization.
 
 1, Please run [EAreport](https://github.com/interactivereport/RNASequest/blob/main/EAreport){target="_blank"} first before generating the slide deck. For more details, please check the [manual](https://interactivereport.github.io/RNASequest/tutorial/docs/running-ea-pipeline.html#eareport){target="_blank"}.
 
-2, The Slidedeck.Rmd only plots the first two covariates for ‘covariates plot’, so as to avoid plotting hundreds of figures/slides. If users want to plot a specific covariates, please edit the **‘config.yml’** file by moving your desired covariates to the first two.
+2, The Slidedeck.Rmd only plots the first two covariates for ‘covariates plot’, so as to avoid plotting hundreds of figures/slides. If users want to plot a specific covariate, please edit the **‘config.yml’** file by moving your desired covariates to the first two.
 
 For example:
 
