@@ -244,19 +244,7 @@ group,grp3,grp2</code></pre>
 <p>Covariate1: Covariate1_level; Covariate2: Covariate2_level; Covariate3: Covariate3_level…</p>
 <p>Different covariates are separated by “;”, the covariate name and covariate value are separated by “:”.</p>
 <p>e.g. Tissue:brain - in this case Tissue needs to be a column in the sample meta table that has a level “brain”. The DESeq (or limma) counts object will be subset to these samples only.</p>
-<p>Note: this is an “AND” subsetting operation if using multiple covariates. e.g. Tissue:brain;Sex:male means pull out samples from brain that are also male. This means that it cannot be used to pool together (union) subsets of samples under the same covariate, e.g. Tissue:brain;Tissue:spinal_cord will not return a union of brain and spinal_cord samples. To achieve this operation the user needs to define a new grouping variable in the sample meta file, say Tissue2, that includes a level “brain_spinal_cord” and includes all of those samples.</p>
-<p><strong>Model</strong>: the model formulas are stored in this column.The formula can be combinations of the following formats:
-Additive: var1 + var2
-Nested: var1: var2
-Interaction: var1*var2</p>
-<p><strong>Covariate_levels</strong>: this column is to specify the covariate levels of interest when the variable of interest is interacting with or nested by other covariate(s). In this case, the levels of covariates are required to specify the covariate’s group in which the comparison is made. The entry format is the same as subsetting_group:</p>
-<p>Covariate1: Covariate1_level; Covariate2: Covariate2_level; Covariate3: Covariate3_level…</p>
-<p>Different covariates are separated by “;”, the covariate name and covariate value are separated by “:”.</p>
-<p>e.g. Sex:male;Treatment:placebo. This is an advanced usage parameter, normally you can leave this blank.</p>
-<p><strong>Analysis_method</strong>: this column specifies the tool to be used for the DEG analysis. There are 2 options: DESeq2 and limma.</p>
-<p><strong>Shrink_logFC</strong>: this column specifies if the the user want to apply the logFC shrink during the DEG analysis.
-The entry can be: yes or no. Please note that this function only applies to the comparison analyzed by DESeq2. The limma package has inbuilt shrinkage function so there is no need to do an extra one.</p>
-<p><strong>LFC_cutoff</strong>: this column is to set the logFoldChange value for the null hypotheses of testing. The default value is 0. Putting this away from 0 makes calls more stringent.</p></li>
+<p>Note: this is an “AND” subsetting operation if using multiple covariates. e.g. Tissue:brain;Sex:male means pull out samples from brain that are also male. This means that it cannot be used to pool together (union) subsets of samples under the same covariate, e.g. Tissue:brain;Tissue:spinal_cord will not return a union of brain and spinal_cord samples. To achieve this operation the user needs to define a new grouping variable in the sample meta file, say Tissue2, that includes a level “brain_spinal_cord” and includes all of those samples.</p></li>
 <li><p><strong>counts.tsv</strong></p>
 <p>This file stores the raw counts of each sample in a tab-delimited format (tsv).</p>
 <pre><code>$ head -4 counts.tsv
