@@ -50,6 +50,7 @@ dependencies:
   - bioconductor-deseq2
   - bioconductor-biocparallel
   - bioconductor-apeglm
+  - bioconductor-sva
   - r-caret
   - ca-certificates
   - openssl

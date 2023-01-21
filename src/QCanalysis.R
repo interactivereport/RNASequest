@@ -10,7 +10,7 @@ config <- sapply(yaml::read_yaml(args[2]),unlist)
 sysConfig <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 
 ## loading EA data --------
-checkConfig(config)
+config <- checkConfig(config)
 D <- getEAData(config)
 D <- useAlias(config,D)
 

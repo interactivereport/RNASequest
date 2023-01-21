@@ -52,6 +52,7 @@ covariates_check_PCcutoff: 5
 covariates_check_FDRcutoff: 0.1
 covariates_check_plotNcol: 3
 covariates_adjust: []
+covariates_method: limma # 'limma': (default) adjusts multiple covariates at the same time, 'combat': adjusts only one covariate
 
 # ====== The comparison information for quickOmics convert ========
 # comparison_file: comparison file defnition file

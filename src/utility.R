@@ -478,7 +478,14 @@ checkConfig <- function(config){
             stop(paste("The gene annotation file, ",config$gene_annotation,", does NOT exist!"))
         if(!file.exists(config$comparison_file))
             stop(paste("The comparison definition file, ",config$comparison_file,", does NOT exist!"))
+        if(is.null(config$covariates_method))
+            config$covariates_method <- "limma"
+        if(!config$covariates_method%in%c("limma","combat"))
+            stop(paste("Unknown covariate adjust method:",config$covariates_method))
+        if(grepl("combat",config$covariates_method) && length(config$covariates_adjust)>1)
+            stop("Combat only supports 1 covarite adjustment!")
     }
+    return(config)
 }
 getEAData <- function(config,withCom=F){
     D <- getMeta(config)
@@ -689,7 +696,7 @@ covariateRM <- function(X,effeL,batchX=NULL,method='limma',
         ad_X <- covariateRM_limmaRM(X[ix,],batchX,prior)
         ad_X <- rbind(ad_X,X[!ix,,drop=F])
         sizeF <- covariateRM_getSizeF(ad_X)
-    }else if(method=="combat_seq"){
+    }else if(grepl("combat",method,ignore.case=T)){
         ad_X <- covariateRM_ComBatRM(X[ix,],batchX[,1])
         ad_X <- rbind(ad_X,X[!ix,,drop=F])
         sizeF <- covariateRM_getSizeF(ad_X)
@@ -1039,7 +1046,7 @@ plotPCanlaysis <- function(config,logTPM,meta,estC=NULL,effL=NULL){
         }else{
             message("====== removing covariates for visualization ...")
             batchX <- meta[,config$covariates_adjust,drop=F]
-            logTPM <- suppressMessages(covariateRM(estC,effL,batchX=batchX,method='limma',
+            logTPM <- suppressMessages(covariateRM(estC,effL,batchX=batchX,method=config$covariates_method,#'limma',
                                                    prior=config$count_prior))
             strPrefix <- paste0(config$output,"/Adjusted")
             suppressMessages(suppressWarnings(
@@ -1549,7 +1556,9 @@ saveQuickOmics <- function(config,EAdata,DEGs){
                          ProjectID=config$prj_name,
                          Species=config$species, 
                          ExpressionUnit=config$ylab,
-                         Path=config$output),
+                         Path=config$output,
+                         CovariantMethod=ifelse(length(config$covariates_adjust)>0,
+                                                config$covariates_method,"")),
               file=paste0(config$output,"/",config$prj_name,".csv"),
               row.names=F)
 }

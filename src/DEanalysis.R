@@ -11,7 +11,7 @@ config$srcDir <- args[1]
 config$ylab <- paste0("log2(TPM+",config$count_prior,")")
 
 ## loading EA data --------
-checkConfig(config)
+config <- checkConfig(config)
 a <- checkShinyTestSetting(sysConfig)
 D <- getEAData(config,withCom=T)
 D <- useAlias(config,D)
@@ -26,7 +26,7 @@ plotDEG_MA(DEGs,D$logTPM,D$meta,D$comp_info,config)
 if(!is.null(config$covariates_adjust) && length(config$covariates_adjust)>0){
     batchX <- D$meta[,config$covariates_adjust,drop=F]
     D$logTPM <- suppressMessages(covariateRM(D$counts,D$effLength,
-                                             batchX=batchX,method='limma',
+                                             batchX=batchX,method=config$covariates_method,#'limma',
                                              prior=config$count_prior))
     config$ylab <- paste0("log2(adjTPM+",config$count_prior,")")
 }
