@@ -8,7 +8,7 @@ source(paste0(args[1],"utility.R"),chdir=T)
 configTmp <- yaml::read_yaml(paste0(args[1],"config.tmp.yml"))
 sysConfig <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 
-checkConfig(configTmp)
+configTmp <- checkConfig(configTmp)
 pInfo <- checkInputDir(args[2],sysConfig)
 pInfo <- appendMeta(pInfo,
                     configTmp$sample_name,
