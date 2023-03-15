@@ -1517,7 +1517,7 @@ formatQuickOmicsMeta <- function(meta,comNames){
                      ComparePairs="")
   }
   MetaData <- as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F)
-  meta <- meta[,-grep("group",colnames(meta),ignore.case=T),drop=F]
+  meta <- meta[,-which(colnames(meta)=="group"),drop=F]
   MetaData <- cbind(MetaData,meta)
   return(MetaData)
 }
