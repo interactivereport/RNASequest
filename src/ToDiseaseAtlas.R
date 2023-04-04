@@ -14,7 +14,7 @@ if(length(args)<2){
 ## -----
 message("loading resource ...")
 config <- yaml::read_yaml(args[2])
-sys_config <- yaml::read_yaml(file.path(args[1],"sys.yml"))
+#sys_config <- yaml::read_yaml(file.path(args[1],"sys.yml"))
 source(file.path(args[1],"QuickOmics_DEG.R"))
 
 R_file = normalizePath(file.path(config$output, paste0(config$prj_name, ".RData")))

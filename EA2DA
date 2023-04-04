@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
 if [[ -n "$1" ]]; then
-    source /etc/profile.d/modules_bash.sh
-    module purge
-    module load R/3.5.1
-    
+    if [[ -f "/etc/profile.d/modules_bash.sh" ]]; then
+        source /etc/profile.d/modules_bash.sh
+        module purge
+        module load R/3.5.1
+    else
+ 	    export src=$(dirname `readlink -e ${0}`)/src
+ 	    source $src/.env
+ 	    eval "$condaEnv"
+    fi
     Rscript $(dirname $0)/src/ToDiseaseAtlas.R $(dirname $0)/src/ $@
 else
     echo "=============== EA2DA path/to/a/EAanalysis/config/file"
