@@ -1517,6 +1517,7 @@ formatQuickOmicsMeta <- function(meta,comNames){
                      ComparePairs="")
   }
   MetaData <- as.data.frame(lapply(MetaData,'length<-',max(sapply(MetaData,length))),stringsAsFactors=F)
+  MetaData$ComparePairs[is.na(MetaData$ComparePairs)] <- ""
   meta <- meta[,-which(colnames(meta)=="group"),drop=F]
   MetaData <- cbind(MetaData,meta)
   return(MetaData)
@@ -1608,7 +1609,7 @@ pubShinyOne <- function(config){
     strF <- paste0(config$QuickOmics_publish_folder,config$prj_name,".RData")
     if(file.exists(strF)){
         message("project files exists in ",config$QuickOmics_publish_folder)
-        stop("The project already exists in ShinyOne!\nPlease remove the record and associated files or change prj_name and re-EArun!")
+        stop("The project already exists in ShinyOne!\nPlease remove the record and associated files or change prj_name and rerun EApub!")
     }
     message("preparing information for ShinyOne")
     shinyOneData <- getShinyOneInfo(config)
