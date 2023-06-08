@@ -7,22 +7,31 @@ suppressMessages(require(limma))
 suppressMessages(require(stringr))
 suppressMessages(require(BiocParallel))
 
-read_file <- function(file, rowname) {
-  if (rowname) {
-    if (str_detect(file, ".csv$")) {
-      table <- read.table(file,header=T,sep=",",as.is=T, check.names=F, row.names =1)
-    } else {
-      table <- read.table(file,header=T,sep="\t",as.is=T, check.names=F, row.names =1)
-    }
+read_file <- function(strF,flag) {
+  comTitle <- c("CompareName",
+                "Subsetting_group",
+                "Model",
+                "Covariate_levels",
+                "Group_name",
+                "Group_test",
+                "Group_ctrl",
+                "Analysis_method",
+                "Shrink_logFC",
+                "LFC_cutoff")
+  if (grepl("csv$",strF, ".csv$")) {
+    comp_info <- as.data.frame(read.table(strF,header=T,sep=",",as.is=T, check.names=F))
   } else {
-    if (str_detect(file, ".csv$")) {
-      table <- read.table(file,header=T,sep=",",as.is=T, check.names=F)
-    } else {
-      table <- read.table(file,header=T,sep="\t",as.is=T, check.names=F)
-    }
+    comp_info <- as.data.frame(read.table(strF,header=T,sep="\t",as.is=T, check.names=F))
   }
-  table[is.na(table)] <- ""
-  return(table)
+  if(sum(!comTitle%in%colnames(comp_info))>0){
+    message("Missing following columns in comparison definition file: ",strF)
+    message("\t",paste(comTitle[!comTitle%in%colnames(comp_info)],collapse=", "))
+    q()
+  }
+  comp_info[is.na(comp_info)] <- ""
+  comp_info <- data.frame(row.names=unlist(comp_info$CompareName),
+                          comp_info[,comTitle[-1]])
+  return(comp_info)
 }
 
 group_DEG <- function(comp_info){
