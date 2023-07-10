@@ -173,7 +173,7 @@ Volcano_Plot <- function(results_long, ProteinGeneName, comparison, volcano_FCcu
                          volcano_genelabel="Gene.Name", label_DEG=TRUE, Max_Pvalue=0, Max_logFC=0, Ngenes=50, rasterize="Yes",
                          vlegendpos="bottom", lfontsize=4, yfontsize=14, volcano_label=TRUE) {
   results_long <-
-    results_long %>% mutate_if(is.factor, as.character)  %>% left_join(ProteinGeneName, ., by = "UniqueID")
+    results_long %>% mutate_if(is.factor, as.character)  %>% left_join(ProteinGeneName, by = "UniqueID")
   test_sel = comparison
   FCcut = log2(as.numeric(volcano_FCcut))
   FCcut_rd=round(FCcut*1000)/1000
