@@ -300,6 +300,11 @@ appendMeta <- function(pInfo,sample_name,selQC){
     if(!is.null(pInfo$sInfo) && !is.null(pInfo$strSeqQC)){
         qc <- cleanTST(pInfo$strSeqQC)
         rownames(qc) <- qc[,1]
+        if(sum(!selQC%in%colnames(qc))>0){
+          message("\tWarning: Missing sequence QC: ",paste(selQC[!selQC%in%colnames(qc)],collapse=", "))
+          selQC <- selQC[selQC%in%colnames(qc)]
+        }
+        selQC <- selQC[selQC%in%colnames(qc)]
         qc <- qc[,selQC,drop=F]
         colnames(qc) <- gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc))))))
         ## only the sequenced samples will be included (remove not sequenced samples from sample sheet)
