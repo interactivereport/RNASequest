@@ -38,7 +38,13 @@ if(!is.null(newLogTPM)){
                 replot=T)
     
 }
+## create Quickomics link
+config$ylab <- paste0("log2(TPM+",config$count_prior,")")
+config <- setSampleGroup(config,D$meta)
+saveNetwork(NULL,config)
+saveQuickOmics(config,D)
+
 
 ## finishing ----
-finishQC(list(comparison_file=config$comparison_file,output=config$output))
+finishQC(c(config,sysConfig))#list(comparison_file=config$comparison_file,output=config$output)
 saveSessionInfo(paste0(config$output,"/session.EAqc"),args[1])

@@ -1067,8 +1067,23 @@ plotPCanlaysis <- function(config,logTPM,meta,estC=NULL,effL=NULL){
     }
     return(NULL)
 }
+setSampleGroup <- function(config,meta){
+    if(length(config$sample_group)>0)
+        return(config)
+    metaType <- sapply(meta,is.factor)
+    for(one in names(metaType)){
+        if(metaType[one] && nlevels(meta[[one]])>1 && nlevels(meta[[one]])<nrow(meta)){
+            config$sample_group <- one
+            return(config)
+        }
+    }
+    config$sample_group <- names(metaType)[metaType][1]
+    return(config)
+}
 finishQC <- function(strMsg){
     message("==========================================")
+    system(paste0("cp ",strMsg$output,"/",strMsg$prj_name,"* ",strMsg$QuickOmics_test_folder))
+    message(paste0("\n-----> Please visit: ",strMsg$QuickOmics_test_link,strMsg$prj_name))
     message("----->'EArun' can be used to obtain the QuickOmics object after necessary 'covariates_adjust' is set and comparison definition file is filled:")
     message("\t\t\t",strMsg$comparison_file)
     message("\t\tEArun ",strMsg$output,"/config.yml\n\n")
@@ -1412,6 +1427,11 @@ Hmisc.rcorr <- function (x, y, type = "pearson"){
     structure(list(r = h, n = npair, P = P), class = "rcorr")
 }
 saveNetwork <- function(X,config){
+    if(is.null(X)){
+        network <- data.frame(from=character(),to=character(),cor=numeric(),p=numeric(),direction=as.integer())
+        save(network,file=paste0(config$output,"/",config$prj_name,"_network.RData"))
+        return()
+    }
     message("Obtaining networks ...")
 	suppressMessages(suppressWarnings({
 		require(Hmisc)
@@ -1451,9 +1471,12 @@ saveNetwork <- function(X,config){
     save(network,file=paste0(config$output,"/",config$prj_name,"_network.RData"))
 }
 updateMeta <- function(config,meta){
-    comp <- read_file(config$comparison_file,T)
-    meta <- metaFactor(meta,config$sample_factor,unique(comp$Group_name))
+    if(length(config$sample_group)>0 && !"group" %in% colnames(meta)){
+        meta <- cbind(meta,group=meta[,config$sample_group])
+    }
     if(!"group" %in% colnames(meta)){
+        comp <- read_file(config$comparison_file,T)
+        meta <- metaFactor(meta,config$sample_factor,unique(comp$Group_name))
         selG <- c(grep("^group$",colnames(meta),ignore.case=T,value=T),
                   comp[1,"Group_name"])[1]
         meta <- cbind(meta,group=meta[,selG])
@@ -1514,7 +1537,7 @@ formatQuickOmicsMeta <- function(meta,comNames){
     MetaData <- list(sampleid=rownames(meta),
                      group=meta$group,
                      Order=unique(meta$group),
-                     ComparePairs=comNames)
+                     ComparePairs=unlist(ifelse(is.null(comNames),"",list(comNames))))
   }else{
     MetaData <- list(sampleid=rownames(meta),
                      group=meta$group,
@@ -1527,7 +1550,7 @@ formatQuickOmicsMeta <- function(meta,comNames){
   MetaData <- cbind(MetaData,meta)
   return(MetaData)
 }
-saveQuickOmics <- function(config,EAdata,DEGs){
+saveQuickOmics <- function(config,EAdata,DEGs=NULL){
     message("saving QuickOmics object ...")
     EAdata$meta <- updateMeta(config,EAdata$meta)
     comp_info <- read_file(config$comparison_file,T)
@@ -1539,10 +1562,17 @@ saveQuickOmics <- function(config,EAdata,DEGs){
     config$sample_group <- ifelse(length(config$sample_group)<1,"group",config$sample_group)
     data_long <- cbind(data_long,group=EAdata$meta[data_long$sampleid,config$sample_group])
     
-    message("\tFormating the DEG results")
-    compRes <- formatQuickOmicsResult(DEGs,EAdata$logTPM,EAdata$meta[,"group"],EAdata$gInfo)
-    data_results <- compRes$Dw
-    results_long <- compRes$Dl
+    if(!is.null(DEGs)){
+        message("\tFormating the DEG results")
+        compRes <- formatQuickOmicsResult(DEGs,EAdata$logTPM,EAdata$meta[,"group"],EAdata$gInfo)
+        data_results <- compRes$Dw
+        results_long <- compRes$Dl
+    }else{
+        data_results <- NULL
+        comp_info <- NULL
+        results_long <- data.frame(UniqueID=character(),test=factor(),logFC=numeric(),P.Value=numeric(),
+                                   Adj.P.Value=numeric(),S.Value=numeric(),Adj.S.Value=numeric())#column type matters in Quickomics
+    }
     
     message("\tFormating the sample meta information")
     MetaData <- formatQuickOmicsMeta(EAdata$meta,names(DEGs))
