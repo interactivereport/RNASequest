@@ -1621,6 +1621,14 @@ checkShinySetting <- function(config){
      is.null(config$shinyAppKey))
     stop(paste("The ShinyOne is not set up!\nPlease contact",config$powerby))
 }
+checkPubFiles <- function(config){
+    if(!file.exists(paste0(config$output,"/",config$prj_name,".RData")))
+        stop("Missing project Quickomics object")
+    if(!file.exists(paste0(config$output,"/",config$prj_name,"_network.RData")))
+        stop("Missing project Quickomics network object")
+    if(!file.exists(paste0(config$output,"/",config$prj_name,".csv")))
+        stop("Missing project discription csv file")
+}
 getShinyOneInfo <- function(config){
     shinyOneData <- config[grep("^shinyOne_",names(config))]
     names(shinyOneData) <- gsub("shinyOne_","",names(shinyOneData))
@@ -1641,6 +1649,7 @@ getShinyOneInfo <- function(config){
 }
 pubShinyOne <- function(config){
     checkShinySetting(config)
+    checkPubFiles(config)
     strF <- paste0(config$QuickOmics_publish_folder,config$prj_name,".RData")
     if(file.exists(strF)){
         message("project files exists in ",config$QuickOmics_publish_folder)
