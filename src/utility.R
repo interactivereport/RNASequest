@@ -517,8 +517,7 @@ getMeta <- function(config){
     meta <- as.data.frame(data.table::fread(config$sample_meta))
     checkMeta(meta,config)
     rownames(meta) <- meta[,config$sample_name]
-    meta <- setMetaFactor(meta,config$sample_factor)
-    return(list(meta=meta))
+    return(setMetaFactor(meta,config$sample_factor))
 }
 checkMeta <- function(meta,config){
     message("checking against config file")
@@ -564,6 +563,7 @@ checkMeta <- function(meta,config){
 getCounts <- function(config,sID){
     message("reading sample counts")
     D <- read.table(config$prj_counts,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
+    if(ncol(D)<2) stop("No sample detected! Make sure tab ('\\t') is the delimiter!")
     ix <- apply(as.matrix(D),1,function(x)return(sum(x>=config$min_count)))>=config$min_sample
     message("\tFiltering genes (",sum(ix),") with minimal counts (>=) ",
             config$min_count," in at least (>=) ",config$min_sample," samples")
@@ -619,6 +619,7 @@ getTPM <- function(config,sID,gID){
     if(!is.null(config$prj_TPM) && file.exists(config$prj_TPM)){
         message("reading sample TPM")
         D <- read.table(config$prj_TPM,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
+        if(ncol(D)<2) stop("No sample detected! Make sure tab ('\\t') is the delimiter!")
         D <- checkSampleName(D,sID)
         D <- checkGeneName(D,gID)
         D <- log2(config$count_prior+D)
@@ -629,6 +630,7 @@ getSeqQC <- function(config,sID){
     if(is.null(config$prj_seqQC)) return(NULL)
     message("reading sequence QC")
     D <- read.table(config$prj_seqQC,sep="\t",header=T,as.is=T,check.names=F,row.names=1)
+    if(ncol(D)<2) stop("No sample detected! Make sure tab ('\\t') is the delimiter!")
     if(sum(!sID%in%rownames(D))>0)
         stop(paste0("samples (",paste(sID[!sID%in%rownames(D)],collapse=","),
                     ") defined in sample meta table are NOT available in sequence QC table"))
@@ -663,6 +665,11 @@ useAlias <- function(config,D){
     }
     #print(names(D))
     return(D)
+}
+shortListMsg <- function(aVec,n=5){
+    msg <- paste(head(aVec,n),collapse=", ")
+    if(length(aVec)>n) msg <- paste(msg,", ... ")
+    return(msg)
 }
 
 ## batch removal based on counts and effective length --------
@@ -773,14 +780,16 @@ covariateRM_estTPM <- function(X,L,sizeF=NULL,prior=0.25){
 }
 
 ## meta factor ----
-setMetaFactor <- function(meta,strMetaFactor,addFactor=NULL,sampleFilter=F){
+setMetaFactor <- function(meta,strMetaFactor,addFactor=NULL,metaFactor=NULL){
     if(is.null(strMetaFactor))return(meta)
     ## retrieve the meta factor or initialize one ----
     meta <- metaFactor_checkNAempty(meta)
-    if(file.exists(strMetaFactor)){
-        metaFactor <- yaml::read_yaml(strMetaFactor)
-    }else{
-        metaFactor <- metaFactor_addFactor(meta,strMetaFactor)
+    if(is.null(metaFactor)){
+        if(file.exists(strMetaFactor)){
+            metaFactor <- yaml::read_yaml(strMetaFactor)
+        }else{
+            metaFactor <- metaFactor_addFactor(meta,strMetaFactor)
+        }
     }
     ## if any annotation removed from meta but existing in the meta factor ----
     if(sum(!names(metaFactor)%in%colnames(meta))>0){
@@ -799,17 +808,15 @@ setMetaFactor <- function(meta,strMetaFactor,addFactor=NULL,sampleFilter=F){
         ## add additional (new) entry into the meta factor
         oneMetaUnique <- unique(meta[,i])
         if(sum(!oneMetaUnique%in%metaFactor[[i]])>0){
-            warning(paste0(paste(oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]],collapse=","),
-                           " from ",i," are not defined in meta factor file"))
+            warning(paste0("The following information (",i,") defined in sample meta file are not defined in metafactor file:\n\t",
+                           shortListMsg(oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]])))
             message("Please update metaFactor file to avoid this warning message")
             metaFactor[[i]] <- c(metaFactor[[i]],oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]])
         }
         if(sum(!metaFactor[[i]]%in%oneMetaUnique)>0){
-            if(!sampleFilter){
-                warning(paste0(paste(metaFactor[[i]][!metaFactor[[i]]%in%oneMetaUnique],collapse=","),
-                               " from ",i," are missing from sample file"))
-                message("Please update metaFactor file to avoid this warning message")
-            }
+            warning(paste0("The following information (",i,") defined in metafactor file are missing from sample file:\n\t",
+                           shortListMsg(metaFactor[[i]][!metaFactor[[i]]%in%oneMetaUnique])))
+            message("Please update metaFactor file to avoid this warning message")
             metaFactor[[i]] <- metaFactor[[i]][metaFactor[[i]]%in%oneMetaUnique]
         }
         meta[,i] <- factor(meta[,i],levels = metaFactor[[i]])
@@ -822,7 +829,7 @@ setMetaFactor <- function(meta,strMetaFactor,addFactor=NULL,sampleFilter=F){
             }
         }
     }
-    return(meta)
+    return(list(meta=meta,metaFactor=metaFactor))
 }
 metaFactor_checkNAempty <- function(meta){
     for(i in colnames(meta)){
@@ -1334,11 +1341,13 @@ lowCountFiltering <- function(config,D,checkComp=T){
     sel <- apply(D$counts,2,sum) > config$minCounts
     if(sum(!sel)>0){
         message("The following samples are removed from DE analysis due to count minimal (",config$minCounts,") set in config (minCounts):")
-        message(paste(colnames(D$counts)[!sel],collapse=", "))
+        message(paste(c(head(colnames(D$counts)[!sel]),"..."),collapse=", "))
         message("===== Total of ",sum(sel)," samples after filtering")
         D$counts <- D$counts[,sel]
         D$meta <- D$meta[sel,]
-        D$meta <- setMetaFactor(D$meta,config$sample_factor,sampleFilter=T)
+        metaInfo <- setMetaFactor(D$meta,config$sample_factor,metaFactor=D$metaFactor)
+        D$meta <- metaInfo$meta
+        D$metaFactor <- metaInfo$metaFactor
         if(!is.null(D$effLength)) D$effLength <- D$effLength[,sel]
         if(!is.null(D$logTPM)) D$logTPM <- D$logTPM[,sel]
         if(!is.null(D$seqQC)) D$seqQC <- D$seqQC[sel,]
@@ -1493,7 +1502,7 @@ updateMeta <- function(config,meta){
     }
     if(!"group" %in% colnames(meta)){
         comp <- read_file(config$comparison_file,T)
-        meta <- setMetaFactor(meta,config$sample_factor,unique(comp$Group_name),sampleFilter=T)
+        meta <- setMetaFactor(meta,config$sample_factor,unique(comp$Group_name),metaFactor=D$metaFactor)$meta
         selG <- c(grep("^group$",colnames(meta),ignore.case=T,value=T),
                   comp[1,"Group_name"])[1]
         meta <- cbind(meta,group=meta[,selG])
