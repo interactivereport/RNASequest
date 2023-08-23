@@ -517,7 +517,7 @@ getMeta <- function(config){
     meta <- as.data.frame(data.table::fread(config$sample_meta))
     checkMeta(meta,config)
     rownames(meta) <- meta[,config$sample_name]
-    meta <- metaFactor(meta,config$sample_factor)
+    meta <- setMetaFactor(meta,config$sample_factor)
     return(list(meta=meta))
 }
 checkMeta <- function(meta,config){
@@ -773,7 +773,7 @@ covariateRM_estTPM <- function(X,L,sizeF=NULL,prior=0.25){
 }
 
 ## meta factor ----
-metaFactor <- function(meta,strMetaFactor,addFactor=NULL){
+setMetaFactor <- function(meta,strMetaFactor,addFactor=NULL,sampleFilter=F){
     if(is.null(strMetaFactor))return(meta)
     ## retrieve the meta factor or initialize one ----
     meta <- metaFactor_checkNAempty(meta)
@@ -805,16 +805,12 @@ metaFactor <- function(meta,strMetaFactor,addFactor=NULL){
             metaFactor[[i]] <- c(metaFactor[[i]],oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]])
         }
         if(sum(!metaFactor[[i]]%in%oneMetaUnique)>0){
-            warning(paste0(paste(metaFactor[[i]][!metaFactor[[i]]%in%oneMetaUnique],collapse=","),
-                           " from ",i," are missing from sample file"))
-            message("Please update metaFactor file to avoid this warning message")
+            if(!sampleFilter){
+                warning(paste0(paste(metaFactor[[i]][!metaFactor[[i]]%in%oneMetaUnique],collapse=","),
+                               " from ",i," are missing from sample file"))
+                message("Please update metaFactor file to avoid this warning message")
+            }
             metaFactor[[i]] <- metaFactor[[i]][metaFactor[[i]]%in%oneMetaUnique]
-        }
-        if(sum(!oneMetaUnique%in%metaFactor[[i]])>0){
-            warning(paste0(paste(oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]],collapse=","),
-                           " from ",i," are not defined in meta factor file"))
-            message("Please update metaFactor file to avoid this warning message")
-            metaFactor[[i]] <- c(metaFactor[[i]],oneMetaUnique[!oneMetaUnique%in%metaFactor[[i]]])
         }
         meta[,i] <- factor(meta[,i],levels = metaFactor[[i]])
     }
@@ -1332,6 +1328,27 @@ plotEachCor <- function(X,Y){
   }
   return(corD)
 }
+lowCountFiltering <- function(config,D,checkComp=T){
+    if(is.null(config$minCounts)) return(D)
+    message("Checking sample counts")
+    sel <- apply(D$counts,2,sum) > config$minCounts
+    if(sum(!sel)>0){
+        message("The following samples are removed from DE analysis due to count minimal (",config$minCounts,") set in config (minCounts):")
+        message(paste(colnames(D$counts)[!sel],collapse=", "))
+        message("===== Total of ",sum(sel)," samples after filtering")
+        D$counts <- D$counts[,sel]
+        D$meta <- D$meta[sel,]
+        D$meta <- setMetaFactor(D$meta,config$sample_factor,sampleFilter=T)
+        if(!is.null(D$effLength)) D$effLength <- D$effLength[,sel]
+        if(!is.null(D$logTPM)) D$logTPM <- D$logTPM[,sel]
+        if(!is.null(D$seqQC)) D$seqQC <- D$seqQC[sel,]
+        # check the comparison informatio again after filtering
+        if(checkComp)
+            D$comp_info <- checkComparisonInfo(read_file(config$comparison_file,T),
+                                               D$meta,config$comparison_file)
+    }
+    return(D)
+}
 
 comparisonAnalysis <- function(config,estC,meta,comp_info){
     message("====== Starting DE analysis ...")
@@ -1476,7 +1493,7 @@ updateMeta <- function(config,meta){
     }
     if(!"group" %in% colnames(meta)){
         comp <- read_file(config$comparison_file,T)
-        meta <- metaFactor(meta,config$sample_factor,unique(comp$Group_name))
+        meta <- setMetaFactor(meta,config$sample_factor,unique(comp$Group_name),sampleFilter=T)
         selG <- c(grep("^group$",colnames(meta),ignore.case=T,value=T),
                   comp[1,"Group_name"])[1]
         meta <- cbind(meta,group=meta[,selG])

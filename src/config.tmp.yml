@@ -60,6 +60,7 @@ covariates_method: limma # 'limma': (default) adjusts multiple covariates at the
 #               mean/sd for all group combinations shown in QuickOmics.
 #               If empty, the first group variable in the comparison file will be used
 comparison_file: initPrjComp
+minCounts: 500000 # the minimal counts of a sample. Samples with less than this will be filtered out during EArun/DEG analysis
 sample_group: []
 
 # ====== The gene network parameters ===============
