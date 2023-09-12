@@ -520,7 +520,9 @@ getMeta <- function(config){
     return(setMetaFactor(meta,config$sample_factor))
 }
 checkMeta <- function(meta,config){
-    message("checking against config file")
+    message("\t",nrow(meta)," samples in sample meta file")
+    stopifnot(nrow(meta)>1)
+    message("\tchecking against config file")
     if(!config$sample_name%in%colnames(meta))
         stop(paste0("sample_name (",config$sample_name,
                     ") is NOT a column in sample meta file (",
@@ -587,6 +589,12 @@ checkSampleName <- function(D,sID){
     if(sum(!sID%in%colnames(D))>0)
         stop(paste0("samples (",paste(c(head(sID[!sID%in%colnames(D)],5),"..."),collapse=","),
                     ") defined in sample meta table are NOT available in count matrix"))
+    delSample <- colnames(D)[!colnames(D)%in%sID]
+    if(length(delSample)>0){
+        message("The following ",length(delSample)," samples are removed from count table since they are not defined in sample meta:")
+        message("\t",paste(head(delSample,5),collapse="; "),ifelse(length(delSample)>5,", ...",""))
+        if(sum(colnames(D)%in%sID)<2) stop("Less than 2 samples from count table defined in sample meta")
+    }
     D <- D[,sID,drop=F]
     return(D)
 }
@@ -607,7 +615,7 @@ getEffLength <- function(config,sID,gID,gInfo=NULL,gLength=NULL){
           selG <- rownames(D)[apply(D,1,median,na.rm=T)<gLength]
           if(length(selG)>0){
             message("\t\tThe nominal length of following ",length(selG)," genes will be used:")
-            message("\t\t",paste(gInfo[selG,"Gene.Name"],collapse=", "))
+            message("\t\t",paste(head(gInfo[selG,"Gene.Name"],5),collapse=", "),ifelse(length(selG)>5,", ...",""))
             D[selG,] <- matrix(gInfo[selG,"Length"],nrow=length(selG),ncol=ncol(D))
           }
         }
@@ -781,6 +789,7 @@ covariateRM_estTPM <- function(X,L,sizeF=NULL,prior=0.25){
 
 ## meta factor ----
 setMetaFactor <- function(meta,strMetaFactor,addFactor=NULL,metaFactor=NULL){
+    stopifnot(nrow(meta)>1)
     if(is.null(strMetaFactor))return(meta)
     ## retrieve the meta factor or initialize one ----
     meta <- metaFactor_checkNAempty(meta)
