@@ -1559,6 +1559,10 @@ formatQuickOmicsResult <- function(DEGs,logTPM,grp,gInfo){
     return(list(Dw=Dw,Dl=Dl))
 }
 formatQuickOmicsMeta <- function(meta,comNames){
+  colnames(meta) <- gsub("^sampleid$","sample__id",
+                         gsub("^Order$","Order__",
+                              gsub("^ComparePairs$","Compare__Pairs",colnames(meta))))
+
   if(nrow(meta)>=length(comNames)){
     MetaData <- list(sampleid=rownames(meta),
                      group=meta$group,
