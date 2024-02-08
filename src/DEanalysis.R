@@ -17,6 +17,9 @@ D <- getEAData(config,withCom=T)
 D <- useAlias(config,D)
 D <- lowCountFiltering(config,D)
 
+## cellmap analysis ----
+cellmap_run(D$logTPM,config,sysConfig)
+
 ## check correlation between covariates and comparison groups -----
 a <- plotCovBio(config,D$meta,D$comp_info)
 

@@ -13,7 +13,7 @@ pInfo <- checkInputDir(args[2],sysConfig)
 pInfo <- appendMeta(pInfo,
                     configTmp$sample_name,
                     sysConfig$qc2meta)
-strMsg <- createInit(args[2],readLines(paste0(args[1],"config.tmp.yml")),pInfo)
+strMsg <- createInit(args[2],readLines(paste0(args[1],"config.tmp.yml")),pInfo,sysConfig)
 
 
 finishInit(strMsg)

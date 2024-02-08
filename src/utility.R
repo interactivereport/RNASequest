@@ -304,11 +304,14 @@ appendMeta <- function(pInfo,sample_name,selQC){
           message("\tWarning: Missing sequence QC: ",paste(selQC[!selQC%in%colnames(qc)],collapse=", "))
           selQC <- selQC[selQC%in%colnames(qc)]
         }
-        selQC <- selQC[selQC%in%colnames(qc)]
+        #selQC <- selQC[selQC%in%colnames(qc)]
         qc <- qc[,selQC,drop=F]
         colnames(qc) <- gsub("^3","x3",gsub("5","x5",gsub("'","p",gsub(" ","_",gsub("\\%","percentage",colnames(qc))))))
         ## only the sequenced samples will be included (remove not sequenced samples from sample sheet)
+        message(sample_name)
+        print(head(pInfo$sInfo))
         pInfo$sInfo <- pInfo$sInfo[pInfo$sInfo[,sample_name]%in%rownames(qc),]
+        
         
         rownames(pInfo$sInfo) <- pInfo$sInfo[,sample_name]
         
@@ -336,7 +339,7 @@ getCovariates <- function(pInfo,notCovariates=NULL){
     return(pInfo)
     
 }
-createInit <- function(strInput,configTmp,pInfo){
+createInit <- function(strInput,configTmp,pInfo,sysConfig=NULL){
     strInput <- normalizePath(strInput)
     message("Creating project folder")
     ix <- 0
@@ -357,6 +360,7 @@ createInit <- function(strInput,configTmp,pInfo){
     
     strComp <- paste0(strOut,"/data/compareInfo.csv")
     createComparison(strComp,pInfo[["comparison_file"]])
+
     message("saving initialization ...")
     if(is.null(pInfo)){
         configTmp <- gsub("initPrjName"," #required",configTmp)
@@ -444,8 +448,15 @@ createInit <- function(strInput,configTmp,pInfo){
         configTmp <- gsub("initCovariates",paste0("[",paste(pInfo$covariates,collapse=","),"]"),configTmp)
         configTmp <- gsub("initPrjComp",strComp,configTmp)
         
-    }else
+    }else{
         stop("Unknown data input")
+    }
+    ## cellmap availability
+    if(!is.null(cm_profiles <- cellmap_avaid_profiles(sysConfig))){
+        configTmp <- c(configTmp,"# ====== This section for CellMap is available to estimate cell type proportions =========")
+        configTmp <- c(configTmp,paste0("CellMap_profile:  #please specify one profiler (human) from ",paste(cm_profiles,collapse=", ")))
+        configTmp <- c(configTmp,paste0("CellMap_rm_ct:  #please specify the cell type(s) to be removed from above profile"))
+    }
     cat(paste(configTmp,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
     return(list(strOut=strOut,strComp=strComp))
 }
@@ -1649,7 +1660,6 @@ finishRun <- function(strMsg){
     
 }
 
-
 ## EApub functions --------
 checkShinySetting <- function(config){
   if(is.null(config$QuickOmics_test_folder) || 
@@ -1721,5 +1731,42 @@ finishShinyOne <- function(shinyMsg){
     
 }
 
+## CellMap functions -----
+cellmap_avaid_profiles <- function(sysConfig){
+    cm_profiles <- NULL
+    if(is.null(sysConfig)) return(cm_profiles)
+    if(!is.null(sysConfig$CellMapExe) && file.exists(sysConfig$CellMapExe)){
+        res <- system(sysConfig$CellMapExe,intern=T,ignore.stderr=T)
+        iStart <- grep("-p PROFILE",res)+2
+        iEnd <- seq_along(res)[nchar(res)==0]
+        iEnd <- iEnd[iEnd>iStart][1]-1
+        if(iEnd>iStart){
+            message("*** CellMap is avaialble with the following profiles: ***")
+            for(i in iStart:iEnd){
+                pf <- sapply(strsplit(res[i],":"),head,1)
+                if(nchar(pf)<15){
+                    message(res[i])
+                    cm_profiles <- c(cm_profiles,trimws(pf))
+                }
+            }
+        }
+    }
+    return(cm_profiles)
+}
+#CellMap_profile
+cellmap_run <- function(logTPM,config,sysConfig){
+    if(!is.null(config$CellMap_profile) && !is.null(sysConfig$CellMapExe) && file.exists(sysConfig$CellMapExe)){
+        message("*** CellMap is running on the cluster, please check the CellMap sub-folder in the output folder ***")
+        TPM <- 2^logTPM-config$count_prior
+        strPrefix <- file.path(config$output,"cellmap",config$prj_name)
+        dir.create(dirname(strPrefix),showWarnings=F)
+        strTPM <- paste0(strPrefix,"_TPM.tsv")
+        write.table(TPM,file=strTPM,sep="\t")
+        strCMD <- paste0(sysConfig$CellMapExe," -b ",strTPM," -p ",config$CellMap_profile," -o ",strPrefix)
+        if(!is.null(config$CellMap_rm_ct) && length(config$CellMap_rm_ct)>0)
+            strCMD <- paste0(strCMD," -d ",paste(config$CellMap_rm_ct,collapse=","))
+        system(strCMD)
+    }
+}
 ## others ----------
 initialMsg(dirname(getwd()))
