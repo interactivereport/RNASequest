@@ -127,11 +127,19 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   comp_info <- comp_info[order(comp_info$Group_ctrl),]
   comp_name = comp_info$CompareName
   model = unique(comp_info$Model)
+  
   group_var = unique(comp_info$Group_name)
-  Subset_group = unique(comp_info$Subsetting_group)
-  Covariate_levels = unique(comp_info$Covariate_levels)
   trt_group = comp_info$Group_test
   ctrl_group = comp_info$Group_ctrl
+  if(nchar(trt_group)==0 || nchar(ctrl_group)==0){
+      message("\tNumeric valurable contrast!")
+      S_meta[,group_var]= as.numeric(S_meta[,group_var])
+  }else{
+      S_meta[,group_var]= as.factor(S_meta[,group_var])
+  }
+  
+  Subset_group = unique(comp_info$Subsetting_group)
+  Covariate_levels = unique(comp_info$Covariate_levels)
   analysis_method = unique(comp_info$Analysis_method)
   shrink_logFC = comp_info$Shrink_logFC
   LFC_cutoff = comp_info$LFC_cutoff
@@ -140,7 +148,7 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   	stop("Error in DESeq2_DEG, more than one comparison subset!")
   
   for (n in colnames(S_meta)) {
-    if(n!=group_var && is.numeric(S_meta[,n])) next # O'Young: possible numeric (co-)variates
+    if(n==group_var || is.numeric(S_meta[,n])) next # O'Young: possible numeric (co-)variates
     S_meta[,n]= factor(S_meta[,n])
   }
   #S_meta[,group_var] = relevel(S_meta[,group_var], ref = ctrl_group)
@@ -165,12 +173,19 @@ DESeq2_DEG <- function(S_meta, Counts_table, comp_info, create_beta_coef_matrix)
   result_list <- list()
   
   for(i in 1:nrow(comp_info)){
-  	message("\t--- ",comp_name[i])
-    res <- results(dds,contrast=c(group_var,trt_group[i],ctrl_group[i]),
-                   lfcThreshold=LFC_cutoff[i], altHypothesis="greaterAbs",
-                   parallel=T)
+  	message("\t--- ",comp_name[i])#
+    if(is.numeric(S_meta[,group_var]))
+        res <- results(dds,name=group_var,
+                       lfcThreshold=LFC_cutoff[i], altHypothesis="greaterAbs",
+                       parallel=T)
+    else
+        res <- results(dds,contrast=c(group_var,trt_group[i],ctrl_group[i]),
+                       lfcThreshold=LFC_cutoff[i], altHypothesis="greaterAbs",
+                       parallel=T)
+    
   	if (toupper(shrink_logFC[i]) == "YES") {
-  		strContrast <- str_c(group_var, "_", trt_group[i], "_vs_", ctrl_group[i])
+  	    if(is.numeric(S_meta[,group_var])) strContrast <- group_var
+  	    else strContrast <- str_c(group_var, "_", trt_group[i], "_vs_", ctrl_group[i])
   		if(!strContrast%in%resultsNames(dds)){
   			#https://www.biostars.org/p/448959/
   			dds[[group_var]] <- relevel(dds[[group_var]], ctrl_group[i])
@@ -351,11 +366,14 @@ checkComparisonInfo <- function(comp_info, meta, comp_info_file) {
       stop(paste(comp_info[i,"Analysis_method"],"for comparison",i,
                  "is NOT a valide 'Analysis_method' (DESeq2 or limma) in comparison file."))
     }
-    if(!grepl("^[A-Zza-z0-9._]+$", comp_info[i,"Group_test"])){
+    if((nchar(comp_info[i,"Group_test"])>0) != (nchar(comp_info[i,"Group_ctrl"])>0)){
+        stop(paste("Missing either 'Group_test' or 'Group_ctrl', leave both empty for the numeric 'Group_name'"))
+    }
+    if(!grepl("^[A-Zza-z0-9._]+$", comp_info[i,"Group_test"]) && nchar(comp_info[i,"Group_test"])>0){
       stop(paste("'Group_test' entry", comp_info[i,"Group_test"],"for comparison",i,
                  "contains characters other than letters, numbers, and delimiters '_' or '.'. Please use only letters, numbers, '_' or '.', as these are safe characters for column names in R."))
     }
-    if(!grepl("^[A-Zza-z0-9._]+$", comp_info[i,"Group_ctrl"])){
+    if(!grepl("^[A-Zza-z0-9._]+$", comp_info[i,"Group_ctrl"]) && nchar(comp_info[i,"Group_ctrl"])>0){
       stop(paste("'Group_ctrl' entry", comp_info[i,"Group_ctrl"],"for comparison",i,
                  "contains characters other than letters, numbers, and delimiters '_' or '.'. Please use only letters, numbers, '_' or '.', as these are safe characters for column names in R."))
     }
@@ -403,18 +421,33 @@ checkComparisonModel <- function(comp_info, meta) {
       }
     } else {Sample_meta =meta}
     
-    # check if the comparison groups contain multiple samples
-    n_samples = apply(Sample_meta[, group_var,drop=F], 2, function(x) return(table(x)))
-    if (! trt_group %in% rownames(n_samples)) {
-      stop(paste("Error in", comp_name, ": trt_group ", trt_group, " is NOT defined in the sample meta file."))
-    } else if (n_samples[trt_group,] < 2) {
-      stop(paste("Error in", comp_name, ": there is no replicate samples for trt_group ", trt_group, "."))
+    # check if the comparsion covariate and levels exist in the sample meta table
+    if (!group_var %in% names(meta)) {
+        stop(paste("Error in", comp_name, ": group variable", group_var, "is NOT defined in the sample meta file."))
+    } else if(nchar(trt_group)>0 || nchar(ctrl_group)>0){
+        group_var_levels = unique(Sample_meta[,group_var])
+        if (!trt_group%in%group_var_levels) {
+            stop(paste("Error in", comp_name, "trt_group", trt_group, "is NOT defined in the sample meta file."))
+        } else if (!ctrl_group%in%group_var_levels) {
+            stop(paste("Error in", comp_name, "ctrl_group", ctrl_group, "is NOT defined in the sample meta file."))
+        }
     }
-
-    if (! ctrl_group %in% rownames(n_samples)) {
-      stop(paste("Error in", comp_name, ": ctrl_group ", ctrl_group, " is NOT defined in the sample meta file."))
-    } else if (n_samples[ctrl_group,] < 2) {
-      stop(paste("Error in", comp_name, ": there is no replicate samples for ctrl_group ", ctrl_group, "."))
+    
+    # check if the comparison groups contain multiple samples
+    # expect numeric comparison variable
+    if(nchar(trt_group)>0 || nchar(ctrl_group)>0){
+        n_samples = apply(Sample_meta[, group_var,drop=F], 2, function(x) return(table(x)))
+        if (! trt_group %in% rownames(n_samples)) {
+            stop(paste("Error in", comp_name, ": trt_group ", trt_group, " is NOT defined in the sample meta file."))
+        } else if (n_samples[trt_group,] < 2) {
+            stop(paste("Error in", comp_name, ": there is no replicate samples for trt_group ", trt_group, "."))
+        }
+        
+        if (! ctrl_group %in% rownames(n_samples)) {
+            stop(paste("Error in", comp_name, ": ctrl_group ", ctrl_group, " is NOT defined in the sample meta file."))
+        } else if (n_samples[ctrl_group,] < 2) {
+            stop(paste("Error in", comp_name, ": there is no replicate samples for ctrl_group ", ctrl_group, "."))
+        }
     }
 
     # check if all the covariates in the model exist in sample meta table and have multiple levels and are independent
@@ -457,17 +490,6 @@ checkComparisonModel <- function(comp_info, meta) {
       }
     }
     
-    # check if the comparsion covariate and levels exist in the sample meta table
-    if (!group_var %in% names(meta)) {
-      stop(paste("Error in", comp_name, ": group variable", group_var, "is NOT defined in the sample meta file."))
-    } else {
-      group_var_levels = unique(Sample_meta[,group_var])
-      if (!trt_group%in%group_var_levels) {
-        stop(paste("Error in", comp_name, "trt_group", trt_group, "is NOT defined in the sample meta file."))
-      } else if (!ctrl_group%in%group_var_levels) {
-        stop(paste("Error in", comp_name, "ctrl_group", ctrl_group, "is NOT defined in the sample meta file."))
-      }
-    }
     
     # check the existence of varibales in the interaction term and the specified levels in sample meta table
     if (str_detect(model, "\\*|\\:")) {
