@@ -84,6 +84,12 @@ Please use the same file hierarchy as 4.2 after creating them.
 The entry can be: yes or no. Please note that this function only applies to the comparison analyzed by DESeq2. The limma package has inbuilt shrinkage function so there is no need to do an extra one.
 
   **LFC_cutoff**: this column is to set the logFoldChange value for the null hypotheses of testing. The default value is 0. Putting this away from 0 makes calls more stringent.
+  
+  **Additional notes:**
+  
+  **Continuous/Numeric variable as the comparison group:**
+  
+  If the user is interested in using a numeric variable (such as Age) as the comparison group in the comparison, please provide the column header of the numeric column in the sample meta table in the “Group_name” column of the comparison.csv table, and leave **"Group_test"** and **"Group_ctrl"** columns of that row empty. Currently this function is only supported if DE analysis is run using the DESeq2 method.
 
 - **counts.tsv**
 
