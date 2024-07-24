@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+src="$(dirname $0)/src"
+if [[ -n "$1" ]]; then
+    env -i src="$src" a=$1 bash -c 'source $src/.env;eval $condaEnv;Rscript $src/qs2csv.R $a'
+else
+    echo "RNAsequst"
+    echo "=============== qs2csv path/to/qs/folder"
+    echo "path/to/qs/folder: a folder contains qs files"
+    echo ""
+    echo "==============="
+    exit 0
+fi
