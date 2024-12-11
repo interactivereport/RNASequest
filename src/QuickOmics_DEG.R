@@ -95,13 +95,27 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
 }
 
 subset_data <- function(Subset_group, Sample_meta, Counts_table) {
-  Subset_group_levels = trimws(strsplit(Subset_group, ";")[[1]])
-  Subset_group_level_vec <- setNames(trimws(sapply(strsplit(Subset_group_levels,":"),tail,1)),trimws(sapply(strsplit(Subset_group_levels,":"),head,1)))
-  for(m in names(Subset_group_level_vec)){
-    Sample_meta = Sample_meta[Sample_meta[,m]==Subset_group_level_vec[m],]
-  }
-  Counts_table = Counts_table[,rownames(Sample_meta)]
-  return(list(S_meta=Sample_meta,Counts_table=Counts_table))
+    matches <- gregexpr("[^;|]+|[;|]", Subset_group, perl=TRUE)
+    subgrp <- trimws(regmatches(Subset_group, matches)[[1]])
+    selS <- subset_one(Sample_meta,subgrp[1])
+    i<-2
+    while(i<length(subgrp)){
+        if(subgrp[i]==";"){
+            selS <- selS & subset_one(Sample_meta,subgrp[i+1])
+        }else if(subgrp[i]=="|"){
+            selS <- selS | subset_one(Sample_meta,subgrp[i+1])
+        }else{
+            stop("unknown seperator: ",subgrp[i])
+        }
+        i <- i+2
+    }
+    Sample_meta <- Sample_meta[selS,]
+    Counts_table = Counts_table[,rownames(Sample_meta)]
+    return(list(S_meta=Sample_meta,Counts_table=Counts_table))
+}
+subset_one <- function(sInfo,kv){
+    kv = trimws(strsplit(kv,":")[[1]])
+    return(sInfo[[kv[1]]]==kv[2])
 }
 
 beta.coef <- function(response_table, design_table, coef_table, digits = 5) { # start function code
