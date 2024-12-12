@@ -94,7 +94,7 @@ DEG_analysis = function(comp_info,Counts_table,S_meta, create_beta_coef_matrix) 
   return(list(result_list))
 }
 
-subset_data <- function(Subset_group, Sample_meta, Counts_table) {
+subset_data <- function(Subset_group, Sample_meta, Counts_table=NULL) {
     matches <- gregexpr("[^;|]+|[;|]", Subset_group, perl=TRUE)
     subgrp <- trimws(regmatches(Subset_group, matches)[[1]])
     selS <- subset_one(Sample_meta,subgrp[1])
@@ -110,7 +110,9 @@ subset_data <- function(Subset_group, Sample_meta, Counts_table) {
         i <- i+2
     }
     Sample_meta <- Sample_meta[selS,]
-    Counts_table = Counts_table[,rownames(Sample_meta)]
+    Counts_table <- NULL
+    if(!is.null(Counts_table))
+        Counts_table = Counts_table[,rownames(Sample_meta)]
     return(list(S_meta=Sample_meta,Counts_table=Counts_table))
 }
 subset_one <- function(sInfo,kv){
@@ -420,18 +422,21 @@ checkComparisonModel <- function(comp_info, meta) {
     message("\tChecking model for ",comp_name)
     # check the existence of subset variables and subset levels in sample meta table
     if (!is.na(Subset_group) && !Subset_group == "") {
-      Subset_group_levels = trimws(strsplit(Subset_group, ";")[[1]])
+      Subset_group_levels = trimws(strsplit(Subset_group, ";|\\|")[[1]])
       Subset_group_level_vec <- setNames(trimws(sapply(strsplit(Subset_group_levels,":"),tail,1)),trimws(sapply(strsplit(Subset_group_levels,":"),head,1)))
       if(sum(!names(Subset_group_level_vec)%in%colnames(meta))>0) {
         stop(paste("Error in", comp_name, ": Subsetting covariate:",names(Subset_group_level_vec)[!names(Subset_group_level_vec)%in%colnames(meta)], "is NOT defined in the sample meta file"))}
       else {
-        Sample_meta = meta
-        for(j in names(Subset_group_level_vec)){
-          if(!Subset_group_level_vec[j]%in%Sample_meta[,j]) {
-            stop(paste("Error in", comp_name, ": the subsetting covariate value", Subset_group_level_vec[j], "is NOT defined in the", j, "column in the sample meta file"))}
-          else {
-            Sample_meta = Sample_meta[Sample_meta[,j]==Subset_group_level_vec[j],]}
-        }      
+        Sample_meta = subset_data(Subset_group,meta)$S_meta
+        #for(j in names(Subset_group_level_vec)){
+        #  if(!Subset_group_level_vec[j]%in%Sample_meta[,j]) {
+        #    stop(paste("Error in", comp_name, ": the subsetting covariate value", Subset_group_level_vec[j], "is NOT defined in the", j, "column in the sample meta file"))}
+        #  else {
+        #    Sample_meta = Sample_meta[Sample_meta[,j]==Subset_group_level_vec[j],]}
+        #}
+        if(nrow(Sample_meta)==0)
+            stop("\n\tNo sample left after subset by: ",Subset_group,"\t(Please note: ';' means 'and', '|' means 'or')\n")
+        message("\t\t",nrow(Sample_meta)," samples left after filtering by ",Subset_group)
       }
     } else {Sample_meta =meta}
     
