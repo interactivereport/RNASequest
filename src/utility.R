@@ -456,6 +456,7 @@ createInit <- function(strInput,configTmp,pInfo,sysConfig=NULL){
         configTmp <- c(configTmp,"# ====== This section for CellMap is available to estimate cell type proportions =========")
         configTmp <- c(configTmp,paste0("CellMap_profile:  #please specify one profiler (human) from ",paste(cm_profiles,collapse=", ")))
         configTmp <- c(configTmp,paste0("CellMap_rm_ct:  #please specify the cell type(s) to be removed from above profile"))
+        configTmp <- c(configTmp,paste0("CellMap_species:  #please specify the species, human/mouse supported"))
     }
     cat(paste(configTmp,collapse="\n"),"\n",sep="",file=paste0(strOut,"/config.yml"))
     return(list(strOut=strOut,strComp=strComp))
@@ -1762,9 +1763,11 @@ cellmap_run <- function(logTPM,config,sysConfig){
         dir.create(dirname(strPrefix),showWarnings=F)
         strTPM <- paste0(strPrefix,"_TPM.tsv")
         write.table(TPM,file=strTPM,sep="\t")
-        strCMD <- paste0(sysConfig$CellMapExe," -b ",strTPM," -p ",config$CellMap_profile," -o ",strPrefix)
+        strCMD <- paste(sysConfig$CellMapExe,"-b",strTPM,"-p",config$CellMap_profile,"-o",strPrefix)
         if(!is.null(config$CellMap_rm_ct) && length(config$CellMap_rm_ct)>0)
             strCMD <- paste0(strCMD," -d ",paste(config$CellMap_rm_ct,collapse=","))
+        if(!is.null(config$CellMap_species) && length(config$CellMap_species)>0)
+            strCMD <- paste(strCMD,"--species",config$CellMap_species)
         system(strCMD)
     }
 }
