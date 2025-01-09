@@ -576,8 +576,11 @@ checkMeta <- function(meta,config){
 }
 getCounts <- function(config,sID){
     message("reading sample counts")
-    D <- read.table(config$prj_counts,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-    if(ncol(D)<2) stop("No sample detected! Make sure tab ('\\t') is the delimiter!")
+    #D <- read.table(config$prj_counts,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
+    D <- data.table::fread(config$prj_counts,header=T,check.names=F)
+    D <- data.frame(row.names=D[[1]],D[,-1],check.names=F)
+    
+    if(ncol(D)<2) stop("No sample detected!")
     ix <- apply(as.matrix(D),1,function(x)return(sum(x>=config$min_count)))>=config$min_sample
     message("\tFiltering genes (",sum(ix),") with minimal counts (>=) ",
             config$min_count," in at least (>=) ",config$min_sample," samples")
@@ -620,7 +623,9 @@ getEffLength <- function(config,sID,gID,gInfo=NULL,gLength=NULL){
     D <- NULL
     if(!is.null(config$prj_effLength) && file.exists(config$prj_effLength)){
         message("reading effective length")
-        D <- read.table(config$prj_effLength,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
+        #D <- read.table(config$prj_effLength,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
+        D <- data.table::fread(config$prj_effLength,header=T,check.names=F)
+        D <- data.frame(row.names=D[[1]],D[,-1],check.names=F)
         D <- checkSampleName(D,sID)
         D <- checkGeneName(D,gID)
         if(!is.null(gInfo) && !is.null(gLength)){
@@ -638,8 +643,10 @@ getTPM <- function(config,sID,gID){
     D <- NULL
     if(!is.null(config$prj_TPM) && file.exists(config$prj_TPM)){
         message("reading sample TPM")
-        D <- read.table(config$prj_TPM,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
-        if(ncol(D)<2) stop("No sample detected! Make sure tab ('\\t') is the delimiter!")
+        #D <- read.table(config$prj_TPM,header=T,row.names=1,sep="\t",check.names=F,as.is=T)
+        D <- data.table::fread(config$prj_TPM,header=T,check.names=F)
+        D <- data.frame(row.names=D[[1]],D[,-1],check.names=F)
+        if(ncol(D)<2) stop("No sample detected!")
         D <- checkSampleName(D,sID)
         D <- checkGeneName(D,gID)
         D <- log2(config$count_prior+D)
@@ -649,8 +656,10 @@ getTPM <- function(config,sID,gID){
 getSeqQC <- function(config,sID){
     if(is.null(config$prj_seqQC)) return(NULL)
     message("reading sequence QC")
-    D <- read.table(config$prj_seqQC,sep="\t",header=T,as.is=T,check.names=F,row.names=1)
-    if(ncol(D)<2) stop("No sample detected! Make sure tab ('\\t') is the delimiter!")
+    #D <- read.table(config$prj_seqQC,sep="\t",header=T,as.is=T,check.names=F,row.names=1)
+    D <- data.table::fread(config$prj_seqQC,header=T,check.names=F)
+    D <- data.frame(row.names=D[[1]],D[,-1],check.names=F)
+    if(ncol(D)<2) stop("No sample detected!")
     if(sum(!sID%in%rownames(D))>0)
         stop(paste0("samples (",paste(sID[!sID%in%rownames(D)],collapse=","),
                     ") defined in sample meta table are NOT available in sequence QC table"))
@@ -1137,7 +1146,9 @@ splitSaveData <- function(X,strF,selRow=NULL,selCol=NULL,saveRowNames=NULL,...){
 }
 splitSaveFactor <- function(strSrc,strDest,strMeta,sep=","){
     if(file.exists(strSrc)){
-        meta <- read.table(strMeta,sep=sep,header=T,check.names=F,as.is=T)
+        #meta <- read.table(strMeta,sep=sep,header=T,check.names=F,as.is=T)
+        meta <- data.table::fread(strMeta,header=T,check.names=F)
+        meta <- data.frame(row.names=meta[[1]],meta[,-1],check.names=F)
         metaF <- yaml::read_yaml(strSrc)
         conn <- file(strDest,"w")
         for(one in names(metaF)){
