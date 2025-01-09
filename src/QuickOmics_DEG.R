@@ -110,7 +110,7 @@ subset_data <- function(Subset_group, Sample_meta, Counts_table=NULL) {
         i <- i+2
     }
     Sample_meta <- Sample_meta[selS,]
-    Counts_table <- NULL
+    #Counts_table <- NULL
     if(!is.null(Counts_table))
         Counts_table = Counts_table[,rownames(Sample_meta)]
     return(list(S_meta=Sample_meta,Counts_table=Counts_table))
