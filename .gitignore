@@ -2,3 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+.gitignore
+RNASequest*
+install_local.yml
+install_local.sh
+src/.env
+src/sys.yml
