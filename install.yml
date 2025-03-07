@@ -4,6 +4,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - r-base=4.3.3
   - r-shiny
   - r-shinythemes
   - r-shinyjs
@@ -54,8 +55,12 @@ dependencies:
   - r-caret
   - ca-certificates
   - openssl
-  - bioconductor-recount3=1.4.0
+  - bioconductor-recount3
   - r-bookdown
   - r-kableextra
   - r-ggrastr
-  - r-dplyr=1.0.9
+  - r-dplyr
+variables:
+  PYTHONNOUSERSITE: 1
+  OPENBLAS_NUM_THREADS: 1
+  MKL_NUM_THREADS: 1
