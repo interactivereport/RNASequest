@@ -984,6 +984,22 @@ plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,10,30
     ## -----
     a <- dev.off()
 }
+plotMetaCor <- function(meta,strPDF){
+    meta <- sapply(meta,function(x){
+        if(length(unique(x))==1 || length(unique(x))==length(x)) return(NULL)
+        return(x)
+    })
+    meta <- as.data.frame(meta[!sapply(meta,is.null)],stringsAsFactors = FALSE)
+    pdf(strPDF)
+    D <- plotEachCor(meta,meta)
+    print(ggplot(D,aes(compGrp,CovGrp))+
+              geom_tile(aes(fill=-log10(pvalue)))+
+              xlab("Sample meta")+ylab("Sample meta")+ggtitle("log10 P-value")+
+              scale_fill_gradient("-log10(pvalue) \n",low="#fee0d2",high="#99000d")+
+              theme_minimal()+
+              theme(axis.text.x=element_text(angle=90)))
+    a <- dev.off()
+}
 plotTopGeneRatio <- function(X,topN,maxN=90,selG=NULL){
     selLevel <- selG
     if(is.null(selG)){
@@ -1301,6 +1317,10 @@ plotEachCor <- function(X,Y){
       message("\t",x," .vs. ",y)
       D <- cbind(X[,x,drop=F],Y[,y,drop=F]) %>% na.omit()
       oneCor <- data.frame(compGrp=x,CovGrp=y,method="",estimate=0,pvalue=1,stat=0,sampleN=nrow(D))
+      if(x==y){
+          corD <- rbind(corD,data.frame(compGrp=x,CovGrp=y,method="",estimate=1,pvalue=1e-10,stat=100,sampleN=nrow(D)))
+          next
+      }
       if(nrow(D)<3){
         corD <- rbind(corD,oneCor)
         next
@@ -1329,26 +1349,32 @@ plotEachCor <- function(X,Y){
           oneCor$method <- "Anova"
           oneCor$pvalue <- as.vector(a$'Pr(>F)'[1])
           oneCor$stat <- as.vector(a$'F value'[1])
+          suppressMessages(suppressWarnings({
           print(ggplot(D,aes_string(y,x))+
-                  geom_boxplot()+
-                  geom_dotplot(binaxis='y',stackdir='center',dotsize=1)+
-                  xlab(oldNames[y])+ylab(oldNames[x])+
-                  theme_light())
-          
+                    geom_violin(fill="yellow",color="gray",alpha=0.7) +
+                    geom_jitter(width = 0.15,size=1,alpha=0.5,color="darkblue")+
+                    xlab(oldNames[y])+ylab(oldNames[x])+
+                    theme_light()+
+                    theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+          }))
         }else if(is.numeric(D[,y]) && (is.factor(D[,x]) || is.character(D[,x]))){
           a <- anova(lm(as.formula(paste(c(y,x),collapse="~")),data=D))
           oneCor$method <- "Anova"
           oneCor$pvalue <- as.vector(a$'Pr(>F)'[1])
           oneCor$stat <- as.vector(a$'F value'[1])
           suppressMessages(suppressWarnings({
-            print(ggplot(D,aes_string(x,y))+
-                    geom_boxplot()+
-                    geom_dotplot(binaxis='y',stackdir='center',dotsize=0.5)+
-                    xlab(oldNames[x])+ylab(oldNames[y])+
-                    theme_light())
+              print(ggplot(D,aes_string(x,y))+
+                        geom_violin(fill="yellow",color="gray",alpha=0.7) +
+                        geom_jitter(width = 0.15,size=1,alpha=0.5,color="darkblue")+
+                        xlab(oldNames[x])+ylab(oldNames[y])+
+                        theme_light()+
+                        theme(axis.text.x = element_text(angle = 45, hjust = 1)))
           }))
         }else if((is.factor(D[,x]) || is.character(D[,x])) && (is.factor(D[,y]) || is.character(D[,y]))){
-          suppressMessages(suppressWarnings(require(gridExtra)))
+          suppressMessages(suppressWarnings({
+              require(gridExtra)
+              require(grid)
+          }))
           a <- suppressWarnings(chisq.test(D[,x],D[,y]))
           oneCor$method <- "Chisq"
           oneCor$pvalue <- as.vector(a$p.value)
@@ -1356,16 +1382,69 @@ plotEachCor <- function(X,Y){
           chiTable <- table(D)
           if(sum(nchar(rownames(chiTable)))<sum(nchar(colnames(chiTable)))) chiTable <- t(chiTable)
           labs <- names(dimnames(chiTable))
-          grid.arrange(tableGrob(chiTable),
-                       left=labs[1],
-                       top=labs[2],
-                       padding=unit(2, "line"))
+          
+          legend_grob <- NULL
+          rowCharN <- max(nchar(rownames(chiTable)))
+          colCharN <- sum(nchar(colnames(chiTable)))
+          charN_cutoff <- 45
+          if((rowCharN+colCharN)>charN_cutoff){
+              rLab <- setNames(paste0("R",1:nrow(chiTable)),rownames(chiTable))
+              cLab <- setNames(paste0("C",1:ncol(chiTable)),colnames(chiTable))
+              rowCharN1 <- max(nchar(rLab))
+              colCharN1 <- sum(nchar(cLab))
+              rLegend <- get_chiTable_legend(labs[1],rLab) 
+              cLegend <- get_chiTable_legend(labs[2],cLab) 
+              if((rowCharN1+colCharN)<charN_cutoff){
+                  rownames(chiTable) <- rLab
+                  legend_grob <- rLegend
+              }else if((rowCharN+colCharN1)<charN_cutoff){
+                  colnames(chiTable) <- cLab
+                  legend_grob <- cLegend
+              }else{
+                  dimnames(chiTable) <- list(rLab,cLab)
+                  legend_grob <- arrangeGrob(rLegend,cLegend,nrow=2)
+              }
+          }
+          if(is.null(legend_grob)){
+              grid.arrange(tableGrob(chiTable),
+                           left=labs[1],
+                           top=labs[2],
+                           padding=unit(2, "line"))
+          }else{
+              grid.arrange(arrangeGrob(tableGrob(chiTable),
+                                       left=labs[1],
+                                       top=labs[2]),
+                           legend_grob,
+                           nrow=2,
+                           heights=c(max(1,nrow(chiTable)*0.1),1),
+                           padding=unit(2, "line"))
+          }
         }
       }
       corD <- rbind(corD,oneCor)
     }
   }
   return(corD)
+}
+get_chiTable_legend <- function(title_text,labs,width=80){
+    labs <- paste0(labs,": ",names(labs))
+    nCol <- floor(width/max(nchar(labs)))
+    if(nCol==1){
+        labs <- list(labs)
+    }else{
+        labs <- split(labs,cut(seq_along(labs),
+                               breaks = nCol,
+                               labels = FALSE))
+    }
+    legend_labs <- lapply(1:length(labs),function(i){
+        lab_title <- ""
+        if(i==1) lab_title <- title_text 
+        textGrob(paste(c(lab_title,labs[[i]]),
+                       collapse="\n"),
+                 x=0.05,y=1,just=c("left","top"),
+                 gp=gpar(fontsize=10))
+    })
+    return(arrangeGrob(grobs=legend_labs,ncol=length(legend_labs)))
 }
 lowCountFiltering <- function(config,D,checkComp=T){
     if(is.null(config$minCounts)) return(D)

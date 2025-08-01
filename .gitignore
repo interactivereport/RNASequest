@@ -2,9 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
-.gitignore
-RNASequest*
-install_local.yml
-install_local.sh
+example/
 src/.env
 src/sys.yml
+edgeTool
+DESeq2*
+*EAonly*

@@ -14,6 +14,10 @@ config <- checkConfig(config)
 D <- getEAData(config)
 D <- useAlias(config,D)
 
+## plot the correction among sample meta -----
+if(!is.null(config$all_meta_corr) && config$all_meta_corr==T)
+    plotMetaCor(D$meta,file.path(config$output,"cor_all_meta.pdf"))
+
 ## plotting sequencing QC ----
 tmp <- plotAlignQC(2^D$logTPM-config$count_prior,
             paste0(config$output,"/sequenceQC.pdf"),
@@ -38,7 +42,9 @@ if(!is.null(newLogTPM)){
                 replot=T)
     
 }
-## create Quickomics link
+
+
+## create Quickomics link -----
 config$ylab <- paste0("log2(TPM+",config$count_prior,")")
 config <- setSampleGroup(config,D$meta)
 saveNetwork(NULL,config)
