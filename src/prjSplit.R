@@ -11,7 +11,7 @@ sysConfig <- yaml::read_yaml(paste0(args[1],"sys.yml"))
 config$src <- args[1]
 
 ## loading EA data --------
-checkConfig(config)
+config <- checkConfig(config)
 D <- getEAData(config)
 
 ## split  ----
