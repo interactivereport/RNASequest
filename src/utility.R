@@ -811,11 +811,10 @@ covariateRM_estTPM <- function(X,L,sizeF=NULL,prior=0.25){
 ## meta factor ----
 setMetaFactor <- function(meta,strMetaFactor,addFactor=NULL,metaFactor=NULL){
     stopifnot(nrow(meta)>1)
-    if(is.null(strMetaFactor))return(meta)
     ## retrieve the meta factor or initialize one ----
     meta <- metaFactor_checkNAempty(meta)
     if(is.null(metaFactor)){
-        if(file.exists(strMetaFactor)){
+        if(!is.null(strMetaFactor) && file.exists(strMetaFactor)){
             metaFactor <- yaml::read_yaml(strMetaFactor)
         }else{
             metaFactor <- metaFactor_addFactor(meta,strMetaFactor)
@@ -887,6 +886,7 @@ metaFactor_addFactor <- function(meta,strMetaFactor,metaFactor=list()){
     return(metaFactor)
 }
 metaFactor_saveYaml <- function(ymlist,strF){
+    if(is.null(strF) || !dir.exists(dirname(strF))) return()
     cat(paste(paste0(names(ymlist),": ['",
                      sapply(ymlist,paste,collapse="','"),"']"),
               collapse="\n"),
@@ -895,7 +895,7 @@ metaFactor_saveYaml <- function(ymlist,strF){
 ## meta 'naive' ----
 correctNaive <- function(config){
   for(one in c("sample_meta","sample_factor","comparison_file")){
-    if(!file.exists(config[[one]])) next()
+    if(is.null(config[[one]]) || !file.exists(config[[one]])) next()
     a <- readLines(config[[one]])
     if(sum(grepl("ï",a,fixed=T))>0){
       message("'Naïve' detected in ",one,", replacing it")
@@ -1161,10 +1161,10 @@ splitSaveData <- function(X,strF,selRow=NULL,selCol=NULL,saveRowNames=NULL,...){
     return(strF)
 }
 splitSaveFactor <- function(strSrc,strDest,strMeta,sep=","){
-    if(file.exists(strSrc)){
+    if(!is.null(strSrc) && file.exists(strSrc)){
         #meta <- read.table(strMeta,sep=sep,header=T,check.names=F,as.is=T)
         meta <- data.table::fread(strMeta,header=T,check.names=F)
-        meta <- data.frame(row.names=meta[[1]],meta[,-1],check.names=F)
+        meta <- data.frame(meta,check.names=F)
         metaF <- yaml::read_yaml(strSrc)
         conn <- file(strDest,"w")
         for(one in names(metaF)){
@@ -1201,11 +1201,11 @@ splitSaveConfig <- function(config,strF){
 splitOne <- function(config,EAdata,one){
     if(sum(EAdata$meta[,config$split_meta]==one)<2){
         message("ignore: ",one," with less than 2 samples")
-        next
+        return()
     }
     message("====== Creating sub project: ",one," ...")
     EAdata$meta <- EAdata$meta[EAdata$meta[,config$split_meta]==one,]
-    strD <- paste0(config$output,"/",one,"/data")
+    strD <- paste0(config$output,"/",gsub("[[:punct:] ]","_",one),"/data")
     system(paste("mkdir -p",strD))
     strD <- normalizePath(strD)
     config <- splitUpdatePrj(config,one,dirname(strD))
@@ -1253,7 +1253,7 @@ splitPrj <- function(config,EAdata){
 
     for(one in unique(EAdata$meta[,config$split_meta])){
         strOut <- splitOne(config,EAdata,one)
-        suppressMessages(saveSessionInfo(paste0(strOut,"/session.EAsplit"),config$src))
+        if(!is.null(strOut)) suppressMessages(saveSessionInfo(paste0(strOut,"/session.EAsplit"),config$src))
     }
 }
 finishSplit <- function(){
