@@ -91,7 +91,9 @@ getRunJobs <- function(jID){
 sbatchScript <- "#!/bin/bash
 #SBATCH -J jID_jName
 #SBATCH -D wkPath
-#SBATCH -n CoreNum
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=CoreNum
 #SBATCH -t 72:0:0
 #SBATCH -o jName.log
 #SBATCH -e jName.log
