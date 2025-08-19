@@ -908,8 +908,9 @@ correctNaive <- function(config){
 source("PC_Covariates.R")
 suppressPackageStartupMessages({
   require(ggplot2)
+  require(grid)
   require(reshape2)}) 
-plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,10,30),gInfo=NULL,replot=F){#,50,100
+plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,50,100,500),gInfo=NULL,meta=NULL,grp_col=NULL,replot=F){#,50,100
     if(file.exists(strPDF) && !replot) return()
     message("plotting sequencing QC @",strPDF)
     if(!is.null(gInfo) & sum(rownames(gInfo)!=gInfo$Gene.Name,na.rm=T)>0){
@@ -934,6 +935,31 @@ plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,10,30
                   theme_minimal()+
                   theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
                         legend.position = "none"))
+    }
+    if(!is.null(meta) && !is.null(grp_col)){
+        D <- cbind(D,meta[rownames(D),])
+        for(grp in grp_col){
+            if(!grp %in%colnames(meta)){
+                message("\t\tSkip top gene for ",grp," which is not a valid column in meta")
+                next
+            }
+            grpN <- length(unique(meta[[grp]]))
+            for(n in names(topN)){
+                #grid.newpage()
+                #pushViewport(viewport(x = 0, just = "left"))  
+                print(ggplot(D,aes_string(x=grp,y=n,fill=grp))+
+                          geom_boxplot(outlier.shape = NA,) +
+                          geom_jitter(width = 0.2, size = 1, color = "black",alpha=0.4) +
+                          labs(title=paste0(n," genes"),y="% of Total TPM")+
+                          theme_light()+
+                          theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                                aspect.ratio=0.8-0.02*grpN,
+                                legend.position="none"))
+                      #newpage=F)
+                #popViewport()
+            }
+            
+        }
     }
     ## union top genes across samples ------
     topUnion <- 30
@@ -980,6 +1006,26 @@ plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,10,30
                       theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
                             legend.position = "none"))
         }
+        if(!is.null(meta) && !is.null(grp_col)){
+            QC <- cbind(qc,meta[rownames(qc),])
+            for(grp in grp_col){
+                if(!grp %in%colnames(meta)) next
+                grpN <- length(unique(meta[[grp]]))
+                for(i in c(colnames(QC)[selQC],colnames(QC)[!selQC])){
+                    if(!is.numeric(QC[1,i])) next
+                    print(ggplot(QC,aes_string(x=grp,y=i,fill=grp))+
+                              geom_boxplot(outlier.shape = NA,) +
+                              geom_jitter(width = 0.2, size = 1, color = "black",alpha=0.4) +
+                              labs(title=i,y="")+
+                              theme_light()+
+                              theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                                    aspect.ratio=0.8-0.02*grpN,
+                                    legend.position="none"))
+                }
+                
+            }
+        }
+        
     }
     ## -----
     a <- dev.off()

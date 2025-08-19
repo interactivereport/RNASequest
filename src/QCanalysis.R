@@ -25,7 +25,9 @@ tmp <- plotAlignQC(2^D$logTPM-config$count_prior,
             qc=D$seqQC,
             prioQC=sysConfig$qc2meta,
             gInfo=D$gInfo,
-            replot=config$seqQC_replot)
+            replot=config$seqQC_replot,
+            meta=D$meta,
+            grp_col=config$seqQC_group)
 
 ## plotting gene length against expression-----
 tmp <- plotGeneLength(config,D$counts,effL=D$effLength,logTPM=D$logTPM,gInfo=D$gInfo)
