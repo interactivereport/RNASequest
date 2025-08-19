@@ -1032,7 +1032,7 @@ plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,50,10
 }
 plotMetaCor <- function(meta,strPDF){
     meta <- sapply(meta,function(x){
-        if(length(unique(x))==1 || length(unique(x))==length(x)) return(NULL)
+        if(length(unique(x))==1 || (!is.numeric(x) && length(unique(x))>20)) return(NULL)#|| length(unique(x))==length(x) 
         return(x)
     })
     meta <- as.data.frame(meta[!sapply(meta,is.null)],stringsAsFactors = FALSE)
