@@ -913,6 +913,7 @@ suppressPackageStartupMessages({
 plotAlignQC <- function(estT,strPrefix,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,50,100,500),gInfo=NULL,meta=NULL,sample_plot=F,grp_col=NULL,replot=F){#,50,100
     strSample <- paste0(strPrefix,"_samples.pdf")
     strGroup <- paste0(strPrefix,"_group.pdf")
+    sample_plot <- ifelse(is.null(sample_plot),T,F)
     grp_plot <- !is.null(meta) && !is.null(grp_col)
     if(!replot && (!sample_plot || (sample_plot && file.exists(strSample))) &&
         (!grp_plot || (grp_plot && file.exists(strGroup))))
