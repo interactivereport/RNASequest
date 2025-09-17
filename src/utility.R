@@ -910,15 +910,18 @@ suppressPackageStartupMessages({
   require(ggplot2)
   require(grid)
   require(reshape2)}) 
-plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,50,100,500),gInfo=NULL,meta=NULL,grp_col=NULL,replot=F){#,50,100
-    if(file.exists(strPDF) && !replot) return()
-    message("plotting sequencing QC @",strPDF)
+plotAlignQC <- function(estT,strPrefix,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,50,100,500),gInfo=NULL,meta=NULL,sample_plot=F,grp_col=NULL,replot=F){#,50,100
+    strSample <- paste0(strPrefix,"_samples.pdf")
+    strGroup <- paste0(strPrefix,"_group.pdf")
+    grp_plot <- !is.null(meta) && !is.null(grp_col)
+    if(!replot && (!sample_plot || (sample_plot && file.exists(strSample))) &&
+        (!grp_plot || (grp_plot && file.exists(strGroup))))
+        return
+    message("plotting sequencing QC")
     if(!is.null(gInfo) & sum(rownames(gInfo)!=gInfo$Gene.Name,na.rm=T)>0){
         rownames(estT) <- paste(rownames(estT),gInfo[rownames(estT),"Gene.Name"],sep="|")
         if(!is.null(estC)) rownames(estC) <- paste(rownames(estC),gInfo[rownames(estC),"Gene.Name"],sep="|")
     }
-    pdfW <- max(ncol(estT)/10+2,6)
-    pdf(strPDF,width=pdfW,height=6)
     ## top genes ratio----
     topN <- setNames(topN,paste0("Top",topN))
     D <- t(apply(estT,2,function(x){
@@ -926,109 +929,170 @@ plotAlignQC <- function(estT,strPDF,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,50,10
         return(sapply(topN,function(i)return(sum(x[1:i])/sum(x)*100)))
     }))
     D <- cbind(sID=factor(rownames(D),levels=rownames(D)),data.frame(D))
-    for(i in colnames(D)){
-        if(i=="sID") next
-        print(ggplot(D,aes_string(x="sID",y=i))+
-                  geom_bar(stat="identity")+
-                  xlab("")+ylab("% of Total TPM")+
-                  ggtitle(paste(i,"genes"))+
-                  theme_minimal()+
-                  theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
-                        legend.position = "none"))
-    }
-    if(!is.null(meta) && !is.null(grp_col)){
-        D <- cbind(D,meta[rownames(D),])
-        for(grp in grp_col){
-            if(!grp %in%colnames(meta)){
-                message("\t\tSkip top gene for ",grp," which is not a valid column in meta")
-                next
-            }
-            grpN <- length(unique(meta[[grp]]))
-            for(n in names(topN)){
-                #grid.newpage()
-                #pushViewport(viewport(x = 0, just = "left"))  
-                print(ggplot(D,aes_string(x=grp,y=n,fill=grp))+
-                          geom_boxplot(outlier.shape = NA,) +
-                          geom_jitter(width = 0.2, size = 1, color = "black",alpha=0.4) +
-                          labs(title=paste0(n," genes"),y="% of Total TPM")+
-                          theme_light()+
-                          theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
-                                aspect.ratio=0.8-0.02*grpN,
-                                legend.position="none"))
-                      #newpage=F)
-                #popViewport()
-            }
-            
-        }
-    }
     ## union top genes across samples ------
     topUnion <- 30
-    p <- plotTopGeneRatio(estT,30)
-    write.csv(p$data,file=gsub("pdf","unionTop.TPM.csv",strPDF),row.names=F)
-    if(pdfW>8) print(p+theme(aspect.ratio=0.75))
-    else print(p)
+    p <- plotTopGeneRatio(estT,topUnion)
+    write.csv(p$data,file=paste0(strPrefix,"_unionTop.TPM.csv"),row.names=F)
     # same genes for counts
+    pC <- NULL
     if(!is.null(estC)){
-        pC <- plotTopGeneRatio(estC,30,selG=levels(p$data[,2]))+
+        pC <- plotTopGeneRatio(estC,topUnion,selG=levels(p$data[,2]))+
             xlab("% of total counts")+ggtitle(p$labels$title)
-        if(pdfW>8) print(pC+theme(aspect.ratio=0.75))
-        else print(pC)
     }
     ## sequence qc ----
     if(!is.null(qc)){
         ## intergenic, intronic and exonic -----
         selN <- c("Exonic Rate","Intronic Rate","Intergenic Rate")
+        qc_D <- NULL
         if(sum(selN%in%colnames(qc))==length(selN)){
-            D = melt(as.matrix(qc[,colnames(qc)%in%selN]))
-            D$Var1 <- factor(D$Var1,levels=rownames(qc))
-            print(ggplot(D,aes(x=Var1,y=value,fill=Var2))+
-                      geom_bar(position="stack",stat="identity")+
-                      ylab("Fraction of Reads")+xlab("")+
-                      ggtitle("Mapped reads allocation")+
-                      ylim(0,1)+theme_minimal()+
-                      scale_fill_manual(values=c("#66c2a5","#fc8d62","#8da0cb"))+
-                      theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
-                            legend.position = "top")+
-                      guides(fill=guide_legend(title="")))
+            qc_D = qc[,colnames(qc)%in%selN]
             qc <- qc[,!colnames(qc)%in%selN,drop=F]
+            #print(head(qc_D))
         }
         ## all rest qc -----
         qc <- cbind(sID=factor(rownames(qc),levels=rownames(qc)),qc)
         selQC <- colnames(qc)%in%prioQC
         colnames(qc) <- make.names(colnames(qc))
-        for(i in c(colnames(qc)[selQC],colnames(qc)[!selQC])){
-            if(!is.numeric(qc[1,i])) next
-            print(ggplot(qc,aes_string(x="sID",y=i))+
-                      geom_bar(stat="identity")+
-                      xlab("")+ylab("")+
-                      ggtitle(i)+
-                      theme_minimal()+
-                      theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
-                            legend.position = "none"))
+        qc <- qc[,c(colnames(qc)[selQC],colnames(qc)[!selQC])]
+    }
+    
+    ## plotting -----
+    if(sample_plot){
+        pdfW <- max(ncol(estT)/10+2,6)
+        pdf(strSample,width=pdfW,height=6)
+        plotQC_bar(D,'sID',colnames(D),
+                   y_lab="% of Total TPM",title_suffix="genes")
+        
+        ar = NULL
+        if(pdfW>8) ar <- 0.75
+        print(p+theme(aspect.ratio=ar))
+        if(!is.null(pC)) print(pC+theme(aspect.ratio=ar))
+        
+        if(!is.null(qc_D)) plotQC_bar_grp(qc_D,y_lab="Fraction of Reads",
+                                          title_suffix="Mapped reads allocation")
+        if(!is.null(qc)) plotQC_bar(qc,'sID',colnames(qc))
+        a <- dev.off()
+    }
+    if(grp_plot){
+        sel_col <- grp_col[grp_col%in%colnames(meta)]
+        if(length(sel_col)<length(grp_col))
+            message("\t\tSkip the following groups for QC ploting, they are not a valid column in the meta: ",paste(grp_col[!grp_col%in%sel_col],collapse=", "))
+        if(length(sel_col)>0){
+            maxN <- max(sapply(sel_col,function(x){
+                return(length(unique(meta[,x])))
+            }))
+            pdfW <- max(maxN/7+2,6)
+            pdf(strGroup,width=pdfW,height=6)
+            plotQC_box(cbind(D[,colnames(D)!="sID"],meta[rownames(D),sel_col,drop=F]),
+                       sel_col,colnames(D)[colnames(D)!="sID"],
+                       y_lab="% of Total TPM",title_suffix="genes")
+            
+            ar = NULL
+            if(pdfW>8) ar <- 0.75
+            print(p+theme(aspect.ratio=ar))
+            if(!is.null(pC)) print(pC+theme(aspect.ratio=ar))
+            
+            if(!is.null(qc_D)) plotQC_box_grp(cbind(qc_D,meta[rownames(qc_D),sel_col,drop=F]),
+                                              colnames(qc_D),sel_col,
+                                              y_lab="Fraction of Reads",
+                                              title_suffix="Mapped reads allocation")
+            if(!is.null(qc)) plotQC_box(cbind(qc[,colnames(qc)!="sID"],meta[qc$sID,sel_col,drop=F]),
+                                        sel_col,colnames(qc)[colnames(qc)!="sID"])
+            
+            a <- dev.off()
         }
-        if(!is.null(meta) && !is.null(grp_col)){
-            QC <- cbind(qc,meta[rownames(qc),])
-            for(grp in grp_col){
-                if(!grp %in%colnames(meta)) next
-                grpN <- length(unique(meta[[grp]]))
-                for(i in c(colnames(QC)[selQC],colnames(QC)[!selQC])){
-                    if(!is.numeric(QC[1,i])) next
-                    print(ggplot(QC,aes_string(x=grp,y=i,fill=grp))+
-                              geom_boxplot(outlier.shape = NA,) +
-                              geom_jitter(width = 0.2, size = 1, color = "black",alpha=0.4) +
-                              labs(title=i,y="")+
-                              theme_light()+
-                              theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
-                                    aspect.ratio=0.8-0.02*grpN,
-                                    legend.position="none"))
-                }
+        for(grp in sel_col){
+            for(one in unique(meta[[grp]])){
+                #message("\t\t",grp,"\t",one)
+                sID <- rownames(meta)[meta[[grp]]==one]
+                pdfW <- max(length(sID)/10+2,6)
+                pdf(paste0(strPrefix,"_",grp,"_",one,".pdf"),width=pdfW,height=6)
+                plotQC_bar(D[sID,],'sID',colnames(D),
+                           y_lab="% of Total TPM",title_suffix="genes")
                 
+                ar = NULL
+                if(pdfW>8) ar <- 0.75
+                print(plotTopGeneRatio(estT[,sID],topUnion)+theme(aspect.ratio=ar))
+                # same genes for counts
+                pC <- NULL
+                if(!is.null(estC)){
+                    print(plotTopGeneRatio(estC[,sID],topUnion,selG=levels(p$data[,2]))+
+                        xlab("% of total counts")+ggtitle(p$labels$title)+theme(aspect.ratio=ar))
+                }
+
+                if(!is.null(qc_D)) plotQC_bar_grp(qc_D[sID,],y_lab="Fraction of Reads",
+                                                  title_suffix="Mapped reads allocation")
+                if(!is.null(qc)) plotQC_bar(qc[sID,],'sID',colnames(qc))
+                a <- dev.off()
             }
         }
-        
     }
-    ## -----
-    a <- dev.off()
+}
+plotQC_bar <- function(D,x_col,y_col,y_lab="",title_suffix=""){
+    for(i in y_col){
+        if(i %in% x_col) next
+        print(ggplot(D,aes_string(x=x_col,y=i))+
+                  geom_bar(stat="identity")+
+                  xlab("")+ylab(y_lab)+
+                  ggtitle(paste(i,title_suffix))+
+                  theme_minimal()+
+                  theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                        legend.position = "none"))
+    }
+}
+plotQC_bar_grp <- function(D,y_lab="",title_suffix=""){
+    D = melt(as.matrix(D))
+    D$Var1 <- factor(D$Var1,levels=unique(D$Var1))
+    print(ggplot(D,aes(x=Var1,y=value,fill=Var2))+
+              geom_bar(position="stack",stat="identity")+
+              ylab(y_lab)+xlab("")+
+              ggtitle(title_suffix)+
+              ylim(0,1)+theme_minimal()+
+              scale_fill_manual(values=c("#66c2a5","#fc8d62","#8da0cb"))+
+              theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                    legend.position = "top")+
+              guides(fill=guide_legend(title="")))
+}
+plotQC_box <- function(D,x_col,y_col,y_lab="",title_suffix=""){
+    for(x in x_col){
+        if(!is.factor(D[[x]])) D[[x]] <- factor(D[[x]],levels = unique(D[[x]]))
+        grpN <- length(unique(D[[x]]))
+        for(y in y_col){
+            if(y%in%x_col) next
+            print(ggplot(D,aes_string(x=x,y=y,fill=x))+
+                      geom_boxplot(outlier.shape = NA,) +
+                      geom_jitter(width = 0.2, size = 1, color = "black",alpha=0.4) +
+                      labs(title=paste(y,title_suffix),y=y_lab)+
+                      theme_light()+
+                      theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                            aspect.ratio=0.8-0.02*grpN,
+                            legend.position="none"))
+        }
+    }
+}
+plotQC_box_grp <- function(DD,y_col,grp_col,y_lab="",title_suffix=""){
+    #print(melt(as.matrix(DD[,y_col])))
+    D = melt(as.matrix(DD[,y_col])) %>%
+        dplyr::left_join(DD%>%select(dplyr::all_of(grp_col))%>%tibble::rownames_to_column("Var1"),by="Var1")
+    #D = cbind(D,DD[D$Var1,grp_col])
+    if(length(y_col)==3) grp_color <- setNames(c("#66c2a5","#fc8d62","#8da0cb"),
+                                               y_col)
+    else grp_color <- setNames(RColorBrewer::brewer.pal(length(y_col),"Set2"),
+                               y_col)
+    for(one in grp_col){
+        if(!is.factor(D[[one]])) D[[one]] <- factor(D[[one]],levels=unique(D[[one]]))
+        print(ggplot(D,aes_string(x=one,y="value",fill="Var2",color="Var2"))+
+                  geom_boxplot(outlier.shape = NA) +
+                  geom_point(position=position_jitterdodge(),color="black",alpha=0.4)+
+                  ylab(y_lab)+xlab(one)+
+                  ggtitle(title_suffix)+
+                  ylim(0,1)+theme_minimal()+
+                  scale_fill_manual(values=grp_color)+
+                  scale_colour_manual(values=grp_color)+
+                  theme(axis.text.x=element_text(angle=90,vjust=0.5,hjust=1),
+                        legend.position = "top")+
+                  guides(fill=guide_legend(title=""),color="none"))
+    }
 }
 plotMetaCor <- function(meta,strPDF){
     meta <- sapply(meta,function(x){

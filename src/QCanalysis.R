@@ -20,13 +20,14 @@ if(!is.null(config$all_meta_corr) && config$all_meta_corr==T)
 
 ## plotting sequencing QC ----
 tmp <- plotAlignQC(2^D$logTPM-config$count_prior,
-            paste0(config$output,"/sequenceQC.pdf"),
+            file.path(config$output,"sequenceQC"),
             estC=D$counts,
             qc=D$seqQC,
             prioQC=sysConfig$qc2meta,
             gInfo=D$gInfo,
             replot=config$seqQC_replot,
             meta=D$meta,
+            sample_plot=config$seqQC_full_sample_bar,
             grp_col=config$seqQC_group)
 
 ## plotting gene length against expression-----
@@ -36,12 +37,15 @@ tmp <- plotGeneLength(config,D$counts,effL=D$effLength,logTPM=D$logTPM,gInfo=D$g
 newLogTPM <- plotPCanlaysis(config,D$logTPM,D$meta,estC=D$counts,effL=D$effLength)
 if(!is.null(newLogTPM)){
     plotAlignQC(2^newLogTPM-config$count_prior,
-                paste0(config$output,"/Adjusted_sequenceQC.pdf"),
+                file.path(config$output,"Adjusted_sequenceQC"),
                 estC=D$counts,
                 qc=D$seqQC,
                 prioQC=sysConfig$qc2meta,
                 gInfo=D$gInfo,
-                replot=T)
+                replot=T,
+                meta=D$meta,
+                sample_plot=config$seqQC_full_sample_bar,
+                grp_col=config$seqQC_group)
     
 }
 

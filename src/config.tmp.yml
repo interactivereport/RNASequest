@@ -39,6 +39,7 @@ core: 2
 parallel: false # or sge or slurm
 qsubTime: 180 #in minites, 3hr # not used for slurm
 min_median_effective_length: 5 #nominal length will be used If the median effective length is smaller than the specified
+seqQC_full_sample_bar: true # if there are a large number of samples, recommend set this to be false and use the following to access them in group plots or a very wide image/pdf will be created
 seqQC_group: # if provide the meta columns, boxplots will be included in the sequence qc plots
 seqQC_replot: false
 geneLength_QC: false
