@@ -1898,6 +1898,88 @@ getShinyOneInfo <- function(config){
     shinyOneData[["Data_Cleaning"]] <- paste("Data processing folder:",config$output)
     return(shinyOneData)
 }
+getShinyOneInfoNEW <- function(config){
+  shinyOneData <- config[grep("^shinyOne_",names(config))]
+  names(shinyOneData) <- gsub("shinyOne_","",names(shinyOneData))
+  
+  shinyOneData[['Title']] <- ifelse(is.null(config$shinyOne_Title),
+                                    config$prj_name,
+                                    config$shinyOne_Title)
+  shinyOneData[["Species"]] <- config$species
+  shinyOneData[["TSTID"]] <- ifelse(grepl("^TST",config$prj_name),substr(config$prj_name,1,8),"")
+  
+  shinyOneData[["Data_Generated_By"]] <- paste(system("whoami",intern=T),
+                                               shinyOneData[["Data_Generated_By"]],
+                                               sep="; ")
+  shinyOneData[["Date"]] <- as.character(Sys.Date())
+  if (config$permission=="Restricted") {
+    shinyOneData[["URL"]] <- paste0(config$QuickOmics_publish_link_Res,config$Res_ID)
+    shinyOneData[["URL_Private"]] <- paste0(config$QuickOmics_publish_link_Conf,config$prj_name)
+    shinyOneData[["Is_Private"]] <-2
+  } else if (config$permission=="Confidential") {
+    shinyOneData[["URL_Private"]] <- paste0(config$QuickOmics_publish_link_Conf,config$prj_name)
+    shinyOneData[["Is_Private"]] <-1
+  } else {
+    shinyOneData[["URL"]] <- paste0(config$QuiclOmics_publish_link,config$prj_name)
+    shinyOneData[["Data_Cleaning"]] <- paste("Data processing folder:",config$output)
+    shinyOneData[["Is_Private"]] <-0
+  }
+  return(shinyOneData)
+}
+pubShinyOneNEW <- function(config){
+  checkShinySetting(config)
+  checkPubFiles(config)
+  if (!("permission" %in% names(config))) {config$permission="Biogen-Wide"}
+  if (!("overwrite" %in% names(config))) {config$overwrite=FALSE}
+  if (config$overwrite==FALSE) {
+    ExportFolder=ifelse (config$permission=="Biogen-Wide", 
+                         config$QuickOmics_publish_folder, config$QuickOmics_publish_folder_Conf)
+    strF <- paste0(ExportFolder,config$prj_name,".RData")
+    if(file.exists(strF)){
+      message("project files exists in ",ExportFolder)
+      stop("The project already exists in ShinyOne!\nPlease remove the record and associated files or change prj_name and rerun EApub!")
+    }
+  }
+  if (config$permission=="Restricted") {
+    require(digest)
+    config$Res_ID=substr(digest(config$prj_name, algo = "md5", serialize = FALSE), 1, 8)
+  }
+  message("preparing information for ShinyOne")
+  shinyOneData <- getShinyOneInfoNEW(config)
+  shinyOneCMD <- paste0("curl -s -k -X POST -d 'data={",
+                        paste(paste0('"',names(shinyOneData),'": "',shinyOneData,'"'),collapse = ", "),
+                        "}' '",config$shinyApp,"api_add_project.php?api_key=",config$shinyAppKey,"'")
+  
+  message("submitting to ShinyOne manager ...")
+  res <- system(shinyOneCMD,intern=T)
+  shinyMsg <- tryCatch({
+    rjson::fromJSON(res)
+  },error=function(eMsg){
+    stop(paste0(paste(res,collapse="\n"),
+                "\nPlease contact Computational Biology Group [fergal.casey@biogen.com;zhengyu.ouyang@biogen.com]"))
+  })
+  if(!shinyMsg$Status){
+    stop(paste0(paste(paste(names(shinyMsg),shinyMsg,sep=":"),collapse="\n"),
+                "\nPlease contact ",config$powerby))
+  }
+  if (config$permission %in% c("Restricted", "Confidential")) {
+    system(paste0("cp ",config$output,"/",config$prj_name,"* ",config$QuickOmics_publish_folder_Conf))
+  } else {
+    system(paste0("cp ",config$output,"/",config$prj_name,"* ",config$QuickOmics_publish_folder))
+  }
+  if (config$permission=="Restricted") { #copy to md5 name files
+    data_dir=str_c(config$output, "/"); ID=config$prj_name
+    Res_dir=config$QuickOmics_publish_folder_Res; Res_ID=config$Res_ID
+    files=dir(data_dir, pattern=ID)
+    for (f in files) {
+      cat("copy ",  f, "\n", sep="")
+      newF <- str_replace(f, ID, Res_ID)
+      system(str_c("cp ", data_dir, f, " ", Res_dir, newF, "\n"))
+    }
+    cat("Finished ", ID, " to Res/", Res_ID, "\n", sep="")
+  }
+  return(list(id=shinyMsg$ID, shinyOneData=shinyOneData))
+}
 pubShinyOne <- function(config){
     checkShinySetting(config)
     checkPubFiles(config)

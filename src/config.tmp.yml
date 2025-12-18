@@ -88,5 +88,5 @@ shinyOne_Sample_Type:   #e.g. Blood, Cell
 shinyOne_Technology_Platform: RNA-Seq
 shinyOne_Data_Source: Internal
 shinyOne_Data_Cleaning:
-
+permission: Biogen-Wide #options are:  Biogen-Wide; Restricted; Confidential
 
