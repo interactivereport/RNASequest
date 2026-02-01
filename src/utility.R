@@ -913,7 +913,7 @@ suppressPackageStartupMessages({
 plotAlignQC <- function(estT,strPrefix,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,50,100,500),gInfo=NULL,meta=NULL,sample_plot=F,grp_col=NULL,replot=F){#,50,100
     strSample <- paste0(strPrefix,"_samples.pdf")
     strGroup <- paste0(strPrefix,"_group.pdf")
-    sample_plot <- ifelse(is.null(sample_plot),T,F)
+    sample_plot <- ifelse(is.null(sample_plot),T,sample_plot)
     grp_plot <- !is.null(meta) && !is.null(grp_col)
     if(!replot && (!sample_plot || (sample_plot && file.exists(strSample))) &&
         (!grp_plot || (grp_plot && file.exists(strGroup))))
@@ -941,10 +941,11 @@ plotAlignQC <- function(estT,strPrefix,estC=NULL,qc=NULL,prioQC=NULL,topN=c(1,50
             xlab("% of total counts")+ggtitle(p$labels$title)
     }
     ## sequence qc ----
+    qc_D<-NULL #XZ added to avoid Error: object 'qc_D' not found
     if(!is.null(qc)){
         ## intergenic, intronic and exonic -----
         selN <- c("Exonic Rate","Intronic Rate","Intergenic Rate")
-        qc_D <- NULL
+        #qc_D <- NULL
         if(sum(selN%in%colnames(qc))==length(selN)){
             qc_D = qc[,colnames(qc)%in%selN]
             qc <- qc[,!colnames(qc)%in%selN,drop=F]
