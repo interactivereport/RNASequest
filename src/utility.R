@@ -1764,6 +1764,9 @@ formatQuickOmicsResult <- function(DEGs,logTPM,grp,gInfo){
     Dl <- NULL
     for(i in names(DEGs)){
         res <- DEGs[[i]]$DEG
+        if(is.null(res) || nrow(res) == 0 || ncol(res) == 0) {
+          next
+        }
         if(ncol(res)<5){
           res <- cbind(res,data.frame(row.names=rownames(res),
                                       rep(list(rep(NA,nrow(res))),5-ncol(res))))
