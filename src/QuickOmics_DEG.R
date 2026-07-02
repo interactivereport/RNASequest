@@ -58,7 +58,7 @@ Batch_DEG = function(Counts_table, S_meta, comp_info, create_beta_coef_matrix=F,
   #                                 seq(nrow(comp_info))),
   #                           rownames(comp_info))
   comp_info.list <- group_DEG(cbind(CompareName=rownames(comp_info),comp_info))
-  DEG_result_list <- lapply(comp_info.list, function(x) DEG_analysis(x, Counts_table, S_meta, create_beta_coef_matrix))
+  DEG_result_list <- sapply(comp_info.list, DEG_analysis, Counts_table, S_meta, create_beta_coef_matrix)
   DEG_result_list <- unlist(DEG_result_list,recursive=F)
   return(DEG_result_list)
 }
