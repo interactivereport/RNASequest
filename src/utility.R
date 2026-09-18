@@ -1,3 +1,4 @@
+options(datatable.integer64 = "double")
 strConfig <- file.path(getwd(),"sys.yml")
 if(!file.exists(strConfig))
   stop(paste0("=====\nPlease contact admins to set the sys.yml in ",args[1],".\nAn Example is 'sys_example.yml'.\n====="))
