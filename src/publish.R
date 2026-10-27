@@ -26,6 +26,31 @@ if ("URL_Private" %in% names(shinyOneData)) {
   cat( "Private URL: ", shinyOneData$URL_Private,"\n", sep="",  file=log_file, append=T )
 }
 cat("\n\nPowered by:",sysConfig$powerby, capture.output(sessionInfo()), sep="\n", file=log_file, append=T)
+
+#if publish to second ShinyOne instance
+if (!is.null(sysConfig$shinyApp2)) {
+  if (str_detect(sysConfig$shinyApp2, "http")) {
+    ## submit to ShinyOne Instance 2------------
+    message("Submitting to second ShinyOne instance...")
+    sysConfig$shinyApp=sysConfig$shinyApp2
+    if (!is.null(sysConfig$shinyAppKey2)) {sysConfig$shinyAppKey=sysConfig$shinyAppKey2}
+    Res <- pubShinyOneNEW(c(config,sysConfig))
+    finishShinyOne(list(shinyApp=sysConfig$shinyApp,ID=Res$id))
+    ##save log for second instance
+    cat(date(), "\n",
+        "Second ShinyOne access: ", sysConfig$shinyApp,"app_project_review.php?ID=",Res$id, "\n\n",
+        sep="",  file=log_file, append=T )
+    shinyOneData=Res$shinyOneData
+    if ("URL" %in% names(shinyOneData)) {
+      cat( "URL: ", shinyOneData$URL, "\n", sep="",  file=log_file, append=T )
+    }
+    if ("URL_Private" %in% names(shinyOneData)) {
+      cat( "Private URL: ", shinyOneData$URL_Private,"\n", sep="",  file=log_file, append=T )
+    }
+    #cat("\n\nPowered by:",sysConfig$powerby, capture.output(sessionInfo()), sep="\n", file=log_file, append=T)
+  }
+}
+
 ## R markdown
 
 ## finishing
